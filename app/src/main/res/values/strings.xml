@@ -1,10 +1,8 @@
 <resources>
-    <string name="app_name">ArchComponent</string>
+    <string name="app_name">BuStop</string>
     <string name="progress_title">Getting stops</string>
     <string name="progress_body">Please Wait</string>
     <!--LOCATION-->
-    <string name="latitude_label">Latitude</string>
-    <string name="longitude_label">Longitude</string>
-    <string name="accuracy_label">Accuracy</string>
     <string name="no_permissions">You have not granted the app the necessary permissions</string>
+
 </resources>

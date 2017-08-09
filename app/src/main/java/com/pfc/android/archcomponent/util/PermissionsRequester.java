@@ -20,7 +20,7 @@ public class PermissionsRequester {
 
     private final WeakReference<Activity> activityWeakReference;
 
-    static PermissionsRequester newInstance(@NonNull Activity activity) {
+    public static PermissionsRequester newInstance(@NonNull Activity activity) {
         WeakReference<Activity> activityWeakReference = new WeakReference<>(activity);
         return new PermissionsRequester(activityWeakReference);
     }
@@ -29,7 +29,7 @@ public class PermissionsRequester {
         this.activityWeakReference = activityWeakReference;
     }
 
-    boolean hasPermissions() {
+    public boolean hasPermissions() {
         Activity activity = activityWeakReference.get();
         if (activity != null) {
             for (String permission : PERMISSIONS) {
@@ -42,7 +42,7 @@ public class PermissionsRequester {
         return false;
     }
 
-    void requestPermissions() {
+    public void requestPermissions() {
         Activity activity = activityWeakReference.get();
         if (activity != null) {
             ActivityCompat.requestPermissions(activity, PERMISSIONS, 0);

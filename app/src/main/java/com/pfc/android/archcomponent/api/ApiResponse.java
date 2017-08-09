@@ -2,8 +2,6 @@ package com.pfc.android.archcomponent.api;
 
 import android.util.Log;
 
-import com.pfc.android.archcomponent.ui.MainActivity;
-
 import java.util.List;
 
 /**
@@ -14,7 +12,6 @@ public class ApiResponse {
 
     private final String TAG = ApiResponse.class.getName();
 
-   // private StopLocationEntity stoplocation;
     private List<StopPointsEntity> stoppoints;
     private Throwable error;
 

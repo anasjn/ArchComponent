@@ -4,10 +4,13 @@ import android.Manifest;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.pm.PackageManager;
+
 import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -21,11 +24,15 @@ import com.pfc.android.archcomponent.model.DefaultLocation;
  */
 
 public class LocationLiveData extends LiveData<DefaultLocation> {
+
+    private final String TAG = LocationLiveData.class.getName();
+
     private final Context context;
 
     private FusedLocationProviderClient fusedLocationProviderClient = null;
 
     public LocationLiveData(Context context) {
+
         this.context = context;
     }
 
@@ -37,6 +44,7 @@ public class LocationLiveData extends LiveData<DefaultLocation> {
             return;
         }
         FusedLocationProviderClient locationProviderClient = getFusedLocationProviderClient();
+        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++FusedLocationProviderClient "+ locationProviderClient);
         LocationRequest locationRequest = LocationRequest.create();
         Looper looper = Looper.myLooper();
         locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, looper);
@@ -46,6 +54,7 @@ public class LocationLiveData extends LiveData<DefaultLocation> {
     private FusedLocationProviderClient getFusedLocationProviderClient() {
         if (fusedLocationProviderClient == null) {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++getFusedLocationProviderClient "+ fusedLocationProviderClient);
         }
         return fusedLocationProviderClient;
     }
@@ -65,6 +74,7 @@ public class LocationLiveData extends LiveData<DefaultLocation> {
             double longitude = newLocation.getLongitude();
             float accuracy = newLocation.getAccuracy();
             DefaultLocation location = new DefaultLocation(latitude, longitude, accuracy);
+            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++location "+ location);
             setValue(location);
         }
     };

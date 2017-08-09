@@ -11,9 +11,15 @@
     android:orientation="vertical"
     tools:context="com.pfc.android.archcomponent.ui.MainActivity">
 
-    <include layout="@layout/fragment_location"/>
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.MainActivity"
+        tools:ignore="MergeRootFrame"/>
 
-    <EditText
+
+    <!--EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/et_search"
@@ -29,6 +35,6 @@
         android:scrollbars="vertical"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp"/>
+        tools:layout_editor_absoluteX="8dp"/-->
 
 </LinearLayout>

@@ -2,41 +2,61 @@ package com.pfc.android.archcomponent.ui;
 
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.arch.lifecycle.LiveData;
 
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.model.DefaultLocation;
-import com.pfc.android.archcomponent.util.LocationLiveData;
 import com.pfc.android.archcomponent.model.LocationListener;
+import com.pfc.android.archcomponent.viewmodel.LocationViewModel;
+
+import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.Locale;
+
 
 /**
  * Created by dr3amsit on 31/07/17.
  */
+public class LocationFragment extends LifecycleFragment implements LocationListener,OnMapReadyCallback {
 
-public class LocationFragment extends LifecycleFragment implements LocationListener {
+    public static final String TAG = LocationFragment.class.getName();
+
     private static final String FRACTIONAL_FORMAT = "%.4f";
     private static final String ACCURACY_FORMAT = "%.1fm";
 
-    private TextView latitudeValue;
-    private TextView longitudeValue;
-    private TextView accuracyValue;
+    private GoogleMap gMap;
+    private Marker mDefault;
+    private LatLng mDefaultLocation = null;
+    private DefaultLocation defaultLocation = null;
+    LiveData<DefaultLocation> liveData = null;
+
 
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        LiveData<DefaultLocation> liveData = new LocationLiveData(context);
-        liveData.observe(this,new Observer<DefaultLocation>(){
+
+        LocationViewModel lViewModel =  ViewModelProviders.of(this).get(LocationViewModel.class);
+        liveData = lViewModel.getLocation(context);
+        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++liveData ");
+        liveData.observe(this,new Observer <DefaultLocation>(){
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
+                Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++onChanged mDefaultLocation defaultLocation "+ liveData);
                 updateLocation(defaultLocation);
             }
         });
@@ -49,20 +69,49 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_location, container, false);
-        latitudeValue = (TextView) view.findViewById(R.id.latitude_value);
-        longitudeValue = (TextView) view.findViewById(R.id.longitude_value);
-        accuracyValue = (TextView) view.findViewById(R.id.accuracy_value);
-        return view;
+         return view;
     }
 
     @Override
-    public void updateLocation(DefaultLocation location) {
-        String latitudeString = createFractionString(location.getLatitude());
-        String longitudeString = createFractionString(location.getLongitude());
-        String accuracyString = createAccuracyString(location.getAccuracy());
-        latitudeValue.setText(latitudeString);
-        longitudeValue.setText(longitudeString);
-        accuracyValue.setText(accuracyString);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //set the map
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(final GoogleMap googleMap){
+        gMap = googleMap;
+        if(defaultLocation == null){
+            defaultLocation = new DefaultLocation(-0.118092, 51.509865,200);
+            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++null onMapReady latitude "+ defaultLocation.getLatitude() +" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
+        }
+        updateLocation(defaultLocation);
+
+    }
+
+
+    private void addMarkers(DefaultLocation defaultLocation){
+        if(defaultLocation!=null) {
+            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++mDefaultLocation ");
+            mDefaultLocation = new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude());
+            mDefault = gMap.addMarker(new MarkerOptions().position(mDefaultLocation).title("I am here"));
+            mDefault.setTag(0);
+            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++addMarkers mDefaultLocation latitude " + mDefaultLocation.latitude + " addMarkers mDefaultLocation longitude " + mDefaultLocation.longitude);
+            gMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
+        }
+
+    }
+
+    @Override
+    public void updateLocation(DefaultLocation defaultLocation) {
+        String latitudeString = createFractionString(defaultLocation.getLatitude());
+        String longitudeString = createFractionString(defaultLocation.getLongitude());
+//        String accuracyString = createAccuracyString(defaultLocation.getAccuracy());
+        defaultLocation = new DefaultLocation(Double.parseDouble(latitudeString),Double.parseDouble(longitudeString),200);
+        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++updateLocation mDefaultLocation latitude "+ defaultLocation.getLatitude()+" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
+        addMarkers(defaultLocation);
     }
 
     private String createFractionString(double fraction) {

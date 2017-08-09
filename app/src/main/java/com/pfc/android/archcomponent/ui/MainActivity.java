@@ -54,8 +54,6 @@ public class MainActivity extends LifecycleActivity {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private final String TAG = MainActivity.class.getName();
 
-    private GoogleMap gMap;
-
     private ListLocationsViewModel mViewModel;
     private RecyclerView mRecyclerView;
     private ProgressDialog mDialog;
@@ -65,10 +63,6 @@ public class MainActivity extends LifecycleActivity {
     private PermissionsRequester permissionsRequester;
     private LocationFragment locationFragment;
     private View fragmentContainer;
-
-
-    private Location mLastLocation;
-    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

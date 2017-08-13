@@ -77,20 +77,13 @@ public class StopPointsEntity {
     @Expose
     private String lon;
 
-    public String get$type() {
-//        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+$type);
-        return $type;
-    }
+    public String get$type() { return $type; }
 
     public void set$type(String $type) {
         this.$type = $type;
     }
 
-    public List<String> getModes() {
-
-//        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+modes.size());
-        return modes;
-    }
+    public List<String> getModes() { return modes; }
 
     public void setModes(List<String> modes) {
         this.modes = modes;
@@ -128,21 +121,13 @@ public class StopPointsEntity {
         this.hubNaptanCode = hubNaptanCode;
     }
 
-    public List<LineGroup> getLineGroup() {
-
-        //Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+lineGroup.size());
-        return lineGroup;
-    }
+    public List<LineGroup> getLineGroup() { return lineGroup; }
 
     public void setLineGroup(List<LineGroup> lineGroup) {
         this.lineGroup = lineGroup;
     }
 
-    public List<LineModeGroup> getLineModeGroups() {
-
-//        Log.v(TAG, "lineModeGroups +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+lineModeGroups.size());
-        return lineModeGroups;
-    }
+    public List<LineModeGroup> getLineModeGroups() { return lineModeGroups; }
 
     public void setLineModeGroups(List<LineModeGroup> lineModeGroups) {
         this.lineModeGroups = lineModeGroups;
@@ -230,21 +215,13 @@ public class StopPointsEntity {
         this.stopLetter = stopLetter;
     }
 
-    public List<LineEntity> getListlines() {
-
-//        Log.v(TAG, "listlines +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+listlines.size());
-        return listlines;
-    }
+    public List<LineEntity> getListlines() { return listlines; }
 
     public void setListlines(List<LineEntity> listlines) {
         this.listlines = listlines;
     }
 
-    public List<AdditionalPropertiesEntity> getAddproperties() {
-
-//        Log.v(TAG, "addproperties +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+addproperties.size());
-        return addproperties;
-    }
+    public List<AdditionalPropertiesEntity> getAddproperties() { return addproperties; }
 
     public void setLines(List<AdditionalPropertiesEntity> addproperties) {
         this.addproperties = addproperties;

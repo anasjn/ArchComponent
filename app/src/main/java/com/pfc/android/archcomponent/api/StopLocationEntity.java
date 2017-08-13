@@ -38,11 +38,7 @@ public class StopLocationEntity {
     @Expose
     private int page;
 
-    public String get$type() {
-
-        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+$type);
-        return $type;
-    }
+    public String get$type() { return $type; }
 
     public void set$type(String $type) {
         this.$type = $type;
@@ -56,8 +52,6 @@ public class StopLocationEntity {
         this.centrePoint = centrePoint;
     }
 
-
-
     public int getPageSize() {
         return pageSize;
     }
@@ -70,11 +64,7 @@ public class StopLocationEntity {
         return stopPoints;
     }
 
-    public void setStopPoints(List<StopPointsEntity> stopPoints) {
-
-        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+stopPoints.size());
-        this.stopPoints = stopPoints;
-    }
+    public void setStopPoints(List<StopPointsEntity> stopPoints) { this.stopPoints = stopPoints; }
 
     public int getTotal() {
         return total;

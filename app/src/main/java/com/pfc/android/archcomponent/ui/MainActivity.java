@@ -42,17 +42,6 @@ public class MainActivity extends LifecycleActivity {
             transaction.replace(R.id.content_fragment, fragment);
             transaction.commit();
         }
-
-
-
-//        LinearLayout ll = (LinearLayout)findViewById(R.id.showstopdetail);
-//        if(ll !=null){
-//            ll.setOnClickListener((view) -> {
-//                    Intent detailIntent = new Intent(MainActivity.this, StopDetailActivity.class);
-//                     startActivity(detailIntent);
-//            });
-//        }
-
     }
 
     //Location

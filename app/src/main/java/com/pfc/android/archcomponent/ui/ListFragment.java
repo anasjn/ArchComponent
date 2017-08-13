@@ -102,7 +102,6 @@ public class ListFragment extends LifecycleFragment {
         mRecyclerView.hasFixedSize();
 
         mAdapter = new DataAdapter();
-
         mAdapter.setOnItemClickListener(new CustomDetailClickListener() {
             @Override
             public void onItemClick(View v, int position) {
@@ -112,7 +111,6 @@ public class ListFragment extends LifecycleFragment {
 
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
-
         return rootView;
     }
 

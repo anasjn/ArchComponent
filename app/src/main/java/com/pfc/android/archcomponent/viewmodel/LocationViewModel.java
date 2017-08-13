@@ -1,9 +1,9 @@
 package com.pfc.android.archcomponent.viewmodel;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
-import android.location.Location;
 
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.util.LocationLiveData;
@@ -14,7 +14,7 @@ import com.pfc.android.archcomponent.util.LocationLiveData;
 
 public class LocationViewModel extends ViewModel {
 
-    private LiveData<DefaultLocation> locationLiveData = null;
+    private MutableLiveData<DefaultLocation> locationLiveData;
 
     public LiveData<DefaultLocation> getLocation(Context context) {
         if (locationLiveData == null) {
@@ -22,5 +22,6 @@ public class LocationViewModel extends ViewModel {
         }
         return locationLiveData;
     }
+
 }
 

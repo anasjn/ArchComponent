@@ -1,5 +1,7 @@
 package com.pfc.android.archcomponent.api;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,6 +12,7 @@ import java.util.List;
  */
 
 public class StopPointsEntity {
+    private final String TAG = StopPointsEntity.class.getName();
     @SerializedName("$type")
     @Expose
     private String $type;
@@ -64,9 +67,9 @@ public class StopPointsEntity {
     @SerializedName("additionalProperties")
     @Expose
     private List<AdditionalPropertiesEntity> addproperties;
-    @SerializedName("children")
-    @Expose
-    private List<String> children;
+//    @SerializedName("children")
+//    @Expose
+//    private List<String> children;
     @SerializedName("lat")
     @Expose
     private String lat;
@@ -75,6 +78,7 @@ public class StopPointsEntity {
     private String lon;
 
     public String get$type() {
+//        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+$type);
         return $type;
     }
 
@@ -83,6 +87,8 @@ public class StopPointsEntity {
     }
 
     public List<String> getModes() {
+
+//        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+modes.size());
         return modes;
     }
 
@@ -123,6 +129,8 @@ public class StopPointsEntity {
     }
 
     public List<LineGroup> getLineGroup() {
+
+        //Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+lineGroup.size());
         return lineGroup;
     }
 
@@ -131,6 +139,8 @@ public class StopPointsEntity {
     }
 
     public List<LineModeGroup> getLineModeGroups() {
+
+//        Log.v(TAG, "lineModeGroups +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+lineModeGroups.size());
         return lineModeGroups;
     }
 
@@ -170,17 +180,15 @@ public class StopPointsEntity {
         this.placeType = placeType;
     }
 
-    public void setAddproperties(List<AdditionalPropertiesEntity> addproperties) {
-        this.addproperties = addproperties;
-    }
-
-    public List<String> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<String> children) {
-        this.children = children;
-    }
+//    public List<String> getChildren() {
+//
+//        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+children.size());
+//        return children;
+//    }
+//
+//    public void setChildren(List<String> children) {
+//        this.children = children;
+//    }
 
     public String getLat() {
         return lat;
@@ -223,6 +231,8 @@ public class StopPointsEntity {
     }
 
     public List<LineEntity> getListlines() {
+
+//        Log.v(TAG, "listlines +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+listlines.size());
         return listlines;
     }
 
@@ -231,6 +241,8 @@ public class StopPointsEntity {
     }
 
     public List<AdditionalPropertiesEntity> getAddproperties() {
+
+//        Log.v(TAG, "addproperties +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+addproperties.size());
         return addproperties;
     }
 

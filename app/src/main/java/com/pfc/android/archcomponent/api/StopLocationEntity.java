@@ -4,8 +4,11 @@ package com.pfc.android.archcomponent.api;
  * Created by dr3amsit on 29/07/17.
  */
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.pfc.android.archcomponent.ui.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,6 +16,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class StopLocationEntity {
+
+    private final String TAG = StopLocationEntity.class.getName();
 
     @SerializedName("$type")
     @Expose
@@ -34,6 +39,8 @@ public class StopLocationEntity {
     private int page;
 
     public String get$type() {
+
+        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+$type);
         return $type;
     }
 
@@ -64,6 +71,8 @@ public class StopLocationEntity {
     }
 
     public void setStopPoints(List<StopPointsEntity> stopPoints) {
+
+        Log.v(TAG, "onCreate +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+stopPoints.size());
         this.stopPoints = stopPoints;
     }
 

@@ -2,6 +2,7 @@ package com.pfc.android.archcomponent.viewmodel;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
@@ -26,7 +27,6 @@ public class ListLocationsViewModel extends ViewModel {
 
     // No argument constructor
     public ListLocationsViewModel() {
-        Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++no argument constructor");
         mApiResponse = new MediatorLiveData<>();
         mIssueRepository = new IssueRepositoryImpl();
     }
@@ -37,17 +37,15 @@ public class ListLocationsViewModel extends ViewModel {
         return mApiResponse;
     }
 
-    public LiveData<ApiResponse> loadStopInformation(@NonNull double lat,@NonNull double lon, int radious) {
-        LiveData<ApiResponse> aux= mIssueRepository.getStopLocation(lat, lon, radious);
+    public LiveData<ApiResponse> loadStopInformation(@NonNull String app_id, @NonNull String app_key,@NonNull double lat,@NonNull double lon, int radious) {
+        MutableLiveData<ApiResponse> aux= mIssueRepository.getStopLocation(app_id,app_key,lat, lon, radious);
         mApiResponse.addSource(aux, new Observer <ApiResponse>(){
             @Override
             public void onChanged(@Nullable ApiResponse apiResponse) {
                 if(apiResponse==null){
                     Log.v(TAG,"Fetch data from API");
                 }else{
-                    Log.v(TAG,"_____________________________________onChanged else");
-                    Log.v(TAG,"_____________________________________onChanged aux" + aux.getValue().getStopLocation().get(0).getStopLetter());
-                    Log.v(TAG,"_____________________________________onChanged apiResponse" + apiResponse.getStopLocation().get(0).getStopLetter());
+//                    Log.v(TAG,"_____________________________________onChanged aux" + aux.getValue().getStopLocation());
                     mApiResponse.removeSource(aux);
                     mApiResponse.setValue(apiResponse);
                 }

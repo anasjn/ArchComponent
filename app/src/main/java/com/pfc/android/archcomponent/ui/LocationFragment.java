@@ -52,11 +52,9 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
 
         LocationViewModel lViewModel =  ViewModelProviders.of(this).get(LocationViewModel.class);
         liveData = lViewModel.getLocation(context);
-        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++liveData ");
         liveData.observe(this,new Observer <DefaultLocation>(){
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
-                Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++onChanged mDefaultLocation defaultLocation "+ liveData);
                 updateLocation(defaultLocation);
             }
         });
@@ -85,7 +83,7 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         gMap = googleMap;
         if(defaultLocation == null){
             defaultLocation = new DefaultLocation(-0.118092, 51.509865,200);
-            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++null onMapReady latitude "+ defaultLocation.getLatitude() +" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
+//            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++null onMapReady latitude "+ defaultLocation.getLatitude() +" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
         }
         updateLocation(defaultLocation);
 
@@ -94,11 +92,10 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
 
     private void addMarkers(DefaultLocation defaultLocation){
         if(defaultLocation!=null) {
-            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++mDefaultLocation ");
             mDefaultLocation = new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude());
             mDefault = gMap.addMarker(new MarkerOptions().position(mDefaultLocation).title("I am here"));
             mDefault.setTag(0);
-            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++addMarkers mDefaultLocation latitude " + mDefaultLocation.latitude + " addMarkers mDefaultLocation longitude " + mDefaultLocation.longitude);
+//            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++addMarkers mDefaultLocation latitude " + mDefaultLocation.latitude + " addMarkers mDefaultLocation longitude " + mDefaultLocation.longitude);
             gMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
         }
 
@@ -108,9 +105,10 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     public void updateLocation(DefaultLocation defaultLocation) {
         String latitudeString = createFractionString(defaultLocation.getLatitude());
         String longitudeString = createFractionString(defaultLocation.getLongitude());
-//        String accuracyString = createAccuracyString(defaultLocation.getAccuracy());
-        defaultLocation = new DefaultLocation(Double.parseDouble(latitudeString),Double.parseDouble(longitudeString),200);
-        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++updateLocation mDefaultLocation latitude "+ defaultLocation.getLatitude()+" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
+        String accuracyString = createAccuracyString(defaultLocation.getAccuracy());
+        accuracyString = "200";
+        defaultLocation = new DefaultLocation(Double.parseDouble(latitudeString),Double.parseDouble(longitudeString),Integer.parseInt(accuracyString));
+//        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++updateLocation mDefaultLocation latitude "+ defaultLocation.getLatitude()+" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
         addMarkers(defaultLocation);
     }
 

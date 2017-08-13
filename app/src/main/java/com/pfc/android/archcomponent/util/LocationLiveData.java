@@ -1,7 +1,7 @@
 package com.pfc.android.archcomponent.util;
 
 import android.Manifest;
-import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
@@ -23,7 +23,7 @@ import com.pfc.android.archcomponent.model.DefaultLocation;
  * Created by dr3amsit on 31/07/17.
  */
 
-public class LocationLiveData extends LiveData<DefaultLocation> {
+public class LocationLiveData extends MutableLiveData<DefaultLocation> {
 
     private final String TAG = LocationLiveData.class.getName();
 
@@ -44,7 +44,7 @@ public class LocationLiveData extends LiveData<DefaultLocation> {
             return;
         }
         FusedLocationProviderClient locationProviderClient = getFusedLocationProviderClient();
-        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++FusedLocationProviderClient "+ locationProviderClient);
+//        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++FusedLocationProviderClient "+ locationProviderClient);
         LocationRequest locationRequest = LocationRequest.create();
         Looper looper = Looper.myLooper();
         locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, looper);
@@ -54,7 +54,6 @@ public class LocationLiveData extends LiveData<DefaultLocation> {
     private FusedLocationProviderClient getFusedLocationProviderClient() {
         if (fusedLocationProviderClient == null) {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++getFusedLocationProviderClient "+ fusedLocationProviderClient);
         }
         return fusedLocationProviderClient;
     }
@@ -72,9 +71,8 @@ public class LocationLiveData extends LiveData<DefaultLocation> {
             Location newLocation = locationResult.getLastLocation();
             double latitude = newLocation.getLatitude();
             double longitude = newLocation.getLongitude();
-            float accuracy = newLocation.getAccuracy();
+            int accuracy = (int) newLocation.getAccuracy();
             DefaultLocation location = new DefaultLocation(latitude, longitude, accuracy);
-            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++location "+ location);
             setValue(location);
         }
     };

@@ -1,6 +1,6 @@
 package com.pfc.android.archcomponent.repository;
 
-import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 
 import com.pfc.android.archcomponent.api.ApiResponse;
 
@@ -9,5 +9,5 @@ import com.pfc.android.archcomponent.api.ApiResponse;
  */
 
 public interface IssueRepository {
-    LiveData<ApiResponse> getStopLocation(double lat, double lon, int radious);
+    MutableLiveData<ApiResponse> getStopLocation(String app_id, String app_key, double lat, double lon, int radious);
 }

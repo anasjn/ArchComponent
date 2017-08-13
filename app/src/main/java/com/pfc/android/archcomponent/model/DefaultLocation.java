@@ -7,9 +7,9 @@ package com.pfc.android.archcomponent.model;
 public class DefaultLocation {
     private final double longitude;
     private final double latitude;
-    private final float accuracy;
+    private final int accuracy;
 
-    public DefaultLocation(double longitude, double latitude, float accuracy) {
+    public DefaultLocation(double latitude, double longitude, int accuracy) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.accuracy = accuracy;

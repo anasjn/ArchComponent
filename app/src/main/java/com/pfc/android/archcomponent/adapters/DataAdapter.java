@@ -85,7 +85,6 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
                         }
 
                     }
-
                 }
             }
         }

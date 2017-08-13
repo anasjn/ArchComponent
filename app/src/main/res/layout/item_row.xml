@@ -5,6 +5,7 @@
     android:gravity="center_vertical"
     android:padding="16dp">
     <LinearLayout
+        android:id="@+id/showstopdetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -46,21 +47,41 @@
                 android:textColor="@color/colorBlack"
                 android:textSize="16sp" />
         </LinearLayout>
-            <TextView
-                android:id="@+id/line"
-                android:layout_width="wrap_content"
+        <!--LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Line"
-                android:textColor="@color/colorGreyLight" />
+                android:gravity="center_vertical"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/line"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Line"
+                    android:textColor="@color/colorGreyLight" />
 
-            <TextView
-                android:id="@+id/towards"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:layout_marginTop="8dp"
-                android:text="Towards"
-                android:textColor="@color/colorGreyLight" />
+                <TextView
+                    android:id="@+id/towards"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Towards"
+                    android:textColor="@color/colorGreyLight" />
+            </LinearLayout>
+            <!--<RadioButton-->
+                <!--android:id="@+id/star_rb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@android:drawable/btn_star"-->
+                <!--android:button="@android:color/transparent"-->
+                <!--android:checked="false"-->
+                <!--android:onClick="showStopDetail"-->
+                <!--android:layout_gravity="center_vertical" />-->
+        <!--/LinearLayout-->
     </LinearLayout>
 </FrameLayout>

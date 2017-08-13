@@ -1,6 +1,7 @@
 package com.pfc.android.archcomponent.ui;
 
 import android.arch.lifecycle.LifecycleActivity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -14,7 +15,8 @@ import com.pfc.android.archcomponent.util.PermissionsRequester;
 
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
-
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 
 
 public class MainActivity extends LifecycleActivity {
@@ -40,6 +42,16 @@ public class MainActivity extends LifecycleActivity {
             transaction.replace(R.id.content_fragment, fragment);
             transaction.commit();
         }
+
+
+
+//        LinearLayout ll = (LinearLayout)findViewById(R.id.showstopdetail);
+//        if(ll !=null){
+//            ll.setOnClickListener((view) -> {
+//                    Intent detailIntent = new Intent(MainActivity.this, StopDetailActivity.class);
+//                     startActivity(detailIntent);
+//            });
+//        }
 
     }
 
@@ -84,6 +96,5 @@ public class MainActivity extends LifecycleActivity {
         super.onDestroy();
         Log.v(TAG, "onDestroy ");
     }
-
 
 }

@@ -1,14 +1,18 @@
 package com.pfc.android.archcomponent.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.api.StopPointsEntity;
+import com.pfc.android.archcomponent.model.CustomDetailClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
     private final String TAG = DataAdapter.class.getName();
 
     private List<StopPointsEntity> mStopPoints;
+    CustomDetailClickListener detailListener;
 
     /**
      * Initialize the dataset of the Adapter.
@@ -35,25 +40,35 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
     // Create new views (invoked by the layout manager)
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-           return new Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false));
+        View row =LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
+        final Holder mViewHolder = new Holder(row);
+        row.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(detailListener!=null) {
+                    detailListener.onItemClick(v, mViewHolder.getAdapterPosition());
+                }
+            }
+        });
+        return mViewHolder;
 
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        Log.v(TAG,"**************************** onBindViewHolder");
+        String lines = "";
         if(mStopPoints!=null && mStopPoints.size()>0) {
             StopPointsEntity stop = mStopPoints.get(position);
-            Log.v(TAG,"**************************** stop "+stop);
             if(stop!=null) {
                 holder.mTextViewLetter.setText(stop.getStopLetter());
                 holder.mTextViewCommonName.setText(stop.getCommonName());
                 holder.mTextViewDistance.setText(">" + stop.getDistance().intValue() + "m");
-                String lines = "";
+
                 Log.v(TAG,"**************************** Letter "+stop.getStopLetter());
                 Log.v(TAG,"**************************** CommonName "+stop.getCommonName());
                 Log.v(TAG,"**************************** distance "+stop.getDistance().intValue() );
+
                 if (stop.getListlines() != null && stop.getListlines().size()>0) {
                     lines = stop.getListlines().get(0).getName();
                     Log.v(TAG, "+++++++++++++lines " + lines);
@@ -76,9 +91,15 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
         }
     }
 
+
+
     @Override
     public int getItemCount() {
         return mStopPoints.size();
+    }
+
+    public void setOnItemClickListener(CustomDetailClickListener listener) {
+        detailListener = listener;
     }
 
     public void addStopInformation(List <StopPointsEntity> stops) {
@@ -98,15 +119,12 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
-    public class Holder extends RecyclerView.ViewHolder {
+    public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final String TAG = Holder.class.getName();
 
-        TextView mTextViewLetter;
-        TextView mTextViewCommonName;
-        TextView mTextViewLine;
-        TextView mTextViewTowards;
-        TextView mTextViewDistance;
+        Context context;
+        TextView mTextViewLetter, mTextViewCommonName, mTextViewLine, mTextViewTowards, mTextViewDistance;
 
         public Holder(View v) {
             super(v);
@@ -116,6 +134,19 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
             mTextViewLine = (TextView) v.findViewById(R.id.line);
             mTextViewTowards = (TextView) v.findViewById(R.id.towards);
             mTextViewDistance = (TextView) v.findViewById(R.id.distance);
+        }
+
+        public Holder(View itemView,int ViewType,Context c) {
+            // Creating ViewHolder Constructor with View and viewType As a parameter
+            super(itemView);
+            context = c;
+            itemView.setClickable(true);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(context, "The Item Clicked is: " + getPosition(), Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -12,7 +12,7 @@ public class ApiResponse {
 
     private final String TAG = ApiResponse.class.getName();
 
-    private List<StopPointsEntity> stoppoints;
+    private static List<StopPointsEntity> stoppoints;
     private Throwable error;
 
     public ApiResponse(List<StopPointsEntity> stoppoints) {
@@ -30,9 +30,12 @@ public class ApiResponse {
         Log.v(TAG, "ApiResponse ");
     }
 
-    public List<StopPointsEntity> getStopLocation() {
-        Log.v(TAG, "getStopLocation ");
+    public static List<StopPointsEntity> getStopLocation() {
         return stoppoints;
+    }
+
+    public static StopPointsEntity getStop(int position) {
+        return stoppoints.get(position);
     }
 
     public Throwable getError() {

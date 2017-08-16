@@ -5,8 +5,11 @@ import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -101,13 +104,23 @@ public class ListFragment extends LifecycleFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.hasFixedSize();
 
-        mAdapter = new DataAdapter();
-        mAdapter.setOnItemClickListener(new CustomDetailClickListener() {
+        CustomDetailClickListener mDetailClickListener = new CustomDetailClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-                Toast.makeText(getContext(), "Clicked Item: "+position,Toast.LENGTH_LONG).show();
+
+                FragmentManager fm = getFragmentManager();
+                Bundle arguments = new Bundle();
+                arguments.putInt("position", position);
+                DetailFragment detailfragment = new DetailFragment();
+                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++list position "+position);
+                detailfragment.setArguments(arguments);
+                fm.beginTransaction().replace(R.id.content_fragment, detailfragment).addToBackStack("detail").commit();
+                //  Toast.makeText(getContext(), "Clicked Item: "+position,Toast.LENGTH_LONG).show();
             }
-        });
+        };
+
+        mAdapter = new DataAdapter(getContext());
+        mAdapter.setOnItemClickListener(mDetailClickListener);
 
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);

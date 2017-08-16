@@ -10,8 +10,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.pfc.android.archcomponent.api.ApiResponse;
+import com.pfc.android.archcomponent.api.StopPointsEntity;
 import com.pfc.android.archcomponent.repository.IssueRepository;
 import com.pfc.android.archcomponent.repository.IssueRepositoryImpl;
+
+import java.util.List;
 
 
 /**
@@ -36,6 +39,13 @@ public class ListLocationsViewModel extends ViewModel {
         Log.v(TAG, "getApiResponse " +mApiResponse.toString());
         return mApiResponse;
     }
+
+//    @NonNull
+//    public List<StopPointsEntity> getStopInfo (String id) {
+//        Log.v(TAG, "getStopInfo " +id);
+//        return ApiResponse.;
+//    }
+
 
     public LiveData<ApiResponse> loadStopInformation(@NonNull String app_id, @NonNull String app_key,@NonNull double lat,@NonNull double lon, int radious) {
         MutableLiveData<ApiResponse> aux= mIssueRepository.getStopLocation(app_id,app_key,lat, lon, radious);

@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,22 +24,35 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
 
     private final String TAG = DataAdapter.class.getName();
 
+    Context mContext;
     private List<StopPointsEntity> mStopPoints;
+    //RecyclerView doesn't come with an onItemClick interface, so we have
+    // to implement one in the adapter.This is the field that hold an instance of CustomDetailClickListener
     CustomDetailClickListener detailListener;
 
     /**
-     * Initialize the dataset of the Adapter.
+     * Initialize the ArrayList of the Adapter.
      *
      */
 
-    public DataAdapter() {
+    public DataAdapter(Context context) {
+        this.mContext = context;
         mStopPoints = new ArrayList<>();
+    }
+
+    //Because your adapter subclasses RecyclerView.Adapter, you need to add the following methods:
+    //1.- getItemCount()
+    //2.- onCreateViewHolder(ViewGroup parent, int viewType)
+    //3.- onBindViewHolder(Holder holder, int position)
+    @Override
+    public int getItemCount() {
+        return mStopPoints.size();
     }
 
     // Create new views (invoked by the layout manager)
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View row =LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
+        View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
         final Holder mViewHolder = new Holder(row);
         row.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -56,7 +68,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(Holder holder, int position) {
+    public void onBindViewHolder(final Holder holder, int position) {
         String lines = "";
         if(mStopPoints!=null && mStopPoints.size()>0) {
             StopPointsEntity stop = mStopPoints.get(position);
@@ -91,13 +103,8 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
     }
 
 
-
-    @Override
-    public int getItemCount() {
-        return mStopPoints.size();
-    }
-
-    public void setOnItemClickListener(CustomDetailClickListener listener) {
+    //Adding the setter method on the CustomDetailClickListener
+    public void setOnItemClickListener (final CustomDetailClickListener listener) {
         detailListener = listener;
     }
 
@@ -106,6 +113,13 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
         mStopPoints.addAll(stops);
         Log.v(TAG,"adapter stops "+mStopPoints.size());
         notifyDataSetChanged();
+    }
+
+    public List <StopPointsEntity>  getStopInformation() {
+        notifyDataSetChanged();
+        Log.v(TAG,"stop mStopPoints "+mStopPoints.size());
+        return mStopPoints;
+
     }
 
     public void clearStopInformation() {
@@ -117,35 +131,38 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
 
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
+     * Whereas the use of the ViewHolder pattern is optional in ListView, RecyclerView enforces it.
+     * This improves scrolling and performance by avoiding findViewById() for each cell.
      */
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final String TAG = Holder.class.getName();
 
-        Context context;
         TextView mTextViewLetter, mTextViewCommonName, mTextViewLine, mTextViewTowards, mTextViewDistance;
 
-        public Holder(View v) {
-            super(v);
+        public Holder(View view) {
+            super(view);
             Log.v(TAG,"**************************************************Holder ");
-            mTextViewLetter = (TextView) v.findViewById(R.id.letter);
-            mTextViewCommonName = (TextView) v.findViewById(R.id.common_name);
-            mTextViewLine = (TextView) v.findViewById(R.id.line);
-            mTextViewTowards = (TextView) v.findViewById(R.id.towards);
-            mTextViewDistance = (TextView) v.findViewById(R.id.distance);
+            mTextViewLetter = (TextView) view.findViewById(R.id.letter);
+            mTextViewCommonName = (TextView) view.findViewById(R.id.common_name);
+            mTextViewLine = (TextView) view.findViewById(R.id.line);
+            mTextViewTowards = (TextView) view.findViewById(R.id.towards);
+            mTextViewDistance = (TextView) view.findViewById(R.id.distance);
         }
 
         public Holder(View itemView,int ViewType,Context c) {
             // Creating ViewHolder Constructor with View and viewType As a parameter
             super(itemView);
-            context = c;
             itemView.setClickable(true);
             itemView.setOnClickListener(this);
         }
 
+        //Implements the onClick override method
         @Override
         public void onClick(View v) {
-            Toast.makeText(context, "The Item Clicked is: " + getPosition(), Toast.LENGTH_SHORT).show();
+            if(detailListener!=null) {
+                detailListener.onItemClick(v,getAdapterPosition());
+            }
         }
     }
 }

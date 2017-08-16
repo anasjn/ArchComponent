@@ -15,8 +15,6 @@ import com.pfc.android.archcomponent.util.PermissionsRequester;
 
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 
 
 public class MainActivity extends LifecycleActivity {
@@ -84,6 +82,15 @@ public class MainActivity extends LifecycleActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.v(TAG, "onDestroy ");
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
 }

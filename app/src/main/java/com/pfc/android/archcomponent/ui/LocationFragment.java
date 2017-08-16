@@ -1,5 +1,6 @@
 package com.pfc.android.archcomponent.ui;
 
+import com.pfc.android.archcomponent.R;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -19,7 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.pfc.android.archcomponent.R;
+
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.model.LocationListener;
 import com.pfc.android.archcomponent.viewmodel.LocationViewModel;

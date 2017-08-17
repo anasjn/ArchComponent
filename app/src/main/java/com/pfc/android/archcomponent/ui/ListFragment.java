@@ -45,7 +45,6 @@ public class ListFragment extends LifecycleFragment {
     private static final String FRACTIONAL_FORMAT = "%.4f";
     private static final String ACCURACY_FORMAT = "%.1fm";
 
-
     protected RecyclerView mRecyclerView;
     protected DataAdapter mAdapter;
     private ListLocationsViewModel mViewModel;
@@ -95,7 +94,7 @@ public class ListFragment extends LifecycleFragment {
 
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
         rootView.setTag(TAG);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
@@ -115,10 +114,9 @@ public class ListFragment extends LifecycleFragment {
                 Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++list position "+position);
                 detailfragment.setArguments(arguments);
                 fm.beginTransaction().replace(R.id.content_fragment, detailfragment).addToBackStack("detail").commit();
-                //  Toast.makeText(getContext(), "Clicked Item: "+position,Toast.LENGTH_LONG).show();
             }
         };
-
+        Log.v(TAG, "************************************************** onCreateView DataAdapter entrando");
         mAdapter = new DataAdapter(getContext());
         mAdapter.setOnItemClickListener(mDetailClickListener);
 
@@ -127,13 +125,6 @@ public class ListFragment extends LifecycleFragment {
         return rootView;
     }
 
-
-    private void hideSoftKeyboard(Activity activity, View view) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(
-                Context.INPUT_METHOD_SERVICE
-        );
-        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
-    }
 
     private void handleResponse(List<StopPointsEntity> stoppoints) {
         if (stoppoints != null && stoppoints.size()>0) {

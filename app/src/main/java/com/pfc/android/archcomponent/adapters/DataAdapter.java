@@ -76,14 +76,8 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
                 holder.mTextViewLetter.setText(stop.getStopLetter());
                 holder.mTextViewCommonName.setText(stop.getCommonName());
                 holder.mTextViewDistance.setText(">" + stop.getDistance().intValue() + "m");
-
-                Log.v(TAG,"**************************** Letter "+stop.getStopLetter());
-                Log.v(TAG,"**************************** CommonName "+stop.getCommonName());
-                Log.v(TAG,"**************************** distance "+stop.getDistance().intValue() );
-
                 if (stop.getListlines() != null && stop.getListlines().size()>0) {
                     lines = stop.getListlines().get(0).getName();
-                    Log.v(TAG, "+++++++++++++lines " + lines);
                     for (int i = 1; i < stop.getListlines().size(); i++) {
                         lines += " - " + stop.getListlines().get(i).getName();
                         holder.mTextViewLine.setText(lines);

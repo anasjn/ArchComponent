@@ -1,0 +1,143 @@
+package com.pfc.android.archcomponent.adapters;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.pfc.android.archcomponent.R;
+import com.pfc.android.archcomponent.api.ArrivalsEntity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by ana on 17/08/17.
+ */
+
+public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder> {
+
+    private final String TAG = ArrivalAdapter.class.getName();
+
+    Context mContext;
+    private List<ArrivalsEntity> mArrivalsEntity;
+
+    /**
+     * Initialize the ArrayList of the Adapter.
+     *
+     */
+
+    public ArrivalAdapter(Context context) {
+        this.mContext = context;
+        mArrivalsEntity = new ArrayList<>();
+    }
+
+    //Because your adapter subclasses RecyclerView.Adapter, you need to add the following methods:
+    //1.- getItemCount()
+    //2.- onCreateViewHolder(ViewGroup parent, int viewType)
+    //3.- onBindViewHolder(Holder holder, int position)
+    @Override
+    public int getItemCount() {
+        return mArrivalsEntity.size();
+    }
+
+    // Create new views (invoked by the layout manager)
+    @Override
+    public ArrivalAdapter.Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.line_row, parent, false);
+        final ArrivalAdapter.Holder mViewHolder = new ArrivalAdapter.Holder(row);
+        Log.v(TAG,"**************************************************ArrivalAdapter ");
+//        row.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+////                if(detailListener!=null) {
+////                    detailListener.onItemClick(v, mViewHolder.getAdapterPosition());
+////                }
+//            }
+//        });
+        return mViewHolder;
+
+    }
+
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(final ArrivalAdapter.Holder holder, int position) {
+        if(mArrivalsEntity!=null && mArrivalsEntity.size()>0) {
+            Log.v(TAG,"**************************************************ArrivalAdapter onBindViewHolder not null ");
+            ArrivalsEntity arrival = mArrivalsEntity.get(position);
+            if(arrival!=null) {
+                holder.mTextViewStationName.setText(arrival.getStationName());
+                holder.mTextViewLineId.setText(arrival.getLineId());
+                holder.mTextViewPlatformName.setText(arrival.getPlatformName());
+                holder.mTextViewDestinationName.setText(arrival.getDestinationName());
+                holder.mTextViewTimeToStation.setText(""+arrival.getTimeToStation());
+            }
+        }
+    }
+
+
+    //Adding the setter method on the CustomDetailClickListener
+//    public void setOnItemClickListener (final CustomDetailClickListener listener) {
+//        detailListener = listener;
+//    }
+
+    public void addArrivalInformation(List <ArrivalsEntity> arrivals) {
+        mArrivalsEntity.clear();
+        mArrivalsEntity.addAll(arrivals);
+//        Log.v(TAG,"adapter arrivals "+mArrivalsEntity.size());
+        notifyDataSetChanged();
+    }
+
+    public List <ArrivalsEntity>  getArrivalInformation() {
+        notifyDataSetChanged();
+//        Log.v(TAG,"arrivals mArrivalsEntity "+mArrivalsEntity.size());
+        return mArrivalsEntity;
+
+    }
+
+    public void clearArrivalInformation() {
+        if (mArrivalsEntity != null) {
+            mArrivalsEntity.clear();
+        }
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Provide a reference to the type of views that you are using (custom ViewHolder)
+     * Whereas the use of the ViewHolder pattern is optional in ListView, RecyclerView enforces it.
+     * This improves scrolling and performance by avoiding findViewById() for each cell.
+     */
+    public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private final String TAG = ArrivalAdapter.Holder.class.getName();
+
+        TextView mTextViewStationName, mTextViewLineId, mTextViewPlatformName, mTextViewDestinationName,mTextViewTimeToStation;
+
+        public Holder(View view) {
+            super(view);
+            mTextViewStationName = (TextView) view.findViewById(R.id.station_name);
+            mTextViewLineId = (TextView) view.findViewById(R.id.line_id);
+            mTextViewPlatformName = (TextView) view.findViewById(R.id.platform_name);
+            mTextViewDestinationName = (TextView) view.findViewById(R.id.destination_name);
+            mTextViewTimeToStation = (TextView) view.findViewById(R.id.time_to_station);
+        }
+
+        public Holder(View itemView,int ViewType,Context c) {
+            // Creating ViewHolder Constructor with View and viewType As a parameter
+            super(itemView);
+            itemView.setClickable(true);
+            itemView.setOnClickListener(this);
+        }
+
+        //Implements the onClick override method
+        @Override
+        public void onClick(View v) {
+//            if(detailListener!=null) {
+//                detailListener.onItemClick(v,getAdapterPosition());
+//            }
+        }
+    }
+}

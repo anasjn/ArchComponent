@@ -1,13 +1,14 @@
 package com.pfc.android.archcomponent.api;
 
+import com.pfc.android.archcomponent.vo.ArrivalsEntity;
+import com.pfc.android.archcomponent.vo.StopLocationEntity;
+
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-
-import static android.R.attr.id;
 
 
 /**

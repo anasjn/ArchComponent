@@ -44,7 +44,6 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
             return;
         }
         FusedLocationProviderClient locationProviderClient = getFusedLocationProviderClient();
-//        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++FusedLocationProviderClient "+ locationProviderClient);
         LocationRequest locationRequest = LocationRequest.create();
         Looper looper = Looper.myLooper();
         locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, looper);

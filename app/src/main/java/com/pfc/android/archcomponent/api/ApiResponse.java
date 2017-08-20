@@ -2,6 +2,8 @@ package com.pfc.android.archcomponent.api;
 
 import android.util.Log;
 
+import com.pfc.android.archcomponent.vo.StopPointsEntity;
+
 import java.util.List;
 
 /**
@@ -16,7 +18,6 @@ public class ApiResponse {
     private Throwable error;
 
     public ApiResponse(List<StopPointsEntity> stoppoints) {
-        Log.v(TAG,"constructor ApiResponse "+stoppoints.size());
         if(stoppoints.size()>0) {
             Log.v(TAG, "constructor ApiResponse " + stoppoints.get(0).getStopLetter());
         }
@@ -27,7 +28,6 @@ public class ApiResponse {
     public ApiResponse(Throwable error) {
         this.error = error;
         this.stoppoints = null;
-        Log.v(TAG, "ApiResponse ");
     }
 
     public static List<StopPointsEntity> getStopLocation() {
@@ -39,7 +39,6 @@ public class ApiResponse {
     }
 
     public Throwable getError() {
-        Log.v(TAG, "getError "+error);
         return error;
     }
 

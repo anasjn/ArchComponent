@@ -84,7 +84,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         gMap = googleMap;
         if(defaultLocation == null){
             defaultLocation = new DefaultLocation(-0.118092, 51.509865,200);
-//            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++null onMapReady latitude "+ defaultLocation.getLatitude() +" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
         }
         updateLocation(defaultLocation);
 
@@ -96,7 +95,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
             mDefaultLocation = new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude());
             mDefault = gMap.addMarker(new MarkerOptions().position(mDefaultLocation).title("I am here"));
             mDefault.setTag(0);
-//            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++addMarkers mDefaultLocation latitude " + mDefaultLocation.latitude + " addMarkers mDefaultLocation longitude " + mDefaultLocation.longitude);
             gMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
         }
 
@@ -107,9 +105,9 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         String latitudeString = createFractionString(defaultLocation.getLatitude());
         String longitudeString = createFractionString(defaultLocation.getLongitude());
         String accuracyString = createAccuracyString(defaultLocation.getAccuracy());
+        //just to have more information in the map
         accuracyString = "200";
         defaultLocation = new DefaultLocation(Double.parseDouble(latitudeString),Double.parseDouble(longitudeString),Integer.parseInt(accuracyString));
-//        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++updateLocation mDefaultLocation latitude "+ defaultLocation.getLatitude()+" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
         addMarkers(defaultLocation);
     }
 

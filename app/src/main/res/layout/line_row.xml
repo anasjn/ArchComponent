@@ -67,6 +67,15 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+        <!--<RadioButton-->
+            <!--android:id="@+id/star_rb"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@android:drawable/btn_star"-->
+            <!--android:button="@android:color/transparent"-->
+            <!--android:checked="false"-->
+            <!--android:onClick="showStopDetail"-->
+            <!--android:layout_gravity="center_vertical" />-->
         <RadioButton
             android:id="@+id/star_rb"
             android:layout_width="wrap_content"
@@ -74,7 +83,6 @@
             android:background="@android:drawable/btn_star"
             android:button="@android:color/transparent"
             android:checked="false"
-            android:onClick="showStopDetail"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 </FrameLayout>

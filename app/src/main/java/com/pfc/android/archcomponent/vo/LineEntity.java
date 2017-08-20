@@ -1,4 +1,4 @@
-package com.pfc.android.archcomponent.api;
+package com.pfc.android.archcomponent.vo;
 
 /**
  * Created by dr3amsit on 29/07/17.

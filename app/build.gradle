@@ -34,7 +34,7 @@ android {
 ext {
     arch_version = '1.0.0-alpha1'
     support_library_version = '26.0.0-alpha1'
-    //dagger_version = "2.8"
+    dagger_version = "2.9"
     espresso_version = '2.2.2'
     runner_version = '0.5'
 }
@@ -58,6 +58,11 @@ dependencies {
     //Room
     compile "android.arch.persistence.room:runtime:$arch_version"
     annotationProcessor "android.arch.persistence.room:compiler:$arch_version"
+
+    //dagger
+    compile "com.google.dagger:dagger:$dagger_version"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
+    provided 'javax.annotation:jsr250-api:1.0'
 
     //Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.1.0'

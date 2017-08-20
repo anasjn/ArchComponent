@@ -32,7 +32,6 @@ public class DetailViewModel extends ViewModel {
 
     @NonNull
     public LiveData<ApiResponse2> getApiResponse() {
-        Log.v(TAG, "getApiResponse2 " +mApiResponse2);
         return mApiResponse2;
     }
 
@@ -45,7 +44,6 @@ public class DetailViewModel extends ViewModel {
                 if(apiResponse2==null){
                     Log.v(TAG,"Fetch data from API");
                 }else{
-                    Log.v(TAG,"_____________________________________onChanged aux arrivals" + aux.getValue().getArrivals().size());
                     mApiResponse2.removeSource(aux);
                     mApiResponse2.setValue(apiResponse2);
                 }

@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name="com.pfc.android.archcomponent.util.FavouriteApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -39,5 +40,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

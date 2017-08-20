@@ -1,10 +1,8 @@
 package com.pfc.android.archcomponent.ui;
 
 import android.arch.lifecycle.LifecycleFragment;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,21 +10,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.adapters.ArrivalAdapter;
-import com.pfc.android.archcomponent.adapters.DataAdapter;
 import com.pfc.android.archcomponent.api.ApiResponse;
-import com.pfc.android.archcomponent.api.ArrivalsEntity;
-import com.pfc.android.archcomponent.api.StopPointsEntity;
+import com.pfc.android.archcomponent.api.ApiResponse2;
+import com.pfc.android.archcomponent.vo.ArrivalsEntity;
+import com.pfc.android.archcomponent.vo.FavouriteEntity;
+import com.pfc.android.archcomponent.vo.StopPointsEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
-import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.viewmodel.DetailViewModel;
-import com.pfc.android.archcomponent.viewmodel.ListLocationsViewModel;
-import com.pfc.android.archcomponent.viewmodel.LocationViewModel;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,33 +46,22 @@ public class DetailFragment extends LifecycleFragment {
         String app_id=getString(R.string.api_transport_id);
         String app_key=getString(R.string.api_transport_key);
 
-        //String naptanId = "";
-
         int position =0;
         Bundle args = getArguments();
         if(args!=null) {
             position = args.getInt("position");
-            Log.v(TAG, "************************************************** onCreateView position " + position);
         }
 
         StopPointsEntity stop = ApiResponse.getStop(position);
-        Log.v(TAG, "************************************************** onCreateView getApiResponse fuera " +stop.getNaptanId());
 
-        // Handle changes emitted by LiveData
-//        dViewModel.getApiResponse().observe(this, apiResponse -> {
-//            Log.v(TAG, "************************************************** onCreateView getApiResponse " + stop.getNaptanId());
-            //update the UI
-            dViewModel.loadArrivalInformation(stop.getNaptanId(),app_id,app_key);
-//        });
+        dViewModel.loadArrivalInformation(stop.getNaptanId(),app_id,app_key);
 
         // Handle changes emitted by LiveData
         dViewModel.getApiResponse().observe(this, apiResponse -> {
             if (apiResponse.getError() != null) {
                 handleError(apiResponse.getError());
-                Log.v(TAG, "handleError distinto null ");
             } else {
                 handleResponse((List<ArrivalsEntity>) apiResponse.getArrivals());
-                Log.v(TAG, "handleResponse "+apiResponse.getArrivals().size());
             }
         });
     }
@@ -85,10 +71,9 @@ public class DetailFragment extends LifecycleFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
         rootView.setTag(TAG);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_lines_view);
-
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
@@ -97,9 +82,27 @@ public class DetailFragment extends LifecycleFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.hasFixedSize();
 
-        Log.v(TAG, "************************************************** onCreateView ArrivalAdapter entrando");
+        CustomDetailClickListener mDetailClickListener = new CustomDetailClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                //Save favourites in the DAtabase
+                //change the background color of the radiobutton
+                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++en el click para guardar en la BBDD "+position);
+
+                ArrivalsEntity arrival = ApiResponse2.getArrival(position);
+                FavouriteEntity favourite = new FavouriteEntity (new Date(System.currentTimeMillis()),arrival.getLineId(),arrival.getPlatformName(),arrival.getDestinationName());
+
+                FragmentManager fm = getFragmentManager();
+                FavouritesFragment favouritesfragment = new FavouritesFragment();
+                Bundle args = new Bundle();
+                args.putSerializable("FavouriteEntity", (Serializable) favourite);
+                favouritesfragment.setArguments(args);
+                fm.beginTransaction().replace(R.id.content_fragment, favouritesfragment).addToBackStack("favourite").commit();
+            }
+        };
+
         mAdapter = new ArrivalAdapter(getContext());
-       // mAdapter.setOnItemClickListener(mDetailClickListener);
+        mAdapter.setOnItemClickListener(mDetailClickListener);
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
@@ -107,7 +110,6 @@ public class DetailFragment extends LifecycleFragment {
 
     private void handleResponse(List<ArrivalsEntity> arrivals) {
         if (arrivals != null && arrivals.size()>0) {
-            Log.v(TAG,"hr arrivlas "+arrivals.size());
             mAdapter.addArrivalInformation(arrivals);
         } else {
             mAdapter.clearArrivalInformation();

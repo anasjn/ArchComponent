@@ -1,26 +1,21 @@
 package com.pfc.android.archcomponent.ui;
 
-import android.app.Activity;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.adapters.DataAdapter;
-import com.pfc.android.archcomponent.api.StopPointsEntity;
+import com.pfc.android.archcomponent.vo.StopPointsEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.viewmodel.ListLocationsViewModel;
@@ -80,10 +75,8 @@ public class ListFragment extends LifecycleFragment {
         mViewModel.getApiResponse().observe(this, apiResponse -> {
             if (apiResponse.getError() != null) {
                 handleError(apiResponse.getError());
-                Log.v(TAG, "handleError distinto null ");
             } else {
                 handleResponse(apiResponse.getStopLocation());
-                Log.v(TAG, "handleResponse ");
             }
         });
     }
@@ -111,15 +104,12 @@ public class ListFragment extends LifecycleFragment {
                 Bundle arguments = new Bundle();
                 arguments.putInt("position", position);
                 DetailFragment detailfragment = new DetailFragment();
-                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++list position "+position);
                 detailfragment.setArguments(arguments);
                 fm.beginTransaction().replace(R.id.content_fragment, detailfragment).addToBackStack("detail").commit();
             }
         };
-        Log.v(TAG, "************************************************** onCreateView DataAdapter entrando");
         mAdapter = new DataAdapter(getContext());
         mAdapter.setOnItemClickListener(mDetailClickListener);
-
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
@@ -128,7 +118,6 @@ public class ListFragment extends LifecycleFragment {
 
     private void handleResponse(List<StopPointsEntity> stoppoints) {
         if (stoppoints != null && stoppoints.size()>0) {
-            Log.v(TAG,"hr stoopoints "+stoppoints.size());
             mAdapter.addStopInformation(stoppoints);
         } else {
             mAdapter.clearStopInformation();

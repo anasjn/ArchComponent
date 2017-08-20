@@ -2,15 +2,13 @@ package com.pfc.android.archcomponent.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pfc.android.archcomponent.R;
-import com.pfc.android.archcomponent.api.StopPointsEntity;
+import com.pfc.android.archcomponent.vo.StopPointsEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
 
 import java.util.ArrayList;
@@ -87,7 +85,6 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
                     for (int j = 0; j < stop.getAddproperties().size(); j++) {
                         if ("Towards".equals(stop.getAddproperties().get(j).getKey())) {
                             holder.mTextViewTowards.setText((CharSequence) stop.getAddproperties().get(j).getValue());
-                            Log.v(TAG,"**************************** towards "+stop.getAddproperties().get(j).getValue() );
                         }
 
                     }
@@ -105,13 +102,11 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
     public void addStopInformation(List <StopPointsEntity> stops) {
         mStopPoints.clear();
         mStopPoints.addAll(stops);
-        Log.v(TAG,"adapter stops "+mStopPoints.size());
         notifyDataSetChanged();
     }
 
     public List <StopPointsEntity>  getStopInformation() {
         notifyDataSetChanged();
-        Log.v(TAG,"stop mStopPoints "+mStopPoints.size());
         return mStopPoints;
 
     }
@@ -136,7 +131,6 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
 
         public Holder(View view) {
             super(view);
-            Log.v(TAG,"**************************************************Holder ");
             mTextViewLetter = (TextView) view.findViewById(R.id.letter);
             mTextViewCommonName = (TextView) view.findViewById(R.id.common_name);
             mTextViewLine = (TextView) view.findViewById(R.id.line);

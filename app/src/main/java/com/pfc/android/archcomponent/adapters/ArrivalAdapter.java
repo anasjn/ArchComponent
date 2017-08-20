@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pfc.android.archcomponent.R;
-import com.pfc.android.archcomponent.api.ArrivalsEntity;
+import com.pfc.android.archcomponent.vo.ArrivalsEntity;
+import com.pfc.android.archcomponent.model.CustomDetailClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,9 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
 
     Context mContext;
     private List<ArrivalsEntity> mArrivalsEntity;
-
+    //RecyclerView doesn't come with an onItemClick interface, so we have
+    // to implement one in the adapter.This is the field that hold an instance of CustomDetailClickListener
+    CustomDetailClickListener detailListener;
     /**
      * Initialize the ArrayList of the Adapter.
      *
@@ -49,15 +52,15 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
     public ArrivalAdapter.Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.line_row, parent, false);
         final ArrivalAdapter.Holder mViewHolder = new ArrivalAdapter.Holder(row);
-        Log.v(TAG,"**************************************************ArrivalAdapter ");
-//        row.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-////                if(detailListener!=null) {
-////                    detailListener.onItemClick(v, mViewHolder.getAdapterPosition());
-////                }
-//            }
-//        });
+        row.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(detailListener!=null) {
+                    Log.v(TAG,"**************************************************ArrivalAdapter.Holder  onClick");
+                    detailListener.onItemClick(v, mViewHolder.getAdapterPosition());
+                }
+            }
+        });
         return mViewHolder;
 
     }
@@ -66,7 +69,6 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
     @Override
     public void onBindViewHolder(final ArrivalAdapter.Holder holder, int position) {
         if(mArrivalsEntity!=null && mArrivalsEntity.size()>0) {
-            Log.v(TAG,"**************************************************ArrivalAdapter onBindViewHolder not null ");
             ArrivalsEntity arrival = mArrivalsEntity.get(position);
             if(arrival!=null) {
                 holder.mTextViewStationName.setText(arrival.getStationName());
@@ -80,20 +82,19 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
 
 
     //Adding the setter method on the CustomDetailClickListener
-//    public void setOnItemClickListener (final CustomDetailClickListener listener) {
-//        detailListener = listener;
-//    }
+    public void setOnItemClickListener (final CustomDetailClickListener listener) {
+        Log.v(TAG,"**************************************************ArrivalAdapter.Holder  setOnItemClickListener");
+        detailListener = listener;
+    }
 
     public void addArrivalInformation(List <ArrivalsEntity> arrivals) {
         mArrivalsEntity.clear();
         mArrivalsEntity.addAll(arrivals);
-//        Log.v(TAG,"adapter arrivals "+mArrivalsEntity.size());
         notifyDataSetChanged();
     }
 
     public List <ArrivalsEntity>  getArrivalInformation() {
         notifyDataSetChanged();
-//        Log.v(TAG,"arrivals mArrivalsEntity "+mArrivalsEntity.size());
         return mArrivalsEntity;
 
     }
@@ -135,9 +136,10 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         //Implements the onClick override method
         @Override
         public void onClick(View v) {
-//            if(detailListener!=null) {
-//                detailListener.onItemClick(v,getAdapterPosition());
-//            }
+            if(detailListener!=null) {
+                Log.v(TAG,"**************************************************ArrivalAdapter.Holder  onClick");
+                detailListener.onItemClick(v,getAdapterPosition());
+            }
         }
     }
 }

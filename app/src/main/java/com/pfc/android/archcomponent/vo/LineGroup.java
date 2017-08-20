@@ -1,4 +1,4 @@
-package com.pfc.android.archcomponent.api;
+package com.pfc.android.archcomponent.vo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,9 +1,7 @@
-package com.pfc.android.archcomponent.api;
+package com.pfc.android.archcomponent.vo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 /**
  * Created by ana on 16/08/17.

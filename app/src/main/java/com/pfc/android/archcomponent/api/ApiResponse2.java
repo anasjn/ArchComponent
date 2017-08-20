@@ -2,6 +2,8 @@ package com.pfc.android.archcomponent.api;
 
 import android.util.Log;
 
+import com.pfc.android.archcomponent.vo.ArrivalsEntity;
+
 import java.util.List;
 
 /**
@@ -17,7 +19,7 @@ public class ApiResponse2 {
 
     public ApiResponse2(List<ArrivalsEntity> arrivals) {
         if(arrivals.size()>0) {
-//            Log.v(TAG, "constructor ApiResponse2 " + arrivals.get(0).getVehicleId());
+            Log.v(TAG, "constructor ApiResponse2 " + arrivals.get(0).getVehicleId());
         }
         this.arrivals = arrivals;
         this.error = null;
@@ -26,7 +28,6 @@ public class ApiResponse2 {
     public ApiResponse2(Throwable error) {
         this.error = error;
         this.arrivals = null;
-//        Log.v(TAG, "ApiResponse2 ");
     }
 
     public static List<ArrivalsEntity> getArrivals() {
@@ -38,7 +39,6 @@ public class ApiResponse2 {
     }
 
     public Throwable getError() {
-//        Log.v(TAG, "getError "+error);
         return error;
     }
 }

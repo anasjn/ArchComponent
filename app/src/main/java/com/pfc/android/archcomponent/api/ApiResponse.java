@@ -12,14 +12,14 @@ import java.util.List;
 
 public class ApiResponse {
 
-    private final String TAG = ApiResponse.class.getName();
+    private static final String TAG = ApiResponse.class.getName();
 
     private static List<StopPointsEntity> stoppoints;
     private Throwable error;
 
     public ApiResponse(List<StopPointsEntity> stoppoints) {
         if(stoppoints.size()>0) {
-            Log.v(TAG, "constructor ApiResponse " + stoppoints.get(0).getStopLetter());
+            Log.v(TAG, "constructor ApiResponse ");
         }
         this.stoppoints = stoppoints;
         this.error = null;

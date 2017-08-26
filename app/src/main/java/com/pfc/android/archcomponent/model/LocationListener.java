@@ -5,5 +5,5 @@ package com.pfc.android.archcomponent.model;
  */
 
 public interface LocationListener{
-    void updateLocation(DefaultLocation defaultLocation);
+    void updateLocation(DefaultLocation defaultLocation,boolean mylocation);
 }

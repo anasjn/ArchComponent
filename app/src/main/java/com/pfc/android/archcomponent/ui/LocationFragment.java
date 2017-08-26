@@ -1,5 +1,7 @@
 package com.pfc.android.archcomponent.ui;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.pfc.android.archcomponent.R;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
@@ -12,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.arch.lifecycle.LiveData;
+import android.widget.Toast;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,12 +24,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.pfc.android.archcomponent.adapters.DataAdapter;
+import com.pfc.android.archcomponent.api.ApiResponse;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.model.LocationListener;
+import com.pfc.android.archcomponent.viewmodel.ListLocationsViewModel;
 import com.pfc.android.archcomponent.viewmodel.LocationViewModel;
 
 import com.google.android.gms.maps.SupportMapFragment;
+import com.pfc.android.archcomponent.vo.StopLocationEntity;
+import com.pfc.android.archcomponent.vo.StopPointsEntity;
 
+import java.util.List;
 import java.util.Locale;
 
 
@@ -45,20 +54,47 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     private LatLng mDefaultLocation = null;
     private DefaultLocation defaultLocation = null;
     LiveData<DefaultLocation> liveData = null;
-
+    //To show in the map the markers for the list of stops location near me
+    protected DataAdapter mAdapter = new DataAdapter(getContext());
 
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
 
+        //user and password
+        String app_id=getString(R.string.api_transport_id);
+        String app_key=getString(R.string.api_transport_key);
+
+
+        if(defaultLocation == null){
+            defaultLocation = new DefaultLocation(51.509865,-0.118092,200);
+        }
+
         LocationViewModel lViewModel =  ViewModelProviders.of(this).get(LocationViewModel.class);
+        //To show in the map the markers for the list of stops location near me
+        ListLocationsViewModel mViewModel = ViewModelProviders.of(this).get(ListLocationsViewModel.class);
+
         liveData = lViewModel.getLocation(context);
         liveData.observe(this,new Observer <DefaultLocation>(){
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
-                updateLocation(defaultLocation);
+                updateLocation(defaultLocation, true);
+                mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
             }
         });
+
+
+        // Handle changes emitted by LiveData
+        mViewModel.getApiResponse().observe(this, apiResponse -> {
+            if (apiResponse.getError() != null) {
+                Log.v(TAG, "handleResponse++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++apiResponse.error ");
+                handleError(apiResponse.getError());
+            } else {
+                Log.v(TAG, "handleResponse++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++apiResponse.getStopLocation ");
+                handleResponse(apiResponse.getStopLocation());
+            }
+        });
+
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,21 +115,56 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         mapFragment.getMapAsync(this);
     }
 
+    private void handleResponse(List<StopPointsEntity> stoppoints) {
+        if (stoppoints != null && stoppoints.size()>0) {
+            Log.v(TAG, "handleResponse++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+stoppoints.size() );
+            if(mAdapter!=null) {
+                mAdapter.addStopInformation(stoppoints);
+                //if (mAdapter != null) {
+                    Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  mAdapter "+mAdapter);
+                   // List<StopPointsEntity> stoppoints = mAdapter.getStopInformation();
+                    Log.v(TAG, "stoppoints++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+stoppoints );
+                    if(stoppoints!=null & stoppoints.size()>0) {
+                        for (int i = 0; i < stoppoints.size(); i++) {
+                            Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  stoppoints. " + stoppoints.get(i).getNaptanId());
+                            updateLocation(new DefaultLocation(Double.parseDouble(stoppoints.get(i).getLat()), Double.parseDouble(stoppoints.get(i).getLon()), 200),false);
+
+                        }
+                    }
+                //}
+            }
+        } else {
+            mAdapter.clearStopInformation();
+            Toast.makeText(
+                    getContext(),
+                    "No stop information found for the searched repository.",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+    }
+
+    private void handleError(Throwable error) {
+        mAdapter.clearStopInformation();
+        Log.e(TAG, "error occured: " + error.toString());
+        Toast.makeText(getContext(), "Oops! Some error occured.", Toast.LENGTH_SHORT).show();
+    }
     @Override
     public void onMapReady(final GoogleMap googleMap){
         gMap = googleMap;
-        if(defaultLocation == null){
-            defaultLocation = new DefaultLocation(-0.118092, 51.509865,200);
-        }
-        updateLocation(defaultLocation);
-
+        updateLocation(defaultLocation, true);
     }
 
 
-    private void addMarkers(DefaultLocation defaultLocation){
+    private void addMarkers(DefaultLocation defaultLocation, boolean mylocation){
         if(defaultLocation!=null) {
             mDefaultLocation = new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude());
-            mDefault = gMap.addMarker(new MarkerOptions().position(mDefaultLocation).title("I am here"));
+            if(mylocation == true) {
+                //this is my current location
+                mDefault = gMap.addMarker(new MarkerOptions().position(mDefaultLocation).title("I am here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+            }else{
+                //other markers that are not my location
+                mDefault = gMap.addMarker(new MarkerOptions().position(mDefaultLocation));
+            }
             mDefault.setTag(0);
             gMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
         }
@@ -101,14 +172,14 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     }
 
     @Override
-    public void updateLocation(DefaultLocation defaultLocation) {
+    public void updateLocation(DefaultLocation defaultLocation, boolean mylocation) {
         String latitudeString = createFractionString(defaultLocation.getLatitude());
         String longitudeString = createFractionString(defaultLocation.getLongitude());
         String accuracyString = createAccuracyString(defaultLocation.getAccuracy());
         //just to have more information in the map
         accuracyString = "200";
         defaultLocation = new DefaultLocation(Double.parseDouble(latitudeString),Double.parseDouble(longitudeString),Integer.parseInt(accuracyString));
-        addMarkers(defaultLocation);
+        addMarkers(defaultLocation,mylocation);
     }
 
     private String createFractionString(double fraction) {
@@ -118,4 +189,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     private String createAccuracyString(float accuracy) {
         return String.format(Locale.getDefault(), ACCURACY_FORMAT, accuracy);
     }
+
+
 }

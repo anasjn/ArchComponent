@@ -61,11 +61,13 @@ public class ListFragment extends LifecycleFragment {
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
                 updateLocation(defaultLocation);
+                Log.v(TAG, "liveData observe +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getLatitude() );
 //                Log.v(TAG, "liveData loadStopInformation +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getLatitude() );
 //                Log.v(TAG, "liveData loadStopInformation +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getLongitude() );
 //                Log.v(TAG, "liveData loadStopInformation +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getAccuracy() );
                 //mViewModel.loadStopInformation(defaultLocation.getLatitude(), defaultLocation.getLongitude(), (int) defaultLocation.getAccuracy());
                 mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
+
                 //mViewModel.loadStopInformation(51.500782092628455,-0.12462615966796875,200);
 
             }
@@ -118,7 +120,14 @@ public class ListFragment extends LifecycleFragment {
 
     private void handleResponse(List<StopPointsEntity> stoppoints) {
         if (stoppoints != null && stoppoints.size()>0) {
+            Log.v(TAG, "handleResponse++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+stoppoints.size() );
             mAdapter.addStopInformation(stoppoints);
+
+//            LocationFragment lf = new LocationFragment();
+//            for (int i = 0; i<stoppoints.size();i++) {
+//                Log.e(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++markers stoppoints " + stoppoints.get(i).getNaptanId());
+//                lf.updateLocation(new DefaultLocation(Double.parseDouble(stoppoints.get(i).getLat()),Double.parseDouble(stoppoints.get(i).getLon()),200));
+//            }
         } else {
             mAdapter.clearStopInformation();
             Toast.makeText(

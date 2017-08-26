@@ -38,6 +38,16 @@ public class MainActivity extends LifecycleActivity {
             transaction.replace(R.id.content_fragment, fragment);
             transaction.commit();
         }
+
+        // Button to select FAv or NEar me fragments
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
     }
 
     //Location

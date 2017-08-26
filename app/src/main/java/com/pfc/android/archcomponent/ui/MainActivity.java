@@ -11,6 +11,10 @@ import android.util.Log;
 import android.view.View;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.util.PermissionsRequester;
+import com.pfc.android.archcomponent.viewmodel.AddFavouriteViewModel;
+import com.pfc.android.archcomponent.viewmodel.DetailViewModel;
+import com.pfc.android.archcomponent.viewmodel.ListLocationsViewModel;
+import com.pfc.android.archcomponent.viewmodel.LocationViewModel;
 
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
@@ -23,6 +27,12 @@ public class MainActivity extends LifecycleActivity {
     private PermissionsRequester permissionsRequester;
     private LocationFragment locationFragment;
     private View fragmentContainer;
+
+    //ViewModels used by different fragments
+    private ListLocationsViewModel mViewModel;
+    private AddFavouriteViewModel afViewModel;
+    private LocationViewModel lViewModel;
+    private DetailViewModel dViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

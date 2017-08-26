@@ -42,7 +42,7 @@ public class FavouritesFragment extends LifecycleFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        afViewModel = ViewModelProviders.of(this).get(AddFavouriteViewModel.class);
+        afViewModel = ViewModelProviders.of(getActivity()).get(AddFavouriteViewModel.class);
         if (getArguments() != null) {
             favouriteEntity = (FavouriteEntity)getArguments().getSerializable(ARG_FAV);
             afViewModel.addFavourite(favouriteEntity);

@@ -5,6 +5,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        map:cameraZoom="16"
+        map:cameraZoom="12"
         map:liteMode="true"
         map:mapType="normal"/>
+

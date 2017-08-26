@@ -18,6 +18,8 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 
+import java.util.Random;
+
 
 /**
  * Created by dr3amsit on 31/07/17.
@@ -71,8 +73,27 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
             double latitude = newLocation.getLatitude();
             double longitude = newLocation.getLongitude();
             int accuracy = (int) newLocation.getAccuracy();
-            DefaultLocation location = new DefaultLocation(latitude, longitude, accuracy);
-            setValue(location);
+//            DefaultLocation location = new DefaultLocation(latitude, longitude, accuracy);
+            DefaultLocation location = randomgeolocation();
+            Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ LocationCallback location " +location );
+            if(location!=null) {
+                setValue(location);
+            }
         }
     };
+
+    //Getting latitude and longitude of two corners of London Map (one superior-right corner and inferior-left corner). With these 2 points we calculeta a random locations.
+    private DefaultLocation randomgeolocation(){
+        Random r = new Random();
+        DefaultLocation location = null;
+        Double lonMin = -0.4016876220703125 ;
+        Double latMin = 51.406701891531576;
+        Double latMax = 51.54943078;
+        Double lonMax = 0.006694793;
+        double randomLatValue = latMin + (latMax - latMin) * r.nextDouble();
+        double randomLonValue = lonMin + (lonMax - lonMin) * r.nextDouble();
+        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++randomLatValue " +randomLatValue );
+        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++randomLonValue " +randomLonValue );
+        return location = new DefaultLocation(randomLatValue, randomLonValue, 200);
+    }
 }

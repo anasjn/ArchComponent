@@ -58,10 +58,17 @@
                         android:textStyle="bold"
                         android:textColor="@color/colorBlack"/>
                     <TextView
-                        android:id="@+id/time_to_station"
+                        android:id="@+id/time_to_station1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="time_to_station"
+                        android:textStyle="bold"
+                        android:textColor="@color/orange"/>
+                    <TextView
+                        android:id="@+id/time_to_station2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="time_to_station2"
                         android:textStyle="bold"
                         android:textColor="@color/orange"/>
                 </LinearLayout>

@@ -173,6 +173,7 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
 
     @Override
     public void updateLocation(DefaultLocation defaultLocation, boolean mylocation) {
+        Log.v(TAG, "++++++++++++++++++++++++++++++defaultLocation++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation );
         if(defaultLocation!=null) {
             if(mylocation == true) {
                 //this is my current location

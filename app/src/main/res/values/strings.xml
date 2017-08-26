@@ -4,5 +4,8 @@
     <string name="progress_body">Please Wait</string>
     <!--LOCATION-->
     <string name="no_permissions">You have not granted the app the necessary permissions</string>
-
+    <string name="timing_first">Next bus in </string>
+    <string name="timing_next">The following in: </string>
+    <string name="separator">, </string>
+    <string name="final_separtor"> mins. </string>
 </resources>

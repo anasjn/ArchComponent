@@ -9,11 +9,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pfc.android.archcomponent.R;
-import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
+import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by ana on 17/08/17.
@@ -24,7 +25,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
     private final String TAG = ArrivalAdapter.class.getName();
 
     Context mContext;
-    private List<ArrivalsEntity> mArrivalsEntity;
+    private List<ArrivalsFormatedEntity> mArrivalsEntity;
     //RecyclerView doesn't come with an onItemClick interface, so we have
     // to implement one in the adapter.This is the field that hold an instance of CustomDetailClickListener
     CustomDetailClickListener detailListener;
@@ -69,13 +70,27 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
     @Override
     public void onBindViewHolder(final ArrivalAdapter.Holder holder, int position) {
         if(mArrivalsEntity!=null && mArrivalsEntity.size()>0) {
-            ArrivalsEntity arrival = mArrivalsEntity.get(position);
+            ArrivalsFormatedEntity arrival = mArrivalsEntity.get(position);
+            String timing = "Next bus in ";
             if(arrival!=null) {
                 holder.mTextViewStationName.setText(arrival.getStationName());
                 holder.mTextViewLineId.setText(arrival.getLineId());
                 holder.mTextViewPlatformName.setText(arrival.getPlatformName());
                 holder.mTextViewDestinationName.setText(arrival.getDestinationName());
-                holder.mTextViewTimeToStation.setText(""+arrival.getTimeToStation());
+                timing += arrival.getTimeToStation().get(0) + " mins.";
+                holder.mTextViewTimeToStation.setText(timing);
+                timing = "The following in: ";
+                int last = arrival.getTimeToStation().size()-1;
+                for(int i =1; i<arrival.getTimeToStation().size();i++){
+                    timing += arrival.getTimeToStation().get(i);
+                    if(last == i){
+                        timing += " mins.";
+                    }else
+                    {
+                        timing += ", ";
+                    }
+                }
+                holder.mTextViewTimeToStation2.setText(timing);
             }
         }
     }
@@ -87,13 +102,13 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         detailListener = listener;
     }
 
-    public void addArrivalInformation(List <ArrivalsEntity> arrivals) {
+    public void addArrivalInformation(List <ArrivalsFormatedEntity> arrivals) {
         mArrivalsEntity.clear();
         mArrivalsEntity.addAll(arrivals);
         notifyDataSetChanged();
     }
 
-    public List <ArrivalsEntity>  getArrivalInformation() {
+    public List <ArrivalsFormatedEntity>  getArrivalInformation() {
         notifyDataSetChanged();
         return mArrivalsEntity;
 
@@ -115,7 +130,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
 
         private final String TAG = ArrivalAdapter.Holder.class.getName();
 
-        TextView mTextViewStationName, mTextViewLineId, mTextViewPlatformName, mTextViewDestinationName,mTextViewTimeToStation;
+        TextView mTextViewStationName, mTextViewLineId, mTextViewPlatformName, mTextViewDestinationName,mTextViewTimeToStation,mTextViewTimeToStation2;
 
         public Holder(View view) {
             super(view);
@@ -123,7 +138,8 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
             mTextViewLineId = (TextView) view.findViewById(R.id.line_id);
             mTextViewPlatformName = (TextView) view.findViewById(R.id.platform_name);
             mTextViewDestinationName = (TextView) view.findViewById(R.id.destination_name);
-            mTextViewTimeToStation = (TextView) view.findViewById(R.id.time_to_station);
+            mTextViewTimeToStation = (TextView) view.findViewById(R.id.time_to_station1);
+            mTextViewTimeToStation2 = (TextView) view.findViewById(R.id.time_to_station2);
         }
 
         public Holder(View itemView,int ViewType,Context c) {

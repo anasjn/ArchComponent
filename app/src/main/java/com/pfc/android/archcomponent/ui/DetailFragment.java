@@ -17,6 +17,7 @@ import com.pfc.android.archcomponent.adapters.ArrivalAdapter;
 import com.pfc.android.archcomponent.api.ApiResponse;
 import com.pfc.android.archcomponent.api.ApiResponse2;
 import com.pfc.android.archcomponent.vo.ArrivalsEntity;
+import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.vo.FavouriteEntity;
 import com.pfc.android.archcomponent.vo.StopPointsEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
@@ -61,7 +62,8 @@ public class DetailFragment extends LifecycleFragment {
             if (apiResponse.getError() != null) {
                 handleError(apiResponse.getError());
             } else {
-                handleResponse((List<ArrivalsEntity>) apiResponse.getArrivals());
+               // handleResponse((List<ArrivalsEntity>) apiResponse.getArrivals());
+                handleResponse((List< ArrivalsFormatedEntity>) apiResponse.getArrivals());
             }
         });
     }
@@ -89,7 +91,7 @@ public class DetailFragment extends LifecycleFragment {
                 //change the background color of the radiobutton
                 Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++en el click para guardar en la BBDD "+position);
 
-                ArrivalsEntity arrival = ApiResponse2.getArrival(position);
+                ArrivalsFormatedEntity arrival = ApiResponse2.getArrival(position);
                 FavouriteEntity favourite = new FavouriteEntity (new Date(System.currentTimeMillis()),arrival.getLineId(),arrival.getPlatformName(),arrival.getDestinationName());
 
                 FragmentManager fm = getFragmentManager();
@@ -108,7 +110,7 @@ public class DetailFragment extends LifecycleFragment {
         return rootView;
     }
 
-    private void handleResponse(List<ArrivalsEntity> arrivals) {
+    private void handleResponse(List<ArrivalsFormatedEntity> arrivals) {
         if (arrivals != null && arrivals.size()>0) {
             mAdapter.addArrivalInformation(arrivals);
         } else {

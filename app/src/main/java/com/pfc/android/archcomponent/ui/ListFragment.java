@@ -68,8 +68,6 @@ public class ListFragment extends LifecycleFragment {
                 mViewModel.loadStopInformation(app_id,app_key,defaultLocation.getLatitude(), defaultLocation.getLongitude(), (int) defaultLocation.getAccuracy());
                 //mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
 
-                //mViewModel.loadStopInformation(51.500782092628455,-0.12462615966796875,200);
-
             }
         });
 

@@ -42,7 +42,9 @@ public class DetailFragment extends LifecycleFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dViewModel = ViewModelProviders.of(getActivity()).get(DetailViewModel.class);
+
+        dViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
+
         //user and password
         String app_id=getString(R.string.api_transport_id);
         String app_key=getString(R.string.api_transport_key);
@@ -62,7 +64,6 @@ public class DetailFragment extends LifecycleFragment {
             if (apiResponse.getError() != null) {
                 handleError(apiResponse.getError());
             } else {
-               // handleResponse((List<ArrivalsEntity>) apiResponse.getArrivals());
                 handleResponse((List< ArrivalsFormatedEntity>) apiResponse.getArrivals());
             }
         });

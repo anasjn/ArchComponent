@@ -64,8 +64,9 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     //to show a list of markers in the map and adjust the zoom for the list of markers
     ArrayList<Marker> markers = new ArrayList<Marker>();
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//    private ListLocationsViewModel mViewModel;
-//    private AddFavouriteViewModel afViewModel;
+
+    private ListLocationsViewModel mViewModel;
+    private LocationViewModel lViewModel;
 
     @Override
     public void onAttach(Context context){
@@ -75,10 +76,9 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         String app_id=getString(R.string.api_transport_id);
         String app_key=getString(R.string.api_transport_key);
 
-        LocationViewModel lViewModel =  ViewModelProviders.of(getActivity()).get(LocationViewModel.class);
+        lViewModel =  ViewModelProviders.of(this).get(LocationViewModel.class);
         //To show in the map the markers for the list of stops location near me
-        ListLocationsViewModel mViewModel = ViewModelProviders.of(getActivity()).get(ListLocationsViewModel.class);
-        //AddFavouriteViewModel afViewModel = ViewModelProviders.of(getActivity()).get(AddFavouriteViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(ListLocationsViewModel.class);
 
         liveData = lViewModel.getLocation(context);
         liveData.observe(this,new Observer <DefaultLocation>(){
@@ -87,7 +87,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
                 updateLocation(defaultLocation, true);
                 mViewModel.loadStopInformation(app_id,app_key,defaultLocation.getLatitude(),defaultLocation.getLongitude(), (int) defaultLocation.getAccuracy());
                 //mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
-
             }
         });
 
@@ -173,12 +172,10 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
 
     @Override
     public void updateLocation(DefaultLocation defaultLocation, boolean mylocation) {
-        Log.v(TAG, "++++++++++++++++++++++++++++++defaultLocation++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation );
         if(defaultLocation!=null) {
             if(mylocation == true) {
                 //this is my current location
                 mDefaultLocation = new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude());
-                Log.v(TAG, "mDefaultLocation++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+mDefaultLocation );
                 mDefault = gMap.addMarker(new MarkerOptions().position(mDefaultLocation).title("I am here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
                 mDefault.setTag(0);
             }else{

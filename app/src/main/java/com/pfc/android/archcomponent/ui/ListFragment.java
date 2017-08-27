@@ -43,31 +43,29 @@ public class ListFragment extends LifecycleFragment {
     protected RecyclerView mRecyclerView;
     protected DataAdapter mAdapter;
     private ListLocationsViewModel mViewModel;
+    //From the activity
+    private LocationViewModel lViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(getActivity()).get(ListLocationsViewModel.class);
+
+        mViewModel = ViewModelProviders.of(this).get(ListLocationsViewModel.class);
+
+        // Initialize location, getting the location from the Activity
+        lViewModel =  ViewModelProviders.of(this).get(LocationViewModel.class);
 
         //user and password
         String app_id=getString(R.string.api_transport_id);
         String app_key=getString(R.string.api_transport_key);
 
-        // Initialize location.
-        LocationViewModel lViewModel =  ViewModelProviders.of(getActivity()).get(LocationViewModel.class);
         liveData = lViewModel.getLocation(getContext());
-
         liveData.observe(this,new Observer<DefaultLocation>(){
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
-                //updateLocation(defaultLocation);
                 Log.v(TAG, "liveData observe +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getLatitude() );
-//                Log.v(TAG, "liveData loadStopInformation +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getLatitude() );
-//                Log.v(TAG, "liveData loadStopInformation +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getLongitude() );
-//                Log.v(TAG, "liveData loadStopInformation +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getAccuracy() );
                 mViewModel.loadStopInformation(app_id,app_key,defaultLocation.getLatitude(), defaultLocation.getLongitude(), (int) defaultLocation.getAccuracy());
-                //mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
-
+//                mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
             }
         });
 
@@ -105,7 +103,6 @@ public class ListFragment extends LifecycleFragment {
                 arguments.putInt("position", position);
                 DetailFragment detailfragment = new DetailFragment();
                 detailfragment.setArguments(arguments);
-                Log.v(TAG, "position++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+position);
                 fm.beginTransaction().replace(R.id.content_fragment, detailfragment).addToBackStack("detail").commit();
             }
         };
@@ -119,7 +116,6 @@ public class ListFragment extends LifecycleFragment {
 
     private void handleResponse(List<StopPointsEntity> stoppoints) {
         if (stoppoints != null && stoppoints.size()>0) {
-            Log.v(TAG, "handleResponse++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+stoppoints.size() );
             mAdapter.addStopInformation(stoppoints);
         } else {
             mAdapter.clearStopInformation();
@@ -136,27 +132,5 @@ public class ListFragment extends LifecycleFragment {
         Log.e(TAG, "error occured: " + error.toString());
         Toast.makeText(getContext(), "Oops! Some error occured.", Toast.LENGTH_SHORT).show();
     }
-
-    /**
-     * Generates Strings for RecyclerView's adapter.
-     */
-
-    public void updateLocation(DefaultLocation defaultLocation) {
-//        String latitudeString = createFractionString(defaultLocation.getLatitude());
-//        String longitudeString = createFractionString(defaultLocation.getLongitude());
-//        String accuracyString = createAccuracyString(defaultLocation.getAccuracy());
-//        accuracyString = "200";
-    //    defaultLocation = new DefaultLocation(defaultLocation.getLatitude(),defaultLocation.getLongitude(),200);
-//        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++updateLocation mDefaultLocation latitude "+ defaultLocation.getLatitude()+" addMarkers mDefaultLocation longitude "+defaultLocation.getLongitude());
-    }
-
-//    private String createFractionString(double fraction) {
-//        return String.format(Locale.getDefault(), FRACTIONAL_FORMAT, fraction);
-//    }
-//
-//    private String createAccuracyString(float accuracy) {
-//        return String.format(Locale.getDefault(), ACCURACY_FORMAT, accuracy);
-//    }
-
 
 }

@@ -65,8 +65,10 @@ public class IssueRepositoryImpl implements IssueRepository {
         call.enqueue(new Callback<List<ArrivalsEntity>>() {
             @Override
             public void onResponse(Call<List<ArrivalsEntity>> call,Response<List<ArrivalsEntity>> response) {
-                ApiResponse2 ap = new ApiResponse2(response.body());
-                liveData.setValue(ap);
+                if(response !=null) {
+                    ApiResponse2 ap = new ApiResponse2(response.body());
+                    liveData.setValue(ap);
+                }
             }
 
             @Override

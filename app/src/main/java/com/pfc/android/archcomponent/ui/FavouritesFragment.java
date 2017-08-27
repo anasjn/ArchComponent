@@ -38,11 +38,12 @@ public class FavouritesFragment extends LifecycleFragment {
     public FavouritesFragment() {
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        afViewModel = ViewModelProviders.of(getActivity()).get(AddFavouriteViewModel.class);
+
+        afViewModel = ViewModelProviders.of(this).get(AddFavouriteViewModel.class);
+
         if (getArguments() != null) {
             favouriteEntity = (FavouriteEntity)getArguments().getSerializable(ARG_FAV);
             afViewModel.addFavourite(favouriteEntity);
@@ -69,11 +70,9 @@ public class FavouritesFragment extends LifecycleFragment {
             public void onChanged(@Nullable List<FavouriteEntity> favourites) {
                 if(adapter==null){
                     adapter = new FavouriteAdapter(getContext(),favourites);
-                    Log.v(TAG, "**************************************************getAll if "+adapter);
                     // Set CustomAdapter as the adapter for RecyclerView.
                     mRecyclerView.setAdapter(adapter);
                 }else{
-                    Log.v(TAG, "**************************************************getAll else "+adapter);
                     adapter.setFavourite(favourites);
                 }
             }
@@ -81,6 +80,4 @@ public class FavouritesFragment extends LifecycleFragment {
 
         return rootView;
     }
-
-
 }

@@ -22,13 +22,12 @@ public class ApiResponse2 {
     private final String TAG = ApiResponse2.class.getName();
 
     private static List<ArrivalsEntity> arrivals;
-    private static List<ArrivalsFormatedEntity> arrivalsformated;
+    private static List<ArrivalsFormatedEntity> arrivalsformated = new ArrayList<>();
     private Throwable error;
 
     public ApiResponse2(List<ArrivalsEntity> arrivals) {
         if (arrivals!=null && arrivals.size() > 0) {
             ArrayList<Integer> listtimes = new ArrayList<Integer>();
-            arrivalsformated = new ArrayList<>();
             listtimes.add(secondsToMinutes(arrivals.get(0).getTimeToStation()));
             String lineId = arrivals.get(0).getLineId();
             ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).get$type(),lineId , arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(),listtimes);
@@ -65,7 +64,6 @@ public class ApiResponse2 {
                     }
             }
             this.arrivals = arrivals;
-
             this.arrivalsformated = arrivalsformated;
             this.error = null;
         }

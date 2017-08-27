@@ -29,10 +29,10 @@ public class MainActivity extends LifecycleActivity {
     private View fragmentContainer;
 
     //ViewModels used by different fragments
-    private ListLocationsViewModel mViewModel;
-    private AddFavouriteViewModel afViewModel;
-    private LocationViewModel lViewModel;
-    private DetailViewModel dViewModel;
+    //private ListLocationsViewModel mViewModel;
+    //private AddFavouriteViewModel afViewModel;
+    //private LocationViewModel lViewModel;
+    //private DetailViewModel dViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -50,16 +50,17 @@ public class ListFragment extends LifecycleFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(this).get(ListLocationsViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(ListLocationsViewModel.class);
 
         // Initialize location, getting the location from the Activity
-        lViewModel =  ViewModelProviders.of(this).get(LocationViewModel.class);
+        lViewModel =  ViewModelProviders.of(getActivity()).get(LocationViewModel.class);
 
         //user and password
         String app_id=getString(R.string.api_transport_id);
         String app_key=getString(R.string.api_transport_key);
 
         liveData = lViewModel.getLocation(getContext());
+        Log.v(TAG, "+++++++++++++++++++++++++liveData "+liveData);
         liveData.observe(this,new Observer<DefaultLocation>(){
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
@@ -130,7 +131,7 @@ public class ListFragment extends LifecycleFragment {
     private void handleError(Throwable error) {
         mAdapter.clearStopInformation();
         Log.e(TAG, "error occured: " + error.toString());
-        Toast.makeText(getContext(), "Oops! Some error occured.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity().getBaseContext(), "Oops! Some error occured.", Toast.LENGTH_SHORT).show();
     }
 
 }

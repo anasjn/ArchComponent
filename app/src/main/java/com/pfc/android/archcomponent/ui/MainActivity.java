@@ -29,24 +29,24 @@ public class MainActivity extends LifecycleActivity {
     private View fragmentContainer;
 
     //ViewModels used by different fragments
-    //private ListLocationsViewModel mViewModel;
+    private ListLocationsViewModel mViewModel;
     //private AddFavouriteViewModel afViewModel;
-    //private LocationViewModel lViewModel;
+    private LocationViewModel lViewModel;
     //private DetailViewModel dViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ListFragment fragment = new ListFragment();
+
         //Location permissions check and fragment to use for location
         fragmentContainer = findViewById(R.id.fragment_container);
         permissionsRequester = PermissionsRequester.newInstance(this);
 
         if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            ListFragment fragment = new ListFragment();
-            transaction.replace(R.id.content_fragment, fragment);
-            transaction.commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, fragment).commit();
         }
 
         // Button to select FAv or NEar me fragments
@@ -63,10 +63,7 @@ public class MainActivity extends LifecycleActivity {
     //Location
     private void createLocationFragment() {
         locationFragment = (LocationFragment) Fragment.instantiate(this, LocationFragment.class.getCanonicalName());
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.fragment_container, locationFragment);
-        transaction.commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
 
     }
 

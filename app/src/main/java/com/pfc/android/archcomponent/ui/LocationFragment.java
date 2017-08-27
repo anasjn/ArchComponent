@@ -3,11 +3,15 @@ package com.pfc.android.archcomponent.ui;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.maps.android.ui.BubbleIconFactory;
+import com.google.maps.android.ui.IconGenerator;
 import com.pfc.android.archcomponent.R;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -37,6 +41,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
 import com.pfc.android.archcomponent.vo.StopPointsEntity;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -45,14 +50,14 @@ import java.util.Locale;
 /**
  * Created by dr3amsit on 31/07/17.
  */
-public class LocationFragment extends LifecycleFragment implements LocationListener,OnMapReadyCallback {
+public class LocationFragment extends LifecycleFragment implements LocationListener, OnMapReadyCallback {
 
     public static final String TAG = LocationFragment.class.getName();
 
     private static final String FRACTIONAL_FORMAT = "%.4f";
     private static final String ACCURACY_FORMAT = "%.1fm";
 
-    private GoogleMap gMap;
+    private GoogleMap gMap = null;
     private Marker mDefault;
     private LatLng mDefaultLocation = null;
     private LatLng mLocation = null;
@@ -62,83 +67,67 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     protected DataAdapter mAdapter = new DataAdapter(getContext());
 
     //to show a list of markers in the map and adjust the zoom for the list of markers
-    ArrayList<Marker> markers = new ArrayList<Marker>();
+    ArrayList<Marker> markers =  new ArrayList<Marker>();
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
     private ListLocationsViewModel mViewModel;
     private LocationViewModel lViewModel;
 
+
     @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_location, container, false);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        Log.v(TAG, "onViewCreated++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Async ");
+        mapFragment.getMapAsync(this);
+        return view;
+    }
 
-        //user and password
-        String app_id=getString(R.string.api_transport_id);
-        String app_key=getString(R.string.api_transport_key);
 
-        lViewModel =  ViewModelProviders.of(this).get(LocationViewModel.class);
+    @Override
+    public void onMapReady(final GoogleMap googleMap){
+        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++onMapReady");
+        gMap = googleMap;
+        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++markers"+markers);
+        lViewModel =  ViewModelProviders.of(getActivity()).get(LocationViewModel.class);
         //To show in the map the markers for the list of stops location near me
-        mViewModel = ViewModelProviders.of(this).get(ListLocationsViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(ListLocationsViewModel.class);
 
-        liveData = lViewModel.getLocation(context);
+        liveData = lViewModel.getLocation(getContext());
         liveData.observe(this,new Observer <DefaultLocation>(){
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
                 updateLocation(defaultLocation, true);
-                mViewModel.loadStopInformation(app_id,app_key,defaultLocation.getLatitude(),defaultLocation.getLongitude(), (int) defaultLocation.getAccuracy());
-                //mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
             }
         });
 
         // Handle changes emitted by LiveData
         mViewModel.getApiResponse().observe(this, apiResponse -> {
             if (apiResponse.getError() != null) {
-                Log.v(TAG, "handleResponse++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++apiResponse.error ");
                 handleError(apiResponse.getError());
             } else {
-                Log.v(TAG, "handleResponse++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++apiResponse.getStopLocation ");
                 handleResponse(apiResponse.getStopLocation());
             }
         });
 
-    }
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_location, container, false);
-         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        //set the map
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
     }
 
     private void handleResponse(List<StopPointsEntity> stoppoints) {
+        markers =  new ArrayList<Marker>();
+        builder = new LatLngBounds.Builder();
+        Log.v(TAG, "handleResponse stoppoints "+stoppoints);
+        //Log.v(TAG, "handleResponse markers "+markers.size());
         if (stoppoints != null && stoppoints.size()>0) {
             Log.v(TAG, "handleResponse++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+stoppoints.size() );
             if(mAdapter!=null) {
                 mAdapter.addStopInformation(stoppoints);
-                    Log.v(TAG, "stoppoints++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+stoppoints );
-                    if(stoppoints!=null & stoppoints.size()>0) {
-                        for (int i = 0; i < stoppoints.size(); i++) {
-                            Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  stoppoints. " + stoppoints.get(i).getNaptanId());
-                            updateLocation(new DefaultLocation(Double.parseDouble(stoppoints.get(i).getLat()), Double.parseDouble(stoppoints.get(i).getLon()), 200),false);
-                        }
-                    }
-                if(markers!=null) {
-                    for (int j = 0; j < markers.size(); j++) {
-                        builder.include(markers.get(j).getPosition());
+                if(stoppoints!=null & stoppoints.size()>0) {
+                    for (int i = 0; i < stoppoints.size(); i++) {
+                        Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  stoppoints. " + stoppoints.get(i).getNaptanId());
+                        updateLocation(new DefaultLocation(Double.parseDouble(stoppoints.get(i).getLat()), Double.parseDouble(stoppoints.get(i).getLon()), 200),false);
                     }
                 }
-                gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),50));
             }
         } else {
             mAdapter.clearStopInformation();
@@ -148,6 +137,14 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
                     Toast.LENGTH_SHORT
             ).show();
         }
+        if(markers!=null & markers.size()>0) {
+            for (int j = 0; j < markers.size(); j++) {
+                Log.v(TAG," markers positions handleResponse" +markers.get(j).getPosition());
+                builder.include(markers.get(j).getPosition());
+            }
+            Log.v(TAG, "moveCamera++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ");
+            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),50));
+        }
     }
 
     private void handleError(Throwable error) {
@@ -155,36 +152,39 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         Log.e(TAG, "error occured: " + error.toString());
         Toast.makeText(getContext(), "Oops! Some error occured.", Toast.LENGTH_SHORT).show();
     }
-    @Override
-    public void onMapReady(final GoogleMap googleMap){
-        gMap = googleMap;
-        if(defaultLocation!=null) {
-            updateLocation(defaultLocation, true);
-            if(markers!=null) {
-                for (int i = 0; i < markers.size(); i++) {
-                    builder.include(markers.get(i).getPosition());
-                }
-            }
-            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),50));
-        }
-    }
-
 
     @Override
     public void updateLocation(DefaultLocation defaultLocation, boolean mylocation) {
+        Log.v(TAG, "updateLocation defaultLocation "+defaultLocation);
         if(defaultLocation!=null) {
+            IconGenerator iconFactory = new IconGenerator(getContext());
             if(mylocation == true) {
                 //this is my current location
                 mDefaultLocation = new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude());
-                mDefault = gMap.addMarker(new MarkerOptions().position(mDefaultLocation).title("I am here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-                mDefault.setTag(0);
+                iconFactory.setColor(Color.GREEN);
+                Log.v(TAG, "gMap if "+gMap);
+                if(gMap!=null) {
+                    mDefault = gMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("I'm here"))).position(mDefaultLocation));
+                    mDefault.setTag(0);
+                    if(mDefault!=null) {
+                        markers.add(mDefault);
+                    }
+                    Log.v(TAG," markers if" +markers.size());
+                }
             }else{
                 //other markers that are not my location
+                //iconFactory.setColor(Color);
                 mLocation = new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude());
-                mDefault = gMap.addMarker(new MarkerOptions().position(mLocation));
-                mDefault.setTag(0);
+                Log.v(TAG, "gMap else "+gMap);
+                if(gMap!=null) {
+                    mDefault = gMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(""+new DecimalFormat("#.###").format(defaultLocation.getLatitude())+"&"+new DecimalFormat("#.###").format(defaultLocation.getLongitude())))).position(mLocation));
+                    mDefault.setTag(0);
+                    if(mDefault!=null) {
+                        markers.add(mDefault);
+                    }
+                    Log.v(TAG," markers else " +markers.size());
+                }
             }
-            markers.add(mDefault);
         }
     }
 }

@@ -34,7 +34,6 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
     private FusedLocationProviderClient fusedLocationProviderClient = null;
 
     public LocationLiveData(Context context) {
-
         this.context = context;
     }
 
@@ -97,6 +96,6 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
 
        // randomLatValue=51.50083830777585;
        // randomLonValue=-0.09180195654082074;
-        return location = new DefaultLocation(randomLatValue, randomLonValue, 200);
+        return location = new DefaultLocation(randomLatValue, randomLonValue, "I'm here");
     }
 }

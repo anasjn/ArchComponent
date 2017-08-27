@@ -65,7 +65,7 @@ public class ListFragment extends LifecycleFragment {
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
                 Log.v(TAG, "liveData observe +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "+defaultLocation.getLatitude() );
-                mViewModel.loadStopInformation(app_id,app_key,defaultLocation.getLatitude(), defaultLocation.getLongitude(), (int) defaultLocation.getAccuracy());
+                mViewModel.loadStopInformation(app_id,app_key,defaultLocation.getLatitude(), defaultLocation.getLongitude(),200);
 //                mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
             }
         });

@@ -49,9 +49,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
 
     public static final String TAG = LocationFragment.class.getName();
 
-    private static final String FRACTIONAL_FORMAT = "%.4f";
-    private static final String ACCURACY_FORMAT = "%.1fm";
-
     private GoogleMap gMap = null;
     private Marker mDefault;
     private LatLng mDefaultLocation = null;
@@ -82,7 +79,7 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     public void onMapReady(final GoogleMap googleMap){
         Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++onMapReady");
         gMap = googleMap;
-        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++markers"+markers);
+
         lViewModel =  ViewModelProviders.of(getActivity()).get(LocationViewModel.class);
         //To show in the map the markers for the list of stops location near me
         mViewModel = ViewModelProviders.of(getActivity()).get(ListLocationsViewModel.class);
@@ -144,7 +141,8 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
                 builder.include(markers.get(j).getPosition());
             }
             Log.v(TAG, "moveCamera++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ");
-            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),50));
+            gMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),0));
+            gMap.setLatLngBoundsForCameraTarget(builder.build());
         }
     }
 

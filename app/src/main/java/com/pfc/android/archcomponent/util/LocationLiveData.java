@@ -30,8 +30,8 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
     private final String TAG = LocationLiveData.class.getName();
 
     private final Context context;
-
     private FusedLocationProviderClient fusedLocationProviderClient = null;
+    private DefaultLocation cachedLocation = null;
 
     public LocationLiveData(Context context) {
         this.context = context;
@@ -68,15 +68,17 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            Location newLocation = locationResult.getLastLocation();
-            double latitude = newLocation.getLatitude();
-            double longitude = newLocation.getLongitude();
-            int accuracy = (int) newLocation.getAccuracy();
-//            DefaultLocation location = new DefaultLocation(latitude, longitude, accuracy);
-            DefaultLocation location = randomgeolocation();
-            Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ LocationCallback location " +location );
-            if(location!=null) {
-                setValue(location);
+            //Get the last location known
+//            Location newLocation = locationResult.getLastLocation();
+//            double latitude = newLocation.getLatitude();
+//            double longitude = newLocation.getLongitude();
+//            DefaultLocation location = new DefaultLocation(latitude, longitude, 200);
+            //In order to test the application we use a radomLocation
+            if(cachedLocation == null){
+                cachedLocation = randomgeolocation();
+            }
+            if(cachedLocation!=null) {
+                setValue(cachedLocation);
             }
         }
     };
@@ -91,11 +93,6 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
         Double lonMax = 0.006694793;
         double randomLatValue = latMin + (latMax - latMin) * r.nextDouble();
         double randomLonValue = lonMin + (lonMax - lonMin) * r.nextDouble();
-        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++randomLatValue " +randomLatValue );
-        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++randomLonValue " +randomLonValue );
-
-       // randomLatValue=51.50083830777585;
-       // randomLonValue=-0.09180195654082074;
         return location = new DefaultLocation(randomLatValue, randomLonValue, "I'm here");
     }
 }

@@ -32,7 +32,6 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
      * Initialize the ArrayList of the Adapter.
      *
      */
-
     public DataAdapter(Context context) {
         this.mContext = context;
         mStopPoints = new ArrayList<>();
@@ -78,13 +77,13 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
                     lines = stop.getListlines().get(0).getName();
                     for (int i = 1; i < stop.getListlines().size(); i++) {
                         lines += " - " + stop.getListlines().get(i).getName();
-                        holder.mTextViewLine.setText(lines);
                     }
+                    holder.mTextViewLine.setText(lines);
                 }
                 if (stop.getAddproperties() != null && stop.getAddproperties().size()>0) {
                     for (int j = 0; j < stop.getAddproperties().size(); j++) {
                         if ("Towards".equals(stop.getAddproperties().get(j).getKey())) {
-                            holder.mTextViewTowards.setText((CharSequence) stop.getAddproperties().get(j).getValue());
+                            holder.mTextViewTowards.setText("Towards: "+ (CharSequence) stop.getAddproperties().get(j).getValue());
                         }
 
                     }

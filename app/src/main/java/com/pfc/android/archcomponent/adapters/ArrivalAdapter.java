@@ -72,25 +72,28 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         if(mArrivalsEntity!=null && mArrivalsEntity.size()>0) {
             ArrivalsFormatedEntity arrival = mArrivalsEntity.get(position);
             String timing = "Next bus in ";
+            List<Integer> timesToStation;
             if(arrival!=null) {
                 holder.mTextViewStationName.setText(arrival.getStationName());
                 holder.mTextViewLineId.setText(arrival.getLineId());
                 holder.mTextViewPlatformName.setText(arrival.getPlatformName());
                 holder.mTextViewDestinationName.setText(arrival.getDestinationName());
-                timing += arrival.getTimeToStation().get(0) + " mins.";
+                timesToStation = arrival.getTimeToStationSort();
+                timing += timesToStation.get(0) + " mins.";
                 holder.mTextViewTimeToStation.setText(timing);
-                timing = "The following in: ";
-                int last = arrival.getTimeToStation().size()-1;
-                for(int i =1; i<arrival.getTimeToStation().size();i++){
-                    timing += arrival.getTimeToStation().get(i);
-                    if(last == i){
-                        timing += " mins.";
-                    }else
-                    {
-                        timing += ", ";
+                if(timesToStation.size()>1) {
+                    timing = "The following in: ";
+                    int last = timesToStation.size() - 1;
+                    for (int i = 1; i < timesToStation.size(); i++) {
+                        timing += timesToStation.get(i);
+                        if (last == i) {
+                            timing += " mins.";
+                        } else {
+                            timing += ", ";
+                        }
                     }
+                    holder.mTextViewTimeToStation2.setText(timing);
                 }
-                holder.mTextViewTimeToStation2.setText(timing);
             }
         }
     }
@@ -98,7 +101,6 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
 
     //Adding the setter method on the CustomDetailClickListener
     public void setOnItemClickListener (final CustomDetailClickListener listener) {
-        Log.v(TAG,"**************************************************ArrivalAdapter.Holder  setOnItemClickListener");
         detailListener = listener;
     }
 

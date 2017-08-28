@@ -154,6 +154,7 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
                 mDefault = gMap.addMarker(opt.position(mDefaultLocation));
                 mDefault.setTag(defaultLocation.getName());
                 if(mDefault!=null) {
+                    Log.v(TAG,"markers locations "+defaultLocation.getLatitude()+","+defaultLocation.getLongitude());
                     markers.add(mDefault);
                 }
             }

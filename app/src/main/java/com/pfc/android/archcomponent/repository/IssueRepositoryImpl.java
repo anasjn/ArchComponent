@@ -45,7 +45,6 @@ public class IssueRepositoryImpl implements IssueRepository {
         call.enqueue(new Callback<StopLocationEntity>() {
             @Override
             public void onResponse(Call<StopLocationEntity> call,Response<StopLocationEntity> response) {
-                Log.v(TAG, "liveData " +liveData.getValue());
                 ApiResponse ap=new ApiResponse((List<StopPointsEntity>) response.body().getStopPoints());
                 liveData.setValue(ap);
             }
@@ -55,7 +54,6 @@ public class IssueRepositoryImpl implements IssueRepository {
                 liveData.setValue(new ApiResponse(t));
             }
         });
-        Log.v(TAG, "liveData " +liveData.getValue());
         return liveData;
     }
 

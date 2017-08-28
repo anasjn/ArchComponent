@@ -3,6 +3,7 @@ package com.pfc.android.archcomponent.vo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -81,6 +82,11 @@ public class ArrivalsFormatedEntity {
     }
 
     public List<Integer> getTimeToStation() {
+        return timeToStation;
+    }
+
+    public List<Integer> getTimeToStationSort() {
+        Collections.sort(this.timeToStation);
         return timeToStation;
     }
 

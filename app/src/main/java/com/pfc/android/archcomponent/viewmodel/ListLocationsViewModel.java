@@ -1,5 +1,7 @@
 package com.pfc.android.archcomponent.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -31,8 +33,10 @@ public class ListLocationsViewModel extends ViewModel {
         mIssueRepository = new IssueRepositoryImpl();
     }
 
+
     @NonNull
     public LiveData<ApiResponse> getApiResponse() {
+        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++getApiResponse");
         return mApiResponse;
     }
 

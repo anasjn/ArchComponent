@@ -11,27 +11,32 @@ import java.util.List;
  */
 
 public class ArrivalsFormatedEntity {
-    @SerializedName("$type")
-    @Expose
+
     private String $type;
-    @SerializedName("lineId")
-    @Expose
+
+    private String naptanId;
+
     private String lineId;
-    @SerializedName("lineName")
-    @Expose
+
     private String stopLetter;
-    @SerializedName("stationName")
-    @Expose
+
     private String stationName;
-    @SerializedName("platformName")
-    @Expose
+
     private String platformName;
-    @SerializedName("destinationName")
-    @Expose
+
     private String destinationName;
-    @SerializedName("timeToStation")
-    @Expose
+
     private List<Integer> timeToStation;
+
+    private boolean favourite;
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
 
     public String get$type() {
         return $type;
@@ -41,6 +46,13 @@ public class ArrivalsFormatedEntity {
         this.$type = $type;
     }
 
+    public String getNaptanId() {
+        return naptanId;
+    }
+
+    public void setNaptanId(String naptanId) {
+        this.naptanId = naptanId;
+    }
     public String getLineId() {
         return lineId;
     }
@@ -94,13 +106,16 @@ public class ArrivalsFormatedEntity {
         this.timeToStation = timeToStation;
     }
 
-    public ArrivalsFormatedEntity(String $type, String lineId, String stopLetter, String stationName, String platformName, String destinationName, List<Integer> timeToStation) {
+    public ArrivalsFormatedEntity(String $type, String naptanId,String lineId, String stopLetter, String stationName, String platformName, String destinationName, List<Integer> timeToStation, boolean favourite) {
         this.$type = $type;
+        this.naptanId= naptanId;
         this.lineId = lineId;
         this.stopLetter = stopLetter;
         this.stationName = stationName;
         this.platformName = platformName;
         this.destinationName = destinationName;
         this.timeToStation = timeToStation;
+        //isfav?
+        this.favourite = favourite;
     }
 }

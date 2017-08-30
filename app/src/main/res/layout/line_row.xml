@@ -21,7 +21,6 @@
                     android:id="@+id/line_id"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="line_id"
                     android:textStyle="bold"
                     android:textColor="@color/colorBlack"/>
                 <TextView
@@ -30,7 +29,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:textAlignment="center"
-                    android:text="station_name"
                     android:textStyle="bold"
                     android:textColor="@color/colorBlack"/>
             </LinearLayout>
@@ -42,7 +40,6 @@
                     android:id="@+id/platform_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="platform_name"
                     android:textStyle="bold"
                     android:textColor="@color/colorBlack"/>
                 <LinearLayout
@@ -53,7 +50,6 @@
                         android:id="@+id/destination_name"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="destination_name"
                         android:textAlignment="center"
                         android:textStyle="bold"
                         android:textColor="@color/colorBlack"/>
@@ -61,34 +57,23 @@
                         android:id="@+id/time_to_station1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="time_to_station"
                         android:textStyle="bold"
                         android:textColor="@color/orange"/>
                     <TextView
                         android:id="@+id/time_to_station2"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="time_to_station2"
                         android:textStyle="bold"
                         android:textColor="@color/orange"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-        <!--<RadioButton-->
-            <!--android:id="@+id/star_rb"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="@android:drawable/btn_star"-->
-            <!--android:button="@android:color/transparent"-->
-            <!--android:checked="false"-->
-            <!--android:onClick="showStopDetail"-->
-            <!--android:layout_gravity="center_vertical" />-->
         <RadioButton
             android:id="@+id/star_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:drawable/btn_star"
-            android:button="@android:color/transparent"
+
             android:checked="false"
             android:layout_gravity="center_vertical" />
     </LinearLayout>

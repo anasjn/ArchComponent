@@ -110,6 +110,12 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
 
     }
 
+    public String  getStopById(int position) {
+        notifyDataSetChanged();
+        return mStopPoints.get(position).getNaptanId();
+
+    }
+
     public void clearStopInformation() {
         if (mStopPoints != null) {
             mStopPoints.clear();

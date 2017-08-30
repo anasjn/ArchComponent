@@ -74,10 +74,12 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         gMap = googleMap;
         gMap.getUiSettings().setZoomControlsEnabled(true);
         gMap.getUiSettings().setAllGesturesEnabled(true);
-
+        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++lViewModel");
         lViewModel =  ViewModelProviders.of(getActivity()).get(LocationViewModel.class);
         //To show in the map the markers for the list of stops location near me
         mViewModel = ViewModelProviders.of(getActivity()).get(ListLocationsViewModel.class);
+        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++mViewModel");
+
 
         liveData = lViewModel.getLocation(getContext());
         liveData.observe(this,new Observer <DefaultLocation>(){
@@ -86,12 +88,13 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
                 updateLocation(defaultLocation, true);
             }
         });
-
+        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++mViewModel");
         // Handle changes emitted by LiveData
         mViewModel.getApiResponse().observe(this, apiResponse -> {
             if (apiResponse.getError() != null) {
                 handleError(apiResponse.getError());
             } else {
+                Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++apiResponse.getStopLocation()");
                 handleResponse(apiResponse.getStopLocation());
             }
         });
@@ -100,12 +103,13 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     private void handleResponse(List<StopPointsEntity> stoppoints) {
         markers =  new ArrayList<Marker>();
         builder = new LatLngBounds.Builder();
-        String name = "";
+        String name;
         if (stoppoints != null && stoppoints.size()>0) {
             if(mAdapter!=null) {
                 mAdapter.addStopInformation(stoppoints);
                 if(stoppoints!=null & stoppoints.size()>0) {
                     for (int i = 0; i < stoppoints.size(); i++) {
+                        name="";
                         if(stoppoints.get(i).getStopLetter()!=null && !stoppoints.get(i).getStopLetter().isEmpty()){
                             name = stoppoints.get(i).getStopLetter();
                         }

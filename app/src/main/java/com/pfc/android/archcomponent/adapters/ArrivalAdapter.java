@@ -6,14 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.pfc.android.archcomponent.R;
+import com.pfc.android.archcomponent.db.AppDatabase;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
+import com.pfc.android.archcomponent.repository.LocalRepository;
+import com.pfc.android.archcomponent.repository.LocalRepositoryImpl;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+
+import javax.inject.Inject;
 
 
 /**
@@ -29,6 +36,10 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
     //RecyclerView doesn't come with an onItemClick interface, so we have
     // to implement one in the adapter.This is the field that hold an instance of CustomDetailClickListener
     CustomDetailClickListener detailListener;
+
+//    @Inject
+//    public AppDatabase database;
+
     /**
      * Initialize the ArrayList of the Adapter.
      *
@@ -94,6 +105,8 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
                     }
                     holder.mTextViewTimeToStation2.setText(timing);
                 }
+                holder.mRadioButtonStar.setChecked(arrival.isFavourite());
+                Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ isfav? ");
             }
         }
     }
@@ -110,7 +123,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         notifyDataSetChanged();
     }
 
-    public List <ArrivalsFormatedEntity>  getArrivalInformation() {
+    public List <ArrivalsFormatedEntity>  getArrivalsList() {
         notifyDataSetChanged();
         return mArrivalsEntity;
 
@@ -133,6 +146,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         private final String TAG = ArrivalAdapter.Holder.class.getName();
 
         TextView mTextViewStationName, mTextViewLineId, mTextViewPlatformName, mTextViewDestinationName,mTextViewTimeToStation,mTextViewTimeToStation2;
+        RadioButton mRadioButtonStar;
 
         public Holder(View view) {
             super(view);
@@ -142,6 +156,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
             mTextViewDestinationName = (TextView) view.findViewById(R.id.destination_name);
             mTextViewTimeToStation = (TextView) view.findViewById(R.id.time_to_station1);
             mTextViewTimeToStation2 = (TextView) view.findViewById(R.id.time_to_station2);
+            mRadioButtonStar = (RadioButton) view.findViewById(R.id.star_rb);
         }
 
         public Holder(View itemView,int ViewType,Context c) {

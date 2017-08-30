@@ -1,5 +1,7 @@
 package com.pfc.android.archcomponent.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -10,25 +12,34 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.pfc.android.archcomponent.api.ApiResponse2;
+import com.pfc.android.archcomponent.db.AppDatabase;
 import com.pfc.android.archcomponent.repository.IssueRepository;
 import com.pfc.android.archcomponent.repository.IssueRepositoryImpl;
+
+import javax.inject.Inject;
 
 /**
  * Created by ana on 17/08/17.
  */
 
-public class DetailViewModel extends ViewModel {
+public class DetailViewModel extends AndroidViewModel {
 
     private final String TAG = DetailViewModel.class.getName();
 
     private MediatorLiveData<ApiResponse2> mApiResponse2;
     private IssueRepository mIssueRepository;
 
+    @Inject
+    public AppDatabase database;
+
     // No argument constructor
-    public DetailViewModel() {
+    public DetailViewModel(Application application) {
+        super(application);
         mApiResponse2 = new MediatorLiveData<>();
         mIssueRepository = new IssueRepositoryImpl();
     }
+
+
 
     @NonNull
     public LiveData<ApiResponse2> getApiResponse() {

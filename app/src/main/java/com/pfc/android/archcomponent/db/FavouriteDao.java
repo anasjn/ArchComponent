@@ -1,6 +1,7 @@
 package com.pfc.android.archcomponent.db;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Update;
@@ -20,9 +21,16 @@ public interface FavouriteDao {
     @Query("SELECT * FROM favourites")
     LiveData<List<FavouriteEntity>> getAllFavourites();
 
+    @Query("SELECT COUNT(*) FROM favourites WHERE mNaptanId LIKE :naptanid AND mLineId LIKE :lineid")
+    Integer isFavourite(String naptanid, String lineid);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addFavourite(FavouriteEntity favourite);
 
     @Update
     void updateFavourite(FavouriteEntity favourite);
+
+    @Query("SELECT * FROM favourites")
+    List<FavouriteEntity> getFavourites();
+
 }

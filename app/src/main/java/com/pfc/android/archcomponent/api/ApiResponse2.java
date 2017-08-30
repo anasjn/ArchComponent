@@ -1,8 +1,16 @@
 package com.pfc.android.archcomponent.api;
 
+import android.app.Application;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.pfc.android.archcomponent.db.AppDatabase;
+import com.pfc.android.archcomponent.db.FavouriteDao;
+import com.pfc.android.archcomponent.di.DaggerFavouriteComponent;
+import com.pfc.android.archcomponent.di.FavouriteComponent;
+import com.pfc.android.archcomponent.di.FavouriteModule;
+import com.pfc.android.archcomponent.util.FavouriteApplication;
+import com.pfc.android.archcomponent.viewmodel.AddFavouriteViewModel;
 import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
@@ -12,6 +20,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+
+import javax.inject.Inject;
 
 /**
  * Created by ana on 16/08/17.
@@ -25,6 +35,7 @@ public class ApiResponse2 {
     private static List<ArrivalsFormatedEntity> arrivalsformated = null;
     private Throwable error;
 
+
     public ApiResponse2(List<ArrivalsEntity> arrivals) {
         if (arrivals!=null && arrivals.size() > 0) {
 
@@ -33,7 +44,13 @@ public class ApiResponse2 {
 
             listtimes.add(secondsToMinutes(arrivals.get(0).getTimeToStation()));
             String lineId = arrivals.get(0).getLineId();
-            ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).get$type(),lineId , arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(),listtimes);
+            boolean fav = false;
+            //fav calculation
+//            Integer favouriteSize = 0;
+//            favouriteSize = favouriteDao.isFavourite(arrivals.get(0).getNaptanId(),lineId);
+//            if(favouriteSize>0) fav=true;
+//            Log.v(TAG, "fav size: "+favouriteSize);
+            ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).get$type(), arrivals.get(0).getNaptanId(), lineId, arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(), listtimes,fav);
             arrivalsformated.add(aformated);
 
             List<Integer> times = null;
@@ -61,7 +78,11 @@ public class ApiResponse2 {
                     }else {
                         listtimes = new ArrayList<Integer>();
                         listtimes.add(timesInMinutes);
-                        aformated = new ArrivalsFormatedEntity(arrivalAux.get$type(), arrivalAux.getLineId(), arrivalAux.getStopLetter(), arrivalAux.getStationName(), arrivalAux.getPlatformName(), arrivalAux.getDestinationName(), listtimes);
+                        //fav calculation
+//                        favouriteSize = favouriteDao.isFavourite(arrivals.get(0).getNaptanId(),lineId);
+//                        if(favouriteSize>0) fav=true;
+//                        Log.v(TAG, "fav size: "+favouriteSize);
+                        aformated = new ArrivalsFormatedEntity(arrivalAux.get$type(), arrivalAux.getNaptanId(),arrivalAux.getLineId(), arrivalAux.getStopLetter(), arrivalAux.getStationName(), arrivalAux.getPlatformName(), arrivalAux.getDestinationName(), listtimes,fav);
                         arrivalsformated.add(aformated);
                     }
             }

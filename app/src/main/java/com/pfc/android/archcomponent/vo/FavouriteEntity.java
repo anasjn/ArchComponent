@@ -13,9 +13,22 @@ import java.util.Date;
 
 @Entity(tableName = "favourites")
 public class FavouriteEntity implements Serializable {
-        @PrimaryKey (autoGenerate = true)
-        public int mId;
-        public Date mTime;
+
+    @PrimaryKey (autoGenerate = true)
+    public int mId;
+    public Date mTime;
+    public String mLineId;
+    public String mPlatformName;
+    public String mDestinationName;
+    public String mNaptanId;
+
+    public String getmNaptanId() {
+        return mNaptanId;
+    }
+
+    public void setmNaptanId(String mNaptanId) {
+        this.mNaptanId = mNaptanId;
+    }
 
     public int getmId() {
         return mId;
@@ -57,10 +70,6 @@ public class FavouriteEntity implements Serializable {
         this.mDestinationName = mDestinationName;
     }
 
-    public String mLineId;
-    public String mPlatformName;
-    public String mDestinationName;
-
     public FavouriteEntity() {
 //        this.mTime = null;
 //        this.mLineId = null;
@@ -68,11 +77,12 @@ public class FavouriteEntity implements Serializable {
 //        this.mDestinationName = null;
     }
 
-    public FavouriteEntity(Date time, String line, String platform, String destination) {
+    public FavouriteEntity(Date time, String line, String platform, String destination, String naptanId) {
         this.mTime = time;
         this.mLineId = line;
         this.mPlatformName = platform;
         this.mDestinationName = destination;
+        this.mNaptanId = naptanId;
     }
 
     public boolean isTransient() {

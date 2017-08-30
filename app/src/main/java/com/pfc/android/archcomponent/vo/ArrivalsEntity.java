@@ -14,9 +14,9 @@ public class ArrivalsEntity {
     @SerializedName("$type")
     @Expose
     private String $type;
-    @SerializedName("vehicleId")
+    @SerializedName("naptanId")
     @Expose
-    private String vehicleId;
+    private String naptanId;
     @SerializedName("lineId")
     @Expose
     private String lineId;
@@ -47,12 +47,12 @@ public class ArrivalsEntity {
         this.$type = $type;
     }
 
-    public String getVehicleId() {
-        return vehicleId;
+    public String getNaptanId() {
+        return naptanId;
     }
 
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
+    public void setNaptanId(String naptanId) {
+        this.naptanId = naptanId;
     }
 
     public String getLineId() {

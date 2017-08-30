@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -60,6 +61,7 @@ public class ListFragment extends LifecycleFragment {
         String app_key=getString(R.string.api_transport_key);
 
         liveData = lViewModel.getLocation(getContext());
+
         liveData.observe(this,new Observer<DefaultLocation>(){
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation){
@@ -76,6 +78,31 @@ public class ListFragment extends LifecycleFragment {
                 handleResponse(apiResponse.getStopLocation());
             }
         });
+
+//        FavouritesFragment favouritesFragment = new FavouritesFragment();
+
+        // Button to select FAv or NEarme fragments
+//        FloatingActionButton fab = (FloatingActionButton) findViewById();
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).commit();
+////                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+////                        .setAction("Action", null).show();
+//
+//
+//            }
+//        });
+
+//        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent in = new Intent(getActivity(), InsertActivity.class);
+//                startActivity(in);
+//            }
+//        });
     }
 
     @Override
@@ -99,7 +126,7 @@ public class ListFragment extends LifecycleFragment {
 
                 FragmentManager fm = getFragmentManager();
                 Bundle arguments = new Bundle();
-                arguments.putInt("position", position);
+                arguments.putString("naptanId", mAdapter.getStopById(position));
                 DetailFragment detailfragment = new DetailFragment();
                 detailfragment.setArguments(arguments);
                 fm.beginTransaction().replace(R.id.content_fragment, detailfragment).addToBackStack("detail").commit();

@@ -10,7 +10,7 @@ import com.pfc.android.archcomponent.di.FavouriteModule;
  * Created by ana on 19/08/17.
  */
 // We should do all this work within a specialization of the Application class
-// since these instances should be declared only once throughout the entire lifespan of the application
+// since these instances should be declared only once throughout the entire life of the application
 public class FavouriteApplication extends Application {
 
         private FavouriteComponent favouriteComponent;
@@ -32,7 +32,7 @@ public class FavouriteApplication extends Application {
         }
 
 
-        public FavouriteComponent getTaskComponent() {
+        public FavouriteComponent getFavComponent() {
             return favouriteComponent;
         }
 

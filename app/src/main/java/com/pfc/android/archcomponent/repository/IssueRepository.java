@@ -4,6 +4,9 @@ import android.arch.lifecycle.MutableLiveData;
 
 import com.pfc.android.archcomponent.api.ApiResponse;
 import com.pfc.android.archcomponent.api.ApiResponse2;
+import com.pfc.android.archcomponent.api.ApiResponse3;
+import com.pfc.android.archcomponent.db.FavouriteDao;
+import com.pfc.android.archcomponent.vo.FavouriteEntity;
 
 /**
  * Created by dr3amsit on 29/07/17.

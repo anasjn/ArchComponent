@@ -38,6 +38,7 @@ public class UnifiedModelView extends AndroidViewModel {
     private final String TAG = UnifiedModelView.class.getName();
 
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrivalsFormated;
+    private MutableLiveData<List<FavouriteEntity>> favouritesMutableLiveData;
 //    private LiveData<List<FavouriteEntity>> favourites;
 
     @Inject
@@ -47,7 +48,6 @@ public class UnifiedModelView extends AndroidViewModel {
     LocalRepositoryImpl localRepository;
 
     private List<FavouriteEntity> favourites = new ArrayList<>();
-   //private MutableLiveData<List<FavouriteEntity>> favouritesEntity;
 
     //user and password
     String app_id=getApplication().getString(R.string.api_transport_id);
@@ -57,49 +57,39 @@ public class UnifiedModelView extends AndroidViewModel {
     public UnifiedModelView(Application application) {
         super(application);
         ((FavouriteApplication)application).getFavComponent().inject(this);
-
         this.mMutableArrivalsFormated = new MutableLiveData<>();
+        this.favouritesMutableLiveData = new MutableLiveData<>();
+//        this.mLiveDtaFavourites = localRepository.getLiveDataFavourites();
         this.remoteRepository = new RemoteRepositoryImpl();
         this.localRepository = new LocalRepositoryImpl(database);
-       // favouritesEntity = new MutableLiveData<>();
-//        ((FavouriteApplication)application).getFavComponent().inject(this);
-//        favouritesEntity = localRepository.getFavourites();
-//        this.localRepository = new LocalRepositoryImpl(database);
-//
-//        favourites=localRepository.getFavourites();
-//        localRepository.getFavourites().observe(this,new Observer<List<FavouriteEntity>>() {
-//            @Override
-//            public void onChanged(@Nullable List<FavouriteEntity> favouriteEntities) {
-//                favourites.addAll(favouriteEntities);
-//            }
-//        });
 
-        favourites.addAll(localRepository.getFavourites());
+        //this.mMutableFavourites = new MutableLiveData<>();
+        //favourites.addAll(localRepository.getFavourites());
+       // favouritesEntity = localRepository.database.favouriteDao().getAllFavourites();
+        //mMutableFavourites = localRepository.getMutableFavourites();
     }
 
-    @NonNull
-    public List<FavouriteEntity> getFavourites() {
-        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ unifiedViewModel getFavourites: "+localRepository.getFavourites().size());
-        return localRepository.getFavourites();
+//    public LiveData<List<FavouriteEntity>> getmLiveDataFavourites(){
+//        return localRepository.getLiveDataFavourites();
+//    }
+
+    public void setmMutableLiveDataFavourites() {
+        favourites = localRepository.getFavourites();
+        Log.v(TAG, "favourites en unifiedViewMOder "+favourites);
+        favouritesMutableLiveData.setValue(favourites);
     }
 
-//    public LiveData<List<FavouriteEntity>> getFavourites(){
-//        new AsyncTask<Void, Integer, Void>() {
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                //getFavourites(localRepository.getFavourites());
-//                favouritesEntity = localRepository.getFavourites();
-//                return null;
-//            }
-//        }.execute();
-//        return favouritesEntity;
+    public MutableLiveData<List<FavouriteEntity>> getmMutableLiveDataFavourites(){
+        return favouritesMutableLiveData;
+    }
+
+//    @NonNull
+//    public List<FavouriteEntity> getFavourites() {
+//        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ unifiedViewModel getFavourites: "+localRepository.getFavourites().size());
+//        return localRepository.getFavourites();
 //    }
 
     public void addFavourite(FavouriteEntity favouriteEntity) {
-        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ unifiedViewModel addFavourite");
-        if(!favouriteEntity.isTransient()) {
-            throw new RuntimeException("Task already added.");
-        }
         new AsyncTask<FavouriteEntity, Integer, Void>() {
             @Override
             protected Void doInBackground(FavouriteEntity... params) {
@@ -110,15 +100,12 @@ public class UnifiedModelView extends AndroidViewModel {
         }.execute(favouriteEntity);
     }
 
-    private void updateFavourite(FavouriteEntity favouriteEntity) {
-        if(favouriteEntity.isTransient()) {
-            throw new RuntimeException("Task is transient.");
-        }
-
+    public void deleteFavourite(FavouriteEntity favouriteEntity) {
         new AsyncTask<FavouriteEntity, Integer, Void>() {
             @Override
             protected Void doInBackground(FavouriteEntity... params) {
-                database.favouriteDao().updateFavourite(params[0]);
+                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ unifiedViewModel delete params "+params[0].getmLineId());
+                database.favouriteDao().deleteFavourite(params[0]);
                 return null;
             }
         }.execute(favouriteEntity);
@@ -138,7 +125,7 @@ public class UnifiedModelView extends AndroidViewModel {
 
             @Override
             public void onFailure(Call<List<ArrivalsEntity>> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }
@@ -150,7 +137,6 @@ public class UnifiedModelView extends AndroidViewModel {
             listtimes.add(secondsToMinutes(arrivals.get(0).getTimeToStation()));
             String lineId = arrivals.get(0).getLineId();
             boolean fav = isFav(arrivals.get(0));
-            Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++en el 0....fav " + fav);
             ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).get$type(), arrivals.get(0).getNaptanId(), lineId, arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(), listtimes, fav);
             arrivalsformated.add(aformated);
             List<Integer> times = null;
@@ -159,17 +145,13 @@ public class UnifiedModelView extends AndroidViewModel {
             ArrivalsEntity arrivalAux = null;
             int position = 0;
             int timesInMinutes = 0;
-            Log.v(TAG, "+++++++++++++++++++++++++++arrivals: " + arrivals.size());
-            Log.v(TAG, "+++++++++++++++++++++++++++arrivalsformated: " + arrivalsformated.size());
             for (int i = 1; i < arrivals.size(); i++) {
                 arrivalAux = arrivals.get(i);
                 lineId = arrivalAux.getLineId();
-                Log.v(TAG, "+++++++++++++++++++++++++++lineId: " + lineId + "-Iteraci'on" + i);
                 if (arrivalsformated.size() > 0) {
                     position = arrivalsformated.size() - 1;
                 }
                 aux = arrivalsformated.get(position).getLineId();
-                Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Aux.... " + aux);
                 timesInMinutes = secondsToMinutes(arrivalAux.getTimeToStation());
                 if (lineId.equals(aux)) {
                     times = arrivalsformated.get(position).getTimeToStation();
@@ -179,7 +161,6 @@ public class UnifiedModelView extends AndroidViewModel {
                     listtimes = new ArrayList<Integer>();
                     listtimes.add(timesInMinutes);
                     fav = isFav(arrivalAux);
-                    Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Aux....fav " + fav);
                     aformated = new ArrivalsFormatedEntity(arrivalAux.get$type(), arrivalAux.getNaptanId(), arrivalAux.getLineId(), arrivalAux.getStopLetter(), arrivalAux.getStationName(), arrivalAux.getPlatformName(), arrivalAux.getDestinationName(), listtimes,fav);
                     arrivalsformated.add(aformated);
                 }
@@ -196,9 +177,6 @@ public class UnifiedModelView extends AndroidViewModel {
     }
 
     private boolean isFav(ArrivalsEntity arrival){
-        Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ isFAV ");
-       // FavouriteEntity favtemp = new FavouriteEntity(Datearrival.getLineId(), arrival.getNaptanId());
-
         for (FavouriteEntity fav :
                 favourites) {
             if (fav.getmLineId().equals(arrival.getLineId()) && fav.getmNaptanId().equals(arrival.getNaptanId())){
@@ -206,7 +184,5 @@ public class UnifiedModelView extends AndroidViewModel {
             }
         }
         return false;
-
-        //return favourites.  .contains(arrival);
     }
 }

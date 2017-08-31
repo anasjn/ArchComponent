@@ -1,5 +1,7 @@
 package com.pfc.android.archcomponent.repository;
 
+import android.arch.lifecycle.LiveData;
+
 import com.pfc.android.archcomponent.vo.FavouriteEntity;
 
 import java.util.List;
@@ -11,8 +13,9 @@ import java.util.List;
 public interface LocalRepository {
 
     List<FavouriteEntity> getFavourites();
+//    LiveData<List<FavouriteEntity>> getLiveDataFavourites();
     void addFavourite(FavouriteEntity favouriteEntity);
-    void updateFavourite(FavouriteEntity favouriteEntity);
+    void deleteFavourite(FavouriteEntity favouriteEntity);
 
 }
 

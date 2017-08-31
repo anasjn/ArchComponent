@@ -21,6 +21,7 @@ public class FavouriteEntity implements Serializable {
     public String mPlatformName;
     public String mDestinationName;
     public String mNaptanId;
+    public boolean mFavourite;
 
     public String getmNaptanId() {
         return mNaptanId;
@@ -70,22 +71,28 @@ public class FavouriteEntity implements Serializable {
         this.mDestinationName = mDestinationName;
     }
 
-    public FavouriteEntity() {
-//        this.mTime = null;
-//        this.mLineId = null;
-//        this.mPlatformName = null;
-//        this.mDestinationName = null;
+    public boolean ismFavourite() {
+        return mFavourite;
     }
 
-    public FavouriteEntity(Date time, String line, String platform, String destination, String naptanId) {
+    public void setmFavourite(boolean mFavourite) {
+        this.mFavourite = mFavourite;
+    }
+
+    public FavouriteEntity() {
+
+    }
+
+    public FavouriteEntity(Date time, String line, String platform, String destination, String naptanId, boolean favourite) {
         this.mTime = time;
         this.mLineId = line;
         this.mPlatformName = platform;
         this.mDestinationName = destination;
         this.mNaptanId = naptanId;
+        this.mFavourite = favourite;
     }
 
-    public boolean isTransient() {
-        return getmId() == 0;
-    }
+//    public boolean isTransient() {
+//        return getmId() == 0;
+//    }
 }

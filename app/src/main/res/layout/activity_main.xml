@@ -8,30 +8,6 @@
     tools:context="com.pfc.android.archcomponent.ui.MainActivity">
 
     <include layout="@layout/content_main" />
-    <!--<LinearLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:la>-->
-
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/fab"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@android:drawable/ic_menu_myplaces"-->
-            <!--android:layout_gravity="bottom|end|right"-->
-            <!--app:elevation="6dp"-->
-            <!--app:pressedTranslationZ="12dp"/>-->
-
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/nearme"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@android:drawable/star_big_on"-->
-            <!--android:layout_gravity="bottom|end|right"-->
-            <!--app:elevation="6dp"-->
-            <!--app:pressedTranslationZ="12dp"/>-->
-    <!--</LinearLayout>-->
 
     <View
         android:id="@+id/fabBGLayout"
@@ -41,7 +17,7 @@
         android:visibility="gone"/>
 
     <LinearLayout
-        android:id="@+id/fabLayout1"
+        android:id="@+id/fabLayoutNearMe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/standard_23"
@@ -55,14 +31,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/text1"
+            android:id="@+id/textNearMe"
             android:textStyle="bold"
             android:textColor="@color/colorAccent"
             android:background="@color/colorWhite"
             android:text="Near Me"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab1"
+            android:id="@+id/fabNearMe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -72,7 +48,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/fabLayout2"
+        android:id="@+id/fabLayoutFavourites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/standard_12"
@@ -86,14 +62,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/text2"
+            android:id="@+id/textFavourites"
             android:textStyle="bold"
             android:textColor="@color/colorAccent"
             android:background="@color/colorWhite"
             android:text="Favourites"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab2"
+            android:id="@+id/fabFavourites"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"

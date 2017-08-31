@@ -2,28 +2,28 @@ package com.pfc.android.archcomponent.ui;
 
 import android.animation.Animator;
 import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.util.PermissionsRequester;
-import com.pfc.android.archcomponent.viewmodel.AddFavouriteViewModel;
-import com.pfc.android.archcomponent.viewmodel.DetailViewModel;
-import com.pfc.android.archcomponent.viewmodel.ListLocationsViewModel;
-import com.pfc.android.archcomponent.viewmodel.LocationViewModel;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
+import com.pfc.android.archcomponent.vo.FavouriteEntity;
 
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends LifecycleActivity {
@@ -31,19 +31,19 @@ public class MainActivity extends LifecycleActivity {
     private final String TAG = MainActivity.class.getName();
 
     private PermissionsRequester permissionsRequester;
+    private ListFragment nearmeFragment;
+    FavouritesFragment favouritesFragment;
     private LocationFragment locationFragment;
     private View fragmentContainer;
 
-    //ViewModels used by different fragments
-    private ListLocationsViewModel mViewModel;
-    //private AddFavouriteViewModel afViewModel;
-    private LocationViewModel lViewModel;
-    //private DetailViewModel dViewModel;
+
+    private UnifiedModelView unifiedModelView;
+
+    private List<FavouriteEntity> favourites = new ArrayList<>();
 
     //FAB
-    FloatingActionButton fab, fab1, fab2;
-    LinearLayout fabLayout1, fabLayout2;
-    TextView textView1,textView2;
+    FloatingActionButton fab, fabNearMe, fabFavourites;
+    LinearLayout fabLayoutNearMe, fabLayoutFavourites;
     View fabBGLayout;
     boolean isFABOpen=false;
 
@@ -52,28 +52,45 @@ public class MainActivity extends LifecycleActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListFragment nearmeFragment = new ListFragment();
-        FavouritesFragment favouritesFragment = new FavouritesFragment();
-
+        nearmeFragment = new ListFragment();
+        favouritesFragment = new FavouritesFragment();
 
         //Location permissions check and fragment to use for location
         fragmentContainer = findViewById(R.id.fragment_container);
         permissionsRequester = PermissionsRequester.newInstance(this);
 
-        if (savedInstanceState == null) {
+        //Getting the list of favourites in order to see if there is any if them and show them in first place.
+        unifiedModelView = ViewModelProviders.of(this).get(UnifiedModelView.class);
+        //favourites = unifiedModelView.getFavourites();
+        unifiedModelView.setmMutableLiveDataFavourites();
 
-            Log.v(TAG,"savedInstanceState null");
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).commit();
+        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<FavouriteEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<FavouriteEntity> favouriteEntities) {
+                favourites.addAll(favouriteEntities);
+                if(favourites.size()>0) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();
+                }else{
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearme").commit();
+                }
+            }
+        });
+
+
+        if (savedInstanceState == null) {
+            if(favourites.size()>0) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();
+            }else{
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearme").commit();
+            }
         }
 
-
-        fabLayout1= (LinearLayout) findViewById(R.id.fabLayout1);
-        fabLayout2= (LinearLayout) findViewById(R.id.fabLayout2);
-
-
+        //Menu Fab
+        fabLayoutNearMe= (LinearLayout) findViewById(R.id.fabLayoutNearMe);
+        fabLayoutFavourites= (LinearLayout) findViewById(R.id.fabLayoutFavourites);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
-        fab2= (FloatingActionButton) findViewById(R.id.fab2);
+        fabNearMe = (FloatingActionButton) findViewById(R.id.fabNearMe);
+        fabFavourites= (FloatingActionButton) findViewById(R.id.fabFavourites);
         fabBGLayout=findViewById(R.id.fabBGLayout);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -94,25 +111,31 @@ public class MainActivity extends LifecycleActivity {
             }
         });
 
-        fab1.setOnClickListener(fab1OnClick);
-        fab2.setOnClickListener(fab2OnClick);
+        fabNearMe.setOnClickListener(fabNearMeOnClick);
+        fabFavourites.setOnClickListener(fabFavouritesOnClick);
 
     }
 
-    private View.OnClickListener fab1OnClick = new View.OnClickListener(){
+    private View.OnClickListener fabFavouritesOnClick = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            Toast.makeText(getBaseContext(),"tecleado click 1",Toast.LENGTH_SHORT).show();
+            if(favourites.size()>0) {
+                FavouritesFragment favouritesFragment = new FavouritesFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favouriteClick").commit();
+            }else{
+                Toast.makeText(getBaseContext(),"No favourites saved",Toast.LENGTH_SHORT).show();
+            }
+
         }
     };
 
-    private View.OnClickListener fab2OnClick = new View.OnClickListener(){
+    private View.OnClickListener fabNearMeOnClick = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            Toast.makeText(getBaseContext(),"tecleado click 2",Toast.LENGTH_SHORT).show();
+            nearmeFragment = new ListFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearmeClick").commit();
         }
     };
-
 
     //Location
     private void createLocationFragment() {
@@ -155,41 +178,38 @@ public class MainActivity extends LifecycleActivity {
 
     private void showFABMenu(){
         isFABOpen=true;
-        fabLayout1.setVisibility(View.VISIBLE);
-        fabLayout2.setVisibility(View.VISIBLE);
+        fabLayoutNearMe.setVisibility(View.VISIBLE);
+        fabLayoutFavourites.setVisibility(View.VISIBLE);
 
         fabBGLayout.setVisibility(View.VISIBLE);
 
         fab.animate().rotationBy(180);
-        fabLayout1.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
-        fabLayout2.animate().translationY(-getResources().getDimension(R.dimen.standard_100));
+        fabLayoutNearMe.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
+        fabLayoutFavourites.animate().translationY(-getResources().getDimension(R.dimen.standard_100));
     }
 
     private void closeFABMenu(){
         isFABOpen=false;
         fabBGLayout.setVisibility(View.GONE);
         fab.animate().rotationBy(-180);
-        fabLayout1.animate().translationY(0);
-        fabLayout2.animate().translationY(0).setListener(new Animator.AnimatorListener() {
+        fabLayoutNearMe.animate().translationY(0);
+        fabLayoutFavourites.animate().translationY(0).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
 
             }
-
             @Override
             public void onAnimationEnd(Animator animator) {
                 if(!isFABOpen){
-                    fabLayout1.setVisibility(View.GONE);
-                    fabLayout2.setVisibility(View.GONE);
+                    fabLayoutNearMe.setVisibility(View.GONE);
+                    fabLayoutFavourites.setVisibility(View.GONE);
                 }
 
             }
-
             @Override
             public void onAnimationCancel(Animator animator) {
 
             }
-
             @Override
             public void onAnimationRepeat(Animator animator) {
 

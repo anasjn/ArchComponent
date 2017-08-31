@@ -1,5 +1,6 @@
 package com.pfc.android.archcomponent.adapters;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,9 +27,10 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
 
     Context mContext;
     private List<FavouriteEntity> favourites;
+    private MutableLiveData<List<FavouriteEntity>> mMutablefavourites;
     //RecyclerView doesn't come with an onItemClick interface, so we have
     // to implement one in the adapter.This is the field that hold an instance of CustomDetailClickListener
-//    CustomDetailClickListener detailListener;
+    CustomDetailClickListener favouriteListener;
     /**
      * Initialize the ArrayList of the Adapter.
      *
@@ -38,6 +40,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
         Log.v(TAG,"**************************************************FavouriteAdapter Constructor");
         this.mContext = context;
         this.favourites = new ArrayList<>();
+        this.mMutablefavourites = new MutableLiveData<>();
     }
 
 
@@ -53,10 +56,17 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
     // Create new views (invoked by the layout manager)
     @Override
     public FavouriteAdapter.Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.v(TAG,"**************************************************FavouriteAdapter onCreateViewHolder");
         View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.fav_row, parent, false);
         final FavouriteAdapter.Holder mViewHolder = new FavouriteAdapter.Holder(row);
-        Log.v(TAG,"**************************************************FavouriteAdapter onCreateViewHolder "+mViewHolder);
+        row.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(favouriteListener!=null) {
+                    Log.v(TAG,"**************************************************FavouriteAdapter.Holder  onClick");
+                    favouriteListener.onItemClick(v, mViewHolder.getAdapterPosition());
+                }
+            }
+        });
         return mViewHolder;
 
     }
@@ -76,6 +86,10 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
         }
     }
 
+    //Adding the setter method on the CustomDetailClickListener
+    public void setOnItemClickListener(CustomDetailClickListener mFavouriteClickListener) {
+        favouriteListener = mFavouriteClickListener;
+    }
 
     public void setFavourites(List<FavouriteEntity> favourites) {
         this.favourites = favourites;
@@ -104,6 +118,14 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
 
     }
 
+    public MutableLiveData<List<FavouriteEntity>> getMutableFavourites() {
+        Log.v(TAG,"**************************************************FavouriteAdapter getFavourites favourites "+favourites);
+        notifyDataSetChanged();
+        return mMutablefavourites;
+
+    }
+
+
     public void clearFavourites() {
         Log.v(TAG,"**************************************************FavouriteAdapter clearFavouriteInformation");
         if (favourites != null) {
@@ -112,12 +134,13 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
         notifyDataSetChanged();
     }
 
+
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      * Whereas the use of the ViewHolder pattern is optional in ListView, RecyclerView enforces it.
      * This improves scrolling and performance by avoiding findViewById() for each cell.
      */
-    public class Holder extends RecyclerView.ViewHolder {
+    public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener  {
 
         private final String TAG = ArrivalAdapter.Holder.class.getName();
 
@@ -135,8 +158,18 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
             // Creating ViewHolder Constructor with View and viewType As a parameter
             super(itemView);
             Log.v(TAG,"**************************************************FavouriteAdapter Holder Constructor");
+            itemView.setClickable(true);
+            itemView.setOnClickListener(this);
         }
 
+        //Implements the onClick override method
+        @Override
+        public void onClick(View v) {
+            if(favouriteListener!=null) {
+                Log.v(TAG,"**************************************************ArrivalAdapter.Holder  onClick");
+                favouriteListener.onItemClick(v,getAdapterPosition());
+            }
+        }
 
     }
 }

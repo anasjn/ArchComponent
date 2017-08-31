@@ -3,20 +3,13 @@ package com.pfc.android.archcomponent.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.pfc.android.archcomponent.db.AppDatabase;
-import com.pfc.android.archcomponent.db.FavouriteDao;
-import com.pfc.android.archcomponent.viewmodel.AddFavouriteViewModel;
-import com.pfc.android.archcomponent.vo.ArrivalsEntity;
-import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.vo.FavouriteEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
@@ -28,14 +21,16 @@ public class LocalRepositoryImpl implements LocalRepository {
 
     private final String TAG = LocalRepositoryImpl.class.getName();
 
-    //private FavouriteDao favouriteDao;
-    private AppDatabase database;
+    public AppDatabase database;
 
     private List<FavouriteEntity> favouritesEntity;
 
+    //private MutableLiveData<List<FavouriteEntity>> mMutablefavouritesEntity;
+
     public LocalRepositoryImpl(AppDatabase database){
         this.database = database;
-        favouritesEntity = new ArrayList<>();
+        //favouritesEntity = new ArrayList<>();
+       // mMutablefavouritesEntity = new MutableLiveData<>();
     }
 
     public List<FavouriteEntity> getFavourites(){
@@ -66,10 +61,13 @@ public class LocalRepositoryImpl implements LocalRepository {
         }
     }
 
+
+//    public LiveData<List<FavouriteEntity>> getLiveDataFavourites(){
+//        return database.favouriteDao().getAllFavourites();
+//    }
+
+
     public void addFavourite(FavouriteEntity favouriteEntity) {
-        if(!favouriteEntity.isTransient()) {
-            throw new RuntimeException("Task already added.");
-        }
         new AsyncTask<FavouriteEntity, Integer, Void>() {
             @Override
             protected Void doInBackground(FavouriteEntity... params) {
@@ -79,15 +77,12 @@ public class LocalRepositoryImpl implements LocalRepository {
         }.execute(favouriteEntity);
     }
 
-    public void updateFavourite(FavouriteEntity favouriteEntity) {
-        if(favouriteEntity.isTransient()) {
-            throw new RuntimeException("Task is transient.");
-        }
 
+    public void deleteFavourite(FavouriteEntity favouriteEntity) {
         new AsyncTask<FavouriteEntity, Integer, Void>() {
             @Override
             protected Void doInBackground(FavouriteEntity... params) {
-                database.favouriteDao().updateFavourite(params[0]);
+                database.favouriteDao().deleteFavourite(params[0]);
                 return null;
             }
         }.execute(favouriteEntity);

@@ -3,13 +3,9 @@ package com.pfc.android.archcomponent.di;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.util.Log;
-
 import com.pfc.android.archcomponent.db.AppDatabase;
-import com.pfc.android.archcomponent.repository.IssueRepositoryImpl;
 import com.pfc.android.archcomponent.util.FavouriteApplication;
-
 import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 

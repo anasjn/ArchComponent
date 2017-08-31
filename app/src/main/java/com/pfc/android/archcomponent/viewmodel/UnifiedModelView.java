@@ -4,15 +4,12 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
-
+import android.widget.Toast;
 import com.pfc.android.archcomponent.R;
-import com.pfc.android.archcomponent.api.ApiResponse;
 import com.pfc.android.archcomponent.db.AppDatabase;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.repository.LocalRepository;
@@ -25,13 +22,9 @@ import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.vo.FavouriteEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
-import com.pfc.android.archcomponent.vo.StopPointsEntity;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,8 +39,9 @@ public class UnifiedModelView extends AndroidViewModel {
 
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrivalsFormated;
     private MutableLiveData<List<FavouriteEntity>> mFavouritesMutableLiveData;
-    private MutableLiveData<DefaultLocation> mLocationMutableLiveData;
-//    private MutableLiveData<StopPointsEntity> mStopPointMutableLiveData;
+    private LiveData<DefaultLocation> mLocationLiveData;
+    private MutableLiveData<StopLocationEntity> mStopPointMutableLiveData;
+
 
     @Inject
     public AppDatabase database;
@@ -70,16 +64,38 @@ public class UnifiedModelView extends AndroidViewModel {
         this.mFavouritesMutableLiveData = new MutableLiveData<>();
         this.mRemoteRepository = new RemoteRepositoryImpl();
         this.mLocalRepository = new LocalRepositoryImpl(database);
+        this.mStopPointMutableLiveData = new MutableLiveData<>();
+        this.mLocationLiveData = new LocationLiveData(application.getApplicationContext());
     }
 
 
-//    public LiveData<DefaultLocation> getLocation(Context context) {
-//        if (mLocationMutableLiveData == null) {
-//            mLocationMutableLiveData = new LocationLiveData(context);
-//        }
-//        return mLocationMutableLiveData;
-//    }
-//
+    public LiveData<DefaultLocation> getLmLocationLiveData() {
+       return mLocationLiveData;
+    }
+
+    public void setLmLocationLiveData(Context context) {
+        mLocationLiveData = new LocationLiveData(context);
+    }
+
+    public MutableLiveData<StopLocationEntity> getmStopPointMutableLiveData(){
+        return mStopPointMutableLiveData;
+    }
+
+    public void setStopPointMutableLiveData(@NonNull double lat, @NonNull double lon, int radious) {
+        mRemoteRepository.getStopLocation(app_id,app_key,lat, lon, radious, new Callback<StopLocationEntity> () {
+            @Override
+            public void onResponse(Call<StopLocationEntity> call, Response<StopLocationEntity> response) {
+                mStopPointMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<StopLocationEntity> call, Throwable t) {
+                Log.e(TAG, "error occured: " + t.toString());
+                Toast.makeText(getApplication().getBaseContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     public void setmMutableLiveDataFavourites() {
         favourites = mLocalRepository.getFavourites();
@@ -117,21 +133,7 @@ public class UnifiedModelView extends AndroidViewModel {
         return mMutableArrivalsFormated;
     }
 
-//    public void loadStopInformation(@NonNull String app_id, @NonNull String app_key, @NonNull double lat, @NonNull double lon, int radious) {
-//        mRemoteRepository.getStopLocation(app_id,app_key,lat, lon, radious, new Callback<StopLocationEntity> () {
-//            @Override
-//            public void onResponse(Call<StopLocationEntity> call, Response<StopLocationEntity> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<StopLocationEntity> call, Throwable t) {
-//                t.printStackTrace();
-//            }
-//        });
-//    }
-
-    public void getArrivalInformation(String naptanId) {
+    public void getArrivalInformation(@NonNull String naptanId) {
         mRemoteRepository.getArrivalInformation(naptanId, app_id, app_key, new Callback<List<ArrivalsEntity>>() {
             @Override
             public void onResponse(Call<List<ArrivalsEntity>> call, Response<List<ArrivalsEntity>> response) {
@@ -141,7 +143,8 @@ public class UnifiedModelView extends AndroidViewModel {
 
             @Override
             public void onFailure(Call<List<ArrivalsEntity>> call, Throwable t) {
-                t.printStackTrace();
+                Log.e(TAG, "error occured: " + t.toString());
+                Toast.makeText(getApplication().getBaseContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

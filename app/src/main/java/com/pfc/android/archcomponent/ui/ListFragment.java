@@ -1,32 +1,26 @@
 package com.pfc.android.archcomponent.ui;
 
 import android.arch.lifecycle.LifecycleFragment;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.adapters.DataAdapter;
+import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
+import com.pfc.android.archcomponent.vo.StopLocationEntity;
 import com.pfc.android.archcomponent.vo.StopPointsEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
 import com.pfc.android.archcomponent.model.DefaultLocation;
-import com.pfc.android.archcomponent.viewmodel.ListLocationsViewModel;
-import com.pfc.android.archcomponent.viewmodel.LocationViewModel;
-
 import android.arch.lifecycle.ViewModelProviders;
 import android.widget.Toast;
-
 import java.util.List;
-import java.util.Locale;
+
 
 /**
  * Created by ana on 12/08/17.
@@ -35,74 +29,32 @@ import java.util.Locale;
 public class ListFragment extends LifecycleFragment {
 
     private static final String TAG = ListFragment.class.getName();
-
-    LiveData<DefaultLocation> liveData = null;
-
-    private static final String FRACTIONAL_FORMAT = "%.4f";
-    private static final String ACCURACY_FORMAT = "%.1fm";
-
     protected RecyclerView mRecyclerView;
     protected DataAdapter mAdapter;
-    private ListLocationsViewModel mViewModel;
-    //From the activity
-    private LocationViewModel lViewModel;
+    private UnifiedModelView unifiedModelView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(getActivity()).get(ListLocationsViewModel.class);
+        unifiedModelView = ViewModelProviders.of(getActivity()).get(UnifiedModelView.class);
 
-        // Initialize location, getting the location from the Activity
-        lViewModel =  ViewModelProviders.of(getActivity()).get(LocationViewModel.class);
-
-        //user and password
-        String app_id=getString(R.string.api_transport_id);
-        String app_key=getString(R.string.api_transport_key);
-
-        liveData = lViewModel.getLocation(getContext());
-
-        liveData.observe(this,new Observer<DefaultLocation>(){
+        //Get current location
+        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
             @Override
-            public void onChanged(@Nullable DefaultLocation defaultLocation){
-                mViewModel.loadStopInformation(app_id,app_key,defaultLocation.getLatitude(), defaultLocation.getLongitude(),200);
-//                mViewModel.loadStopInformation(app_id,app_key,51.509865,-0.118092,200);
+            public void onChanged(@Nullable DefaultLocation defaultLocation) {
+                //set the stops near my current location
+                unifiedModelView.setStopPointMutableLiveData(defaultLocation.getLatitude(), defaultLocation.getLongitude(),200);
             }
         });
 
-        // Handle changes emitted by LiveData
-        mViewModel.getApiResponse().observe(this, apiResponse -> {
-            if (apiResponse.getError() != null) {
-                handleError(apiResponse.getError());
-            } else {
-                handleResponse(apiResponse.getStopLocation());
+        // Handle changes emitted by StopPointMutableLiveData
+        unifiedModelView.getmStopPointMutableLiveData().observe(this, new Observer<StopLocationEntity>() {
+            @Override
+            public void onChanged(@Nullable StopLocationEntity stopLocationEntity) {
+                handleResponse((List<StopPointsEntity>) stopLocationEntity.getStopPoints());
             }
         });
-
-//        FavouritesFragment favouritesFragment = new FavouritesFragment();
-
-        // Button to select FAv or NEarme fragments
-//        FloatingActionButton fab = (FloatingActionButton) findViewById();
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).commit();
-////                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-//
-//
-//            }
-//        });
-
-//        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent in = new Intent(getActivity(), InsertActivity.class);
-//                startActivity(in);
-//            }
-//        });
     }
 
     @Override
@@ -123,7 +75,6 @@ public class ListFragment extends LifecycleFragment {
         CustomDetailClickListener mDetailClickListener = new CustomDetailClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-
                 FragmentManager fm = getFragmentManager();
                 Bundle arguments = new Bundle();
                 arguments.putString("naptanId", mAdapter.getStopById(position));
@@ -151,12 +102,6 @@ public class ListFragment extends LifecycleFragment {
                     Toast.LENGTH_SHORT
             ).show();
         }
-    }
-
-    private void handleError(Throwable error) {
-        mAdapter.clearStopInformation();
-        Log.e(TAG, "error occured: " + error.toString());
-        Toast.makeText(getActivity().getBaseContext(), "Oops! Some error occured.", Toast.LENGTH_SHORT).show();
     }
 
 }

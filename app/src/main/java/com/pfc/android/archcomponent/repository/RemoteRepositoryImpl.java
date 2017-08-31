@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RemoteRepositoryImpl implements RemoteRepository{
-    public static final String TAG = IssueRepositoryImpl.class.getSimpleName();
+    public static final String TAG = RemoteRepositoryImpl.class.getSimpleName();
 
     public static final String BASE_URL = "https://api.tfl.gov.uk/";
     private TflApiService mApiService;

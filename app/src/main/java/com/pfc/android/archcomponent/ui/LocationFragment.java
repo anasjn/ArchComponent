@@ -13,24 +13,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.arch.lifecycle.LiveData;
 import android.widget.Toast;
-
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import com.pfc.android.archcomponent.adapters.DataAdapter;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.model.LocationListener;
-import com.pfc.android.archcomponent.viewmodel.ListLocationsViewModel;
-import com.pfc.android.archcomponent.viewmodel.LocationViewModel;
-
 import com.google.android.gms.maps.SupportMapFragment;
+import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
+import com.pfc.android.archcomponent.vo.StopLocationEntity;
 import com.pfc.android.archcomponent.vo.StopPointsEntity;
 
 import java.util.ArrayList;
@@ -47,7 +42,7 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     private GoogleMap gMap = null;
     private Marker mDefault;
     private LatLng mDefaultLocation = null;
-    LiveData<DefaultLocation> liveData = null;
+
     //To show in the map the markers for the list of stops location near me
     protected DataAdapter mAdapter = new DataAdapter(getContext());
 
@@ -55,15 +50,17 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     ArrayList<Marker> markers =  new ArrayList<Marker>();
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
-    private ListLocationsViewModel mViewModel;
-    private LocationViewModel lViewModel;
+
+    private UnifiedModelView unifiedModelView;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_location, container, false);
+        //set the map
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
         return view;
     }
 
@@ -74,31 +71,30 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         gMap = googleMap;
         gMap.getUiSettings().setZoomControlsEnabled(true);
         gMap.getUiSettings().setAllGesturesEnabled(true);
-        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++lViewModel");
-        lViewModel =  ViewModelProviders.of(getActivity()).get(LocationViewModel.class);
-        //To show in the map the markers for the list of stops location near me
-        mViewModel = ViewModelProviders.of(getActivity()).get(ListLocationsViewModel.class);
-        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++mViewModel");
 
+        unifiedModelView = ViewModelProviders.of(getActivity()).get(UnifiedModelView.class);
 
-        liveData = lViewModel.getLocation(getContext());
-        liveData.observe(this,new Observer <DefaultLocation>(){
+        //set current location
+        unifiedModelView.setLmLocationLiveData(getContext());
+
+        // Handle changes emitted by LiveDataLocation
+        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
             @Override
-            public void onChanged(@Nullable DefaultLocation defaultLocation){
+            public void onChanged(@Nullable DefaultLocation defaultLocation) {
                 updateLocation(defaultLocation, true);
             }
         });
-        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++mViewModel");
-        // Handle changes emitted by LiveData
-        mViewModel.getApiResponse().observe(this, apiResponse -> {
-            if (apiResponse.getError() != null) {
-                handleError(apiResponse.getError());
-            } else {
-                Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++apiResponse.getStopLocation()");
-                handleResponse(apiResponse.getStopLocation());
+
+        // Handle changes emitted by StopPointMutableLiveData
+        unifiedModelView.getmStopPointMutableLiveData().observe(this, new Observer<StopLocationEntity>() {
+            @Override
+            public void onChanged(@Nullable StopLocationEntity stopLocationEntity) {
+                handleResponse((List<StopPointsEntity>) stopLocationEntity.getStopPoints());
             }
         });
     }
+
+
 
     private void handleResponse(List<StopPointsEntity> stoppoints) {
         markers =  new ArrayList<Marker>();
@@ -137,11 +133,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         }
     }
 
-    private void handleError(Throwable error) {
-        mAdapter.clearStopInformation();
-        Log.e(TAG, "error occured: " + error.toString());
-        Toast.makeText(getContext(), "Oops! Some error occured.", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void updateLocation(DefaultLocation defaultLocation, boolean mylocation) {

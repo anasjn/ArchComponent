@@ -5,20 +5,27 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.pfc.android.archcomponent.R;
+import com.pfc.android.archcomponent.api.ApiResponse;
 import com.pfc.android.archcomponent.db.AppDatabase;
+import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.repository.LocalRepository;
 import com.pfc.android.archcomponent.repository.LocalRepositoryImpl;
+import com.pfc.android.archcomponent.repository.RemoteRepository;
 import com.pfc.android.archcomponent.repository.RemoteRepositoryImpl;
 import com.pfc.android.archcomponent.util.FavouriteApplication;
+import com.pfc.android.archcomponent.util.LocationLiveData;
 import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.vo.FavouriteEntity;
+import com.pfc.android.archcomponent.vo.StopLocationEntity;
+import com.pfc.android.archcomponent.vo.StopPointsEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +45,17 @@ public class UnifiedModelView extends AndroidViewModel {
     private final String TAG = UnifiedModelView.class.getName();
 
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrivalsFormated;
-    private MutableLiveData<List<FavouriteEntity>> favouritesMutableLiveData;
-//    private LiveData<List<FavouriteEntity>> favourites;
+    private MutableLiveData<List<FavouriteEntity>> mFavouritesMutableLiveData;
+    private MutableLiveData<DefaultLocation> mLocationMutableLiveData;
+//    private MutableLiveData<StopPointsEntity> mStopPointMutableLiveData;
 
     @Inject
     public AppDatabase database;
 
-    RemoteRepositoryImpl remoteRepository;
-    LocalRepositoryImpl localRepository;
+    RemoteRepository mRemoteRepository;
+    LocalRepository mLocalRepository;
 
+    //List of favourites in order to check if the arrival is a favourite or not
     private List<FavouriteEntity> favourites = new ArrayList<>();
 
     //user and password
@@ -58,36 +67,29 @@ public class UnifiedModelView extends AndroidViewModel {
         super(application);
         ((FavouriteApplication)application).getFavComponent().inject(this);
         this.mMutableArrivalsFormated = new MutableLiveData<>();
-        this.favouritesMutableLiveData = new MutableLiveData<>();
-//        this.mLiveDtaFavourites = localRepository.getLiveDataFavourites();
-        this.remoteRepository = new RemoteRepositoryImpl();
-        this.localRepository = new LocalRepositoryImpl(database);
-
-        //this.mMutableFavourites = new MutableLiveData<>();
-        //favourites.addAll(localRepository.getFavourites());
-       // favouritesEntity = localRepository.database.favouriteDao().getAllFavourites();
-        //mMutableFavourites = localRepository.getMutableFavourites();
+        this.mFavouritesMutableLiveData = new MutableLiveData<>();
+        this.mRemoteRepository = new RemoteRepositoryImpl();
+        this.mLocalRepository = new LocalRepositoryImpl(database);
     }
 
-//    public LiveData<List<FavouriteEntity>> getmLiveDataFavourites(){
-//        return localRepository.getLiveDataFavourites();
+
+//    public LiveData<DefaultLocation> getLocation(Context context) {
+//        if (mLocationMutableLiveData == null) {
+//            mLocationMutableLiveData = new LocationLiveData(context);
+//        }
+//        return mLocationMutableLiveData;
 //    }
+//
 
     public void setmMutableLiveDataFavourites() {
-        favourites = localRepository.getFavourites();
+        favourites = mLocalRepository.getFavourites();
         Log.v(TAG, "favourites en unifiedViewMOder "+favourites);
-        favouritesMutableLiveData.setValue(favourites);
+        mFavouritesMutableLiveData.setValue(favourites);
     }
 
     public MutableLiveData<List<FavouriteEntity>> getmMutableLiveDataFavourites(){
-        return favouritesMutableLiveData;
+        return mFavouritesMutableLiveData;
     }
-
-//    @NonNull
-//    public List<FavouriteEntity> getFavourites() {
-//        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ unifiedViewModel getFavourites: "+localRepository.getFavourites().size());
-//        return localRepository.getFavourites();
-//    }
 
     public void addFavourite(FavouriteEntity favouriteEntity) {
         new AsyncTask<FavouriteEntity, Integer, Void>() {
@@ -115,8 +117,22 @@ public class UnifiedModelView extends AndroidViewModel {
         return mMutableArrivalsFormated;
     }
 
+//    public void loadStopInformation(@NonNull String app_id, @NonNull String app_key, @NonNull double lat, @NonNull double lon, int radious) {
+//        mRemoteRepository.getStopLocation(app_id,app_key,lat, lon, radious, new Callback<StopLocationEntity> () {
+//            @Override
+//            public void onResponse(Call<StopLocationEntity> call, Response<StopLocationEntity> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<StopLocationEntity> call, Throwable t) {
+//                t.printStackTrace();
+//            }
+//        });
+//    }
+
     public void getArrivalInformation(String naptanId) {
-        remoteRepository.getArrivalInformation(naptanId, app_id, app_key, new Callback<List<ArrivalsEntity>>() {
+        mRemoteRepository.getArrivalInformation(naptanId, app_id, app_key, new Callback<List<ArrivalsEntity>>() {
             @Override
             public void onResponse(Call<List<ArrivalsEntity>> call, Response<List<ArrivalsEntity>> response) {
                 List<ArrivalsFormatedEntity> arrivalsFormatedEntity = convert(response.body());

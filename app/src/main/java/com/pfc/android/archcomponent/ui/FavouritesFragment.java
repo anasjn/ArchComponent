@@ -12,13 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-
 import com.pfc.android.archcomponent.R;
-import com.pfc.android.archcomponent.adapters.ArrivalAdapter;
 import com.pfc.android.archcomponent.adapters.FavouriteAdapter;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
-import com.pfc.android.archcomponent.viewmodel.AddFavouriteViewModel;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
 import com.pfc.android.archcomponent.vo.FavouriteEntity;
 
@@ -87,7 +83,6 @@ public class FavouritesFragment extends LifecycleFragment {
         };
 
         mAdapter = new FavouriteAdapter(getContext());
-       // mAdapter.addFavourites(favourites);
         mAdapter.setOnItemClickListener(mFavouriteClickListener);
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);

@@ -36,9 +36,7 @@ public class MainActivity extends LifecycleActivity {
     private LocationFragment locationFragment;
     private View fragmentContainer;
 
-
     private UnifiedModelView unifiedModelView;
-
     private List<FavouriteEntity> favourites = new ArrayList<>();
 
     //FAB
@@ -61,7 +59,7 @@ public class MainActivity extends LifecycleActivity {
 
         //Getting the list of favourites in order to see if there is any if them and show them in first place.
         unifiedModelView = ViewModelProviders.of(this).get(UnifiedModelView.class);
-        //favourites = unifiedModelView.getFavourites();
+
         unifiedModelView.setmMutableLiveDataFavourites();
 
         unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<FavouriteEntity>>() {
@@ -180,9 +178,7 @@ public class MainActivity extends LifecycleActivity {
         isFABOpen=true;
         fabLayoutNearMe.setVisibility(View.VISIBLE);
         fabLayoutFavourites.setVisibility(View.VISIBLE);
-
         fabBGLayout.setVisibility(View.VISIBLE);
-
         fab.animate().rotationBy(180);
         fabLayoutNearMe.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
         fabLayoutFavourites.animate().translationY(-getResources().getDimension(R.dimen.standard_100));

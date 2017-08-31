@@ -37,7 +37,6 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
      */
 
     public FavouriteAdapter(Context context) {
-        Log.v(TAG,"**************************************************FavouriteAdapter Constructor");
         this.mContext = context;
         this.favourites = new ArrayList<>();
         this.mMutablefavourites = new MutableLiveData<>();
@@ -62,7 +61,6 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
             @Override
             public void onClick(View v){
                 if(favouriteListener!=null) {
-                    Log.v(TAG,"**************************************************FavouriteAdapter.Holder  onClick");
                     favouriteListener.onItemClick(v, mViewHolder.getAdapterPosition());
                 }
             }
@@ -74,11 +72,9 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final FavouriteAdapter.Holder holder, int position) {
-        Log.v(TAG,"**************************************************FavouriteAdapter onBindViewHolder");
         if(favourites!=null && favourites.size()>0) {
             FavouriteEntity favourite = favourites.get(position);
             if(favourite!=null) {
-                Log.v(TAG,"**************************************************FavouriteAdapter onBindViewHolder favourite"+favourite);
                 holder.mTextViewLineId.setText(favourite.getmLineId());
                 holder.mTextViewPlatformName.setText(favourite.getmPlatformName());
                 holder.mTextViewDestinationName.setText(favourite.getmDestinationName());
@@ -94,17 +90,14 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
     public void setFavourites(List<FavouriteEntity> favourites) {
         this.favourites = favourites;
         this.notifyDataSetChanged();
-        Log.v(TAG,"**************************************************FavouriteAdapter setFavourites ");
     }
 
     public FavouriteEntity getFavourite(int position) {
         notifyDataSetChanged();
-        Log.v(TAG,"**************************************************FavouriteAdapter getFavourite ");
         return favourites.get(position);
     }
 
     public void addFavourites(List <FavouriteEntity> favourites) {
-        Log.v(TAG,"**************************************************FavouriteAdapter addFavourites");
         this.favourites.clear();
         Log.v(TAG,"**************************************************FavouriteAdapter addFavourites favourites "+favourites);
         this.favourites.addAll(favourites);
@@ -119,7 +112,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
     }
 
     public MutableLiveData<List<FavouriteEntity>> getMutableFavourites() {
-        Log.v(TAG,"**************************************************FavouriteAdapter getFavourites favourites "+favourites);
+        Log.v(TAG,"**************************************************FavouriteAdapter getMutableFavourites favourites "+favourites);
         notifyDataSetChanged();
         return mMutablefavourites;
 
@@ -148,7 +141,6 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
 
         public Holder(View view) {
             super(view);
-            Log.v(TAG,"**************************************************FavouriteAdapter Holder constructor view solo");
             mTextViewLineId = (TextView) view.findViewById(R.id.line_id);
             mTextViewPlatformName = (TextView) view.findViewById(R.id.platform_name);
             mTextViewDestinationName = (TextView) view.findViewById(R.id.destination_name);
@@ -157,7 +149,6 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
         public Holder(View itemView,int ViewType,Context c) {
             // Creating ViewHolder Constructor with View and viewType As a parameter
             super(itemView);
-            Log.v(TAG,"**************************************************FavouriteAdapter Holder Constructor");
             itemView.setClickable(true);
             itemView.setOnClickListener(this);
         }
@@ -166,7 +157,6 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
         @Override
         public void onClick(View v) {
             if(favouriteListener!=null) {
-                Log.v(TAG,"**************************************************ArrivalAdapter.Holder  onClick");
                 favouriteListener.onItemClick(v,getAdapterPosition());
             }
         }

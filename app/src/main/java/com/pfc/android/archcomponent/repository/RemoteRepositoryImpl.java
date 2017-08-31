@@ -1,20 +1,12 @@
 package com.pfc.android.archcomponent.repository;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.persistence.db.SupportSQLiteOpenHelper;
 
-import com.pfc.android.archcomponent.api.ApiResponse;
-import com.pfc.android.archcomponent.api.ApiResponse2;
 import com.pfc.android.archcomponent.api.TflApiService;
 import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
-import com.pfc.android.archcomponent.vo.StopPointsEntity;
-
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

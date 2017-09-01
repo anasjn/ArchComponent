@@ -1,6 +1,7 @@
 package com.pfc.android.archcomponent.ui;
 
 import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -15,8 +16,9 @@ import android.widget.Toast;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.adapters.FavouriteAdapter;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
+import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
-import com.pfc.android.archcomponent.vo.FavouriteEntity;
+import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +34,14 @@ public class FavouritesFragment extends LifecycleFragment {
     private UnifiedModelView unifiedModelView;
 
     protected RecyclerView mRecyclerView;
-    protected FavouriteAdapter mAdapter;
+    protected FavouriteAdapter mFavouriteAdapter;
+    //protected ArrivalAdapter mArrivalAdapter;
 
-    private List<FavouriteEntity> favourites = new ArrayList<>();
+    private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableFavourites = new MutableLiveData<>();
+
+    private DefaultLocation currentLocation;
+
+    private List<ArrivalsFormatedEntity> favourites = new ArrayList<>();
 
     public FavouritesFragment() {
     }
@@ -45,13 +52,31 @@ public class FavouritesFragment extends LifecycleFragment {
 
         unifiedModelView = ViewModelProviders.of(getActivity()).get(UnifiedModelView.class);
 
-        // Handle changes emitted by LiveData
-        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<FavouriteEntity>>() {
+        //Get current location
+        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
             @Override
-            public void onChanged(@Nullable List<FavouriteEntity> favourites) {
-                handleResponse(favourites);
+            public void onChanged(@Nullable DefaultLocation defaultLocation) {
+                //set the favourites
+                currentLocation = defaultLocation;
+                unifiedModelView.setmMutableLiveDataFavourites();
             }
         });
+
+        // Handle changes emitted by LiveData
+        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<ArrivalsFormatedEntity> favourites) {
+                unifiedModelView.setmMutablePredictionsByStopLine(favourites);
+            }
+        });
+
+        unifiedModelView.getmMutablePredictionsByStopPLine().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<ArrivalsFormatedEntity> favouriteEntities) {
+                handleResponse(favouriteEntities);
+            }
+        });
+
 
     }
 
@@ -73,28 +98,27 @@ public class FavouritesFragment extends LifecycleFragment {
         CustomDetailClickListener mFavouriteClickListener = new CustomDetailClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-                FavouriteEntity favourite = mAdapter.getFavourite(position);
-                Toast.makeText(getContext(), "Line: "+ favourite.getmLineId()+ " in Platform: " +favourite.getmPlatformName()+ " towards: "+favourite.getmDestinationName()+ " has been deleted from Favourites", Toast.LENGTH_SHORT).show();
-                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++favourite "+favourite.getmNaptanId() +" , "+favourite.getmLineId());
+                ArrivalsFormatedEntity favourite = mFavouriteAdapter.getFavourite(position);
+                Toast.makeText(getContext(), "Line: "+ favourite.getLineId()+ " in Platform: " +favourite.getPlatformName()+ " towards: "+favourite.getDestinationName()+ " has been deleted from Favourites", Toast.LENGTH_SHORT).show();
                 unifiedModelView.deleteFavourite(favourite);
                 unifiedModelView.setmMutableLiveDataFavourites();
-
             }
         };
 
-        mAdapter = new FavouriteAdapter(getContext());
-        mAdapter.setOnItemClickListener(mFavouriteClickListener);
+        mFavouriteAdapter = new FavouriteAdapter(getContext());
+        mFavouriteAdapter.setOnItemClickListener(mFavouriteClickListener);
         // Set CustomAdapter as the adapter for RecyclerView.
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mFavouriteAdapter);
         return rootView;
     }
 
 
-    private void handleResponse(List<FavouriteEntity> favourites) {
+    private void handleResponse(List<ArrivalsFormatedEntity> favourites) {
         if (favourites != null && favourites.size()>0) {
-            mAdapter.addFavourites(favourites);
+            mFavouriteAdapter.addFavourites(favourites);
+            mFavouriteAdapter.addCurrentLocation(this.currentLocation);
         } else {
-            mAdapter.clearFavourites();
+            mFavouriteAdapter.clearFavourites();
             Toast.makeText(
                     getContext(),
                     "No arrival information found for the searched stop.",
@@ -102,4 +126,6 @@ public class FavouritesFragment extends LifecycleFragment {
             ).show();
         }
     }
+
+
 }

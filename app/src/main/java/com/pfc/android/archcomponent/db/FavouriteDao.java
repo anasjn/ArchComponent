@@ -1,15 +1,13 @@
 package com.pfc.android.archcomponent.db;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Update;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.pfc.android.archcomponent.vo.FavouriteEntity;
+import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import java.util.List;
 
@@ -26,12 +24,12 @@ public interface FavouriteDao {
 //    Integer isFavourite(String naptanid, String lineid);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void addFavourite(FavouriteEntity favourite);
+    void addFavourite(ArrivalsFormatedEntity favourite);
 
     @Delete
-    void deleteFavourite(FavouriteEntity favourite);
+    void deleteFavourite(ArrivalsFormatedEntity favourite);
 
     @Query("SELECT * FROM favourites")
-    List<FavouriteEntity> getFavourites();
+    List<ArrivalsFormatedEntity> getFavourites();
 
 }

@@ -8,4 +8,5 @@
     <string name="timing_next">The following in: </string>
     <string name="separator">, </string>
     <string name="final_separtor"> mins. </string>
+    <string name="direction">direction</string>
 </resources>

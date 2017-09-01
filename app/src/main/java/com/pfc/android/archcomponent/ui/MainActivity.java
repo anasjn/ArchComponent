@@ -15,7 +15,7 @@ import android.view.View;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.util.PermissionsRequester;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
-import com.pfc.android.archcomponent.vo.FavouriteEntity;
+import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
@@ -37,7 +37,7 @@ public class MainActivity extends LifecycleActivity {
     private View fragmentContainer;
 
     private UnifiedModelView unifiedModelView;
-    private List<FavouriteEntity> favourites = new ArrayList<>();
+    private List<ArrivalsFormatedEntity> favourites = new ArrayList<>();
 
     //FAB
     FloatingActionButton fab, fabNearMe, fabFavourites;
@@ -62,9 +62,9 @@ public class MainActivity extends LifecycleActivity {
 
         unifiedModelView.setmMutableLiveDataFavourites();
 
-        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<FavouriteEntity>>() {
+        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
             @Override
-            public void onChanged(@Nullable List<FavouriteEntity> favouriteEntities) {
+            public void onChanged(@Nullable List<ArrivalsFormatedEntity> favouriteEntities) {
                 favourites.addAll(favouriteEntities);
                 if(favourites.size()>0) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();

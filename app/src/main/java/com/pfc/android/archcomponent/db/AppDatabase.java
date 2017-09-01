@@ -4,14 +4,14 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 
-import com.pfc.android.archcomponent.vo.FavouriteEntity;
+import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 /**
  * Created by dr3amsit on 29/07/17.
  */
 
-@Database(entities = {FavouriteEntity.class}, version = 1)
-@TypeConverters(DateConverter.class)
+@Database(entities = {ArrivalsFormatedEntity.class}, version = 1)
+@TypeConverters({StringConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract FavouriteDao favouriteDao();

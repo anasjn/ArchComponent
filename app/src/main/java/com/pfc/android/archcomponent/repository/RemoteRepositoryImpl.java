@@ -1,6 +1,8 @@
 package com.pfc.android.archcomponent.repository;
 
 
+import android.util.Log;
+
 import com.pfc.android.archcomponent.api.TflApiService;
 import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
@@ -27,8 +29,9 @@ public class RemoteRepositoryImpl implements RemoteRepository{
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
                 .build();
+        Log.v(TAG,"retrofit "+retrofit.baseUrl());
         mApiService = retrofit.create(TflApiService.class);
-
+        Log.v(TAG,"mApiService "+mApiService.toString());
     }
 
     public void getStopLocation(String app_id, String app_key, double lat, double lon, int radius, Callback<StopLocationEntity> callback) {
@@ -39,6 +42,13 @@ public class RemoteRepositoryImpl implements RemoteRepository{
 
     public void getArrivalInformation(String naptanId, String app_id, String app_key, Callback<List<ArrivalsEntity>> callback) {
         Call<List<ArrivalsEntity>> call = mApiService.getArrivalInformation(naptanId,app_id,app_key);
+        call.enqueue(callback);
+    }
+
+    public void getPredictionsByStopPLine(String app_id, String app_key,String lineId, String naptanId, String direction, Callback<List<ArrivalsEntity>> callback){
+        Log.v(TAG,"app_id "+app_id+"app_key" +app_key+"lineId"+lineId+"naptanId"+naptanId+"direction"+direction);
+        Call<List<ArrivalsEntity>> call = mApiService.getPredictionsByStopPLine(app_id,app_key,lineId,naptanId,direction);
+        Log.v(TAG,"app_id "+app_id+"app_key" +app_key+"lineId"+lineId+"naptanId"+naptanId+"direction"+direction);
         call.enqueue(callback);
     }
 }

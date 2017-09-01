@@ -83,7 +83,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         if(mArrivalsEntity!=null && mArrivalsEntity.size()>0) {
             ArrivalsFormatedEntity arrival = mArrivalsEntity.get(position);
             String timing = "Next bus in ";
-            List<Integer> timesToStation;
+            List<String> timesToStation;
             if(arrival!=null) {
                 holder.mTextViewStationName.setText(arrival.getStationName());
                 holder.mTextViewLineId.setText(arrival.getLineId());
@@ -106,7 +106,6 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
                     holder.mTextViewTimeToStation2.setText(timing);
                 }
                 holder.mRadioButtonStar.setChecked(arrival.isFavourite());
-                Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ isfav? ");
             }
         }
     }

@@ -29,6 +29,9 @@ public class ArrivalsEntity {
     @SerializedName("platformName")
     @Expose
     private String platformName;
+    @SerializedName("direction")
+    @Expose
+    private String direction;
     @SerializedName("destinationName")
     @Expose
     private String destinationName;
@@ -85,6 +88,14 @@ public class ArrivalsEntity {
 
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     public String getDestinationName() {

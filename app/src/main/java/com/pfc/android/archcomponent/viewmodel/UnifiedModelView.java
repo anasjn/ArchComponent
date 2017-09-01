@@ -20,7 +20,6 @@ import com.pfc.android.archcomponent.util.FavouriteApplication;
 import com.pfc.android.archcomponent.util.LocationLiveData;
 import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
-import com.pfc.android.archcomponent.vo.FavouriteEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +37,10 @@ public class UnifiedModelView extends AndroidViewModel {
     private final String TAG = UnifiedModelView.class.getName();
 
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrivalsFormated;
-    private MutableLiveData<List<FavouriteEntity>> mFavouritesMutableLiveData;
+    private MutableLiveData<List<ArrivalsFormatedEntity>> mFavouritesMutableLiveData;
     private LiveData<DefaultLocation> mLocationLiveData;
     private MutableLiveData<StopLocationEntity> mStopPointMutableLiveData;
+    private MutableLiveData<List<ArrivalsFormatedEntity>> mMutablePredictionsByStopLine;
 
 
     @Inject
@@ -50,7 +50,7 @@ public class UnifiedModelView extends AndroidViewModel {
     LocalRepository mLocalRepository;
 
     //List of favourites in order to check if the arrival is a favourite or not
-    private List<FavouriteEntity> favourites = new ArrayList<>();
+    private List<ArrivalsFormatedEntity> favourites = new ArrayList<>();
 
     //user and password
     String app_id=getApplication().getString(R.string.api_transport_id);
@@ -66,6 +66,7 @@ public class UnifiedModelView extends AndroidViewModel {
         this.mLocalRepository = new LocalRepositoryImpl(database);
         this.mStopPointMutableLiveData = new MutableLiveData<>();
         this.mLocationLiveData = new LocationLiveData(application.getApplicationContext());
+        this.mMutablePredictionsByStopLine = new MutableLiveData<>();
     }
 
 
@@ -103,26 +104,24 @@ public class UnifiedModelView extends AndroidViewModel {
         mFavouritesMutableLiveData.setValue(favourites);
     }
 
-    public MutableLiveData<List<FavouriteEntity>> getmMutableLiveDataFavourites(){
+    public MutableLiveData<List<ArrivalsFormatedEntity>> getmMutableLiveDataFavourites(){
         return mFavouritesMutableLiveData;
     }
 
-    public void addFavourite(FavouriteEntity favouriteEntity) {
-        new AsyncTask<FavouriteEntity, Integer, Void>() {
+    public void addFavourite(ArrivalsFormatedEntity favouriteEntity) {
+        new AsyncTask<ArrivalsFormatedEntity, Integer, Void>() {
             @Override
-            protected Void doInBackground(FavouriteEntity... params) {
-                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ unifiedViewModel addFavourite params "+params[0].getmLineId());
+            protected Void doInBackground(ArrivalsFormatedEntity... params) {
                 database.favouriteDao().addFavourite(params[0]);
                 return null;
             }
         }.execute(favouriteEntity);
     }
 
-    public void deleteFavourite(FavouriteEntity favouriteEntity) {
-        new AsyncTask<FavouriteEntity, Integer, Void>() {
+    public void deleteFavourite(ArrivalsFormatedEntity favouriteEntity) {
+        new AsyncTask<ArrivalsFormatedEntity, Integer, Void>() {
             @Override
-            protected Void doInBackground(FavouriteEntity... params) {
-                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ unifiedViewModel delete params "+params[0].getmLineId());
+            protected Void doInBackground(ArrivalsFormatedEntity... params) {
                 database.favouriteDao().deleteFavourite(params[0]);
                 return null;
             }
@@ -133,11 +132,11 @@ public class UnifiedModelView extends AndroidViewModel {
         return mMutableArrivalsFormated;
     }
 
-    public void getArrivalInformation(@NonNull String naptanId) {
+    public void setmMutableArrivalsFormated(@NonNull String naptanId) {
         mRemoteRepository.getArrivalInformation(naptanId, app_id, app_key, new Callback<List<ArrivalsEntity>>() {
             @Override
             public void onResponse(Call<List<ArrivalsEntity>> call, Response<List<ArrivalsEntity>> response) {
-                List<ArrivalsFormatedEntity> arrivalsFormatedEntity = convert(response.body());
+                List<ArrivalsFormatedEntity> arrivalsFormatedEntity = convert(response.body(),"xx","yy");
                 mMutableArrivalsFormated.setValue(arrivalsFormatedEntity);
             }
 
@@ -149,21 +148,58 @@ public class UnifiedModelView extends AndroidViewModel {
         });
     }
 
-    public List<ArrivalsFormatedEntity> convert(List<ArrivalsEntity> arrivals) {
+    public MutableLiveData<List<ArrivalsFormatedEntity>> getmMutablePredictionsByStopPLine(){
+        return mMutablePredictionsByStopLine;
+    }
+
+    public void setmMutablePredictionsByStopLine(List<ArrivalsFormatedEntity> favourites) {
+
+        List<ArrivalsFormatedEntity> favouritesResult = new ArrayList<ArrivalsFormatedEntity>();
+        for (ArrivalsFormatedEntity fav:favourites) {
+            Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++setmMutablePredictionsByStopLine lineid "+fav.getLineId());
+            Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++setmMutablePredictionsByStopLine getNaptanId "+fav.getNaptanId());
+            Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++setmMutablePredictionsByStopLine direction "+fav.getDirection());
+            mRemoteRepository.getPredictionsByStopPLine(app_id, app_key, fav.getLineId(), fav.getNaptanId(), fav.getDirection(), new Callback<List<ArrivalsEntity>>() {
+                @Override
+                public void onResponse(Call<List<ArrivalsEntity>> call, Response<List<ArrivalsEntity>> response) {
+                    List<ArrivalsFormatedEntity> arrivalsFormatedEntity = convert(response.body(), fav.getmLat(), fav.getmLon());
+                    Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++onResponse "+arrivalsFormatedEntity.get(0).getTimeToStation());
+                    fav.setTimeToStation(arrivalsFormatedEntity.get(0).getTimeToStation());
+                    //OJO
+//                    favouritesResult.add(new ArrivalsFormatedEntity(fav.getNaptanId(),fav.getLineId(),fav.getPlatformName(),fav.getDestinationName(),fav.getStationName(),fav.getNaptanId(),fav.getmLat(),fav.getmLon(),fav.getDirection(),fav.isFavourite(),fav.getTimeToStation()));
+                    favouritesResult.add(new ArrivalsFormatedEntity(fav.getNaptanId(),fav.getLineId(),fav.getPlatformName(),fav.getDestinationName(),fav.getStationName(),fav.getNaptanId(),fav.getDirection(),fav.isFavourite(),fav.getTimeToStation()));
+                    Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++favouritesResult "+favouritesResult.size());
+                    if(favourites.size() == favouritesResult.size()) mMutablePredictionsByStopLine.setValue(favouritesResult);
+                }
+
+                @Override
+                public void onFailure(Call<List<ArrivalsEntity>> call, Throwable t) {
+                    Log.e(TAG, "error occured: " + t.toString());
+                    Toast.makeText(getApplication().getBaseContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+             });
+        }
+
+    }
+
+    public List<ArrivalsFormatedEntity> convert(List<ArrivalsEntity> arrivals, String lat,String lon) {
         List<ArrivalsFormatedEntity> arrivalsformated = new ArrayList<>();
         if (arrivals != null && arrivals.size() > 0) {
-            ArrayList<Integer> listtimes = new ArrayList<Integer>();
+            ArrayList<String> listtimes = new ArrayList<String>();
             listtimes.add(secondsToMinutes(arrivals.get(0).getTimeToStation()));
             String lineId = arrivals.get(0).getLineId();
             boolean fav = isFav(arrivals.get(0));
-            ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).get$type(), arrivals.get(0).getNaptanId(), lineId, arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(), listtimes, fav);
+            Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++convert arrivals.get(0).getDirection()"+arrivals.get(0).getDirection());
+            //OJO
+//            ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).getNaptanId(), lineId, arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(), lat, lon, arrivals.get(0).getDirection(),fav,listtimes);
+            ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).getNaptanId(), lineId, arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(), arrivals.get(0).getDirection(),fav,listtimes);
             arrivalsformated.add(aformated);
-            List<Integer> times = null;
+            List<String> times = null;
             int j = 0;
             String aux = "";
             ArrivalsEntity arrivalAux = null;
             int position = 0;
-            int timesInMinutes = 0;
+            String timesInMinutes = "";
             for (int i = 1; i < arrivals.size(); i++) {
                 arrivalAux = arrivals.get(i);
                 lineId = arrivalAux.getLineId();
@@ -177,10 +213,11 @@ public class UnifiedModelView extends AndroidViewModel {
                     times.add(timesInMinutes);
                     arrivalsformated.get(position).setTimeToStation(times);
                 } else {
-                    listtimes = new ArrayList<Integer>();
+                    listtimes = new ArrayList<String>();
                     listtimes.add(timesInMinutes);
                     fav = isFav(arrivalAux);
-                    aformated = new ArrivalsFormatedEntity(arrivalAux.get$type(), arrivalAux.getNaptanId(), arrivalAux.getLineId(), arrivalAux.getStopLetter(), arrivalAux.getStationName(), arrivalAux.getPlatformName(), arrivalAux.getDestinationName(), listtimes,fav);
+                    Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++convert arrivals.get(0).getDirection()"+arrivals.get(0).getDirection());
+                    aformated = new ArrivalsFormatedEntity(arrivalAux.getNaptanId(), arrivalAux.getLineId(), arrivalAux.getStopLetter(), arrivalAux.getStationName(), arrivalAux.getPlatformName(), arrivalAux.getDestinationName(), arrivalAux.getDirection(),fav,listtimes);
                     arrivalsformated.add(aformated);
                 }
             }
@@ -189,19 +226,20 @@ public class UnifiedModelView extends AndroidViewModel {
         return arrivalsformated;
     }
 
-    private int secondsToMinutes(int seconds){
+    private String secondsToMinutes(int seconds){
         int minutes = 0;
         minutes = seconds/60;
-        return minutes;
+        return ""+minutes;
     }
 
     private boolean isFav(ArrivalsEntity arrival){
-        for (FavouriteEntity fav :
+        for (ArrivalsFormatedEntity fav :
                 favourites) {
-            if (fav.getmLineId().equals(arrival.getLineId()) && fav.getmNaptanId().equals(arrival.getNaptanId())){
+            if (fav.getLineId().equals(arrival.getLineId()) && fav.getNaptanId().equals(arrival.getNaptanId())){
                 return true;
             }
         }
         return false;
     }
+
 }

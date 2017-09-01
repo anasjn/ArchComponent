@@ -1,5 +1,7 @@
 package com.pfc.android.archcomponent.api;
 
+import android.util.Log;
+
 import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
 
@@ -37,5 +39,17 @@ public interface TflApiService {
             @Query("radius") int radius
     );
 
+
+    //Gets the list of arrival predictions for given line ids based at the given stop
+    //https://api.tfl.gov.uk/Line/181/Arrivals/490004846S?direction=outbound&app_id=0eb46872&app_key=e937f4eacc856f0dcf4c66d1ad8b918d
+    //https://api.tfl.gov.uk/Line/21/Arrivals/490000026E?direction=inbound
+    @GET("Line/{lineid}/Arrivals/{naptanid}")
+    Call<List<ArrivalsEntity>> getPredictionsByStopPLine(
+            @Path("lineid") String lineid,
+            @Path("naptanid") String naptanid,
+            @Query("direction") String direction,
+            @Query("app_id") String api_transport_id,
+            @Query("app_key") String api_transport_key
+    );
 
 }

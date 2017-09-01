@@ -110,9 +110,21 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
 
     }
 
-    public String  getStopById(int position) {
+    public String getNaptanIdByPosition(int position) {
         notifyDataSetChanged();
         return mStopPoints.get(position).getNaptanId();
+
+    }
+
+    public String getLatByPosition(int position) {
+        notifyDataSetChanged();
+        return mStopPoints.get(position).getLat();
+
+    }
+
+    public String getLonByPosition(int position) {
+        notifyDataSetChanged();
+        return mStopPoints.get(position).getLon();
 
     }
 

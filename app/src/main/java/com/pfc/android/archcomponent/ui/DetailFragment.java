@@ -17,9 +17,7 @@ import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.adapters.ArrivalAdapter;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
-import com.pfc.android.archcomponent.vo.FavouriteEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
-import java.util.Date;
 import java.util.List;
 
 
@@ -35,6 +33,9 @@ public class DetailFragment extends LifecycleFragment {
     protected RecyclerView mRecyclerView;
     private UnifiedModelView unifiedModelView;
 
+    private String lat = "";
+    private String lon = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +46,11 @@ public class DetailFragment extends LifecycleFragment {
         Bundle args = getArguments();
         if(args!=null){
             naptanId = args.getString("naptanId");
+            lat = args.getString("lat");
+            lon = args.getString("lon");
         }
 
-        unifiedModelView.getArrivalInformation(naptanId);
+        unifiedModelView.setmMutableArrivalsFormated(naptanId);
 
         // Handle changes emitted by LiveData
         unifiedModelView.getmMutableArrivalsFormated().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
@@ -79,17 +82,17 @@ public class DetailFragment extends LifecycleFragment {
             @Override
             public void onItemClick(View v, int position) {
                 ArrivalsFormatedEntity arrival = mAdapter.getArrivalsList().get(position);
-                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++en el click para guardar en la BBDD "+position +" isfav "+arrival.isFavourite());
-                FavouriteEntity favourite = new FavouriteEntity (new Date(System.currentTimeMillis()),arrival.getLineId(),arrival.getPlatformName(),arrival.getDestinationName(),arrival.getNaptanId(),arrival.isFavourite());
+
+                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++en el click para guardar en la BBDD "+position +" isfav "+arrival.isFavourite() +" arrival.getDirection() "+ arrival.getDirection());
+               // ArrivalsFormatedEntity favourite = new ArrivalsFormatedEntity (arrival.getLineId(),arrival.getPlatformName(),arrival.getDestinationName(),arrival.getStationName(),arrival.getNaptanId(),lat, lon,arrival.getDirection(), arrival.isFavourite(),arrival.getTimeToStationSort());
                 if(!arrival.isFavourite()){
                     Toast.makeText(getContext(), "Line: "+ arrival.getLineId()+ " in Platform: " +arrival.getPlatformName()+ " towards: "+arrival.getDestinationName()+ " has been added to Favourites", Toast.LENGTH_SHORT).show();
-                    Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++add favourite "+favourite.getmNaptanId() +" , "+favourite.getmLineId());
-                    unifiedModelView.addFavourite(favourite);
+                    unifiedModelView.addFavourite(arrival);
                     unifiedModelView.setmMutableLiveDataFavourites();
                 }else{
                     Toast.makeText(getContext(), "Line: "+ arrival.getLineId()+ " in Platform: " +arrival.getPlatformName()+ " towards: "+arrival.getDestinationName()+ " has been deleted from Favourites", Toast.LENGTH_SHORT).show();
-                    Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++delete favourite "+favourite.getmNaptanId() +" , "+favourite.getmLineId());
-                    unifiedModelView.deleteFavourite(favourite);
+                    Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++delete favourite "+arrival.getNaptanId() +" , "+arrival.getLineId());
+                    unifiedModelView.deleteFavourite(arrival);
                     unifiedModelView.setmMutableLiveDataFavourites();
                 }
             }

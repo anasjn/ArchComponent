@@ -1,8 +1,9 @@
 package com.pfc.android.archcomponent.vo;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,9 +11,11 @@ import java.util.List;
  * Created by ana on 26/08/17.
  */
 
-public class ArrivalsFormatedEntity {
+@Entity(tableName = "favourites")
+public class ArrivalsFormatedEntity implements Serializable {
 
-    private String $type;
+    @PrimaryKey(autoGenerate = true)
+    public int mId;
 
     private String naptanId;
 
@@ -24,27 +27,18 @@ public class ArrivalsFormatedEntity {
 
     private String platformName;
 
+    private String direction;
+
+    public String mLat;
+
+    public String mLon;
+
     private String destinationName;
 
-    private List<Integer> timeToStation;
+    private List<String> timeToStation;
 
     private boolean favourite;
 
-    public boolean isFavourite() {
-        return favourite;
-    }
-
-    public void setFavourite(boolean favourite) {
-        this.favourite = favourite;
-    }
-
-    public String get$type() {
-        return $type;
-    }
-
-    public void set$type(String $type) {
-        this.$type = $type;
-    }
 
     public String getNaptanId() {
         return naptanId;
@@ -85,6 +79,31 @@ public class ArrivalsFormatedEntity {
         this.platformName = platformName;
     }
 
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public String getmLat() {
+        return mLat;
+    }
+
+    public void setmLat(String mLat) {
+        this.mLat = mLat;
+    }
+
+    public String getmLon() {
+        return mLon;
+    }
+
+    public void setmLon(String mLon) {
+        this.mLon = mLon;
+    }
+
+
     public String getDestinationName() {
         return destinationName;
     }
@@ -93,21 +112,28 @@ public class ArrivalsFormatedEntity {
         this.destinationName = destinationName;
     }
 
-    public List<Integer> getTimeToStation() {
+    public List<String> getTimeToStation() {
         return timeToStation;
     }
 
-    public List<Integer> getTimeToStationSort() {
+    public List<String> getTimeToStationSort() {
         Collections.sort(this.timeToStation);
         return timeToStation;
     }
 
-    public void setTimeToStation(List<Integer> timeToStation) {
+    public void setTimeToStation(List<String> timeToStation) {
         this.timeToStation = timeToStation;
     }
 
-    public ArrivalsFormatedEntity(String $type, String naptanId,String lineId, String stopLetter, String stationName, String platformName, String destinationName, List<Integer> timeToStation, boolean favourite) {
-        this.$type = $type;
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
+
+    public ArrivalsFormatedEntity( String naptanId, String lineId, String stopLetter, String stationName, String platformName, String destinationName, String direction, boolean favourite, List<String> timeToStation) {
         this.naptanId= naptanId;
         this.lineId = lineId;
         this.stopLetter = stopLetter;
@@ -115,7 +141,9 @@ public class ArrivalsFormatedEntity {
         this.platformName = platformName;
         this.destinationName = destinationName;
         this.timeToStation = timeToStation;
+        this.direction = direction;
         //isfav?
         this.favourite = favourite;
     }
+
 }

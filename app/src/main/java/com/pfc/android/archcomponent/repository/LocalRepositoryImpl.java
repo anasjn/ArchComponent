@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import com.pfc.android.archcomponent.db.AppDatabase;
-import com.pfc.android.archcomponent.vo.FavouriteEntity;
+import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class LocalRepositoryImpl implements LocalRepository {
 
     public AppDatabase database;
 
-    private List<FavouriteEntity> favouritesEntity;
+    private List<ArrivalsFormatedEntity> favouritesEntity;
 
     //private MutableLiveData<List<FavouriteEntity>> mMutablefavouritesEntity;
 
@@ -33,7 +33,7 @@ public class LocalRepositoryImpl implements LocalRepository {
        // mMutablefavouritesEntity = new MutableLiveData<>();
     }
 
-    public List<FavouriteEntity> getFavourites(){
+    public List<ArrivalsFormatedEntity> getFavourites(){
         try {
             return new testGetFavourites(database).execute().get();
         } catch (InterruptedException | ExecutionException ex) {
@@ -42,7 +42,7 @@ public class LocalRepositoryImpl implements LocalRepository {
         }
     }
 
-    private static class testGetFavourites extends AsyncTask<Void, Void, List<FavouriteEntity>>{
+    private static class testGetFavourites extends AsyncTask<Void, Void, List<ArrivalsFormatedEntity>>{
 
         private AppDatabase database;
 
@@ -51,12 +51,12 @@ public class LocalRepositoryImpl implements LocalRepository {
         }
 
         @Override
-        protected List<FavouriteEntity> doInBackground(Void... voids) {
+        protected List<ArrivalsFormatedEntity> doInBackground(Void... voids) {
             return database.favouriteDao().getFavourites();
         }
 
         @Override
-        protected void onPostExecute(List<FavouriteEntity> favouriteEntities) {
+        protected void onPostExecute(List<ArrivalsFormatedEntity> favouriteEntities) {
             super.onPostExecute(favouriteEntities);
         }
     }
@@ -67,10 +67,10 @@ public class LocalRepositoryImpl implements LocalRepository {
 //    }
 
 
-    public void addFavourite(FavouriteEntity favouriteEntity) {
-        new AsyncTask<FavouriteEntity, Integer, Void>() {
+    public void addFavourite(ArrivalsFormatedEntity favouriteEntity) {
+        new AsyncTask<ArrivalsFormatedEntity, Integer, Void>() {
             @Override
-            protected Void doInBackground(FavouriteEntity... params) {
+            protected Void doInBackground(ArrivalsFormatedEntity... params) {
                 database.favouriteDao().addFavourite(params[0]);
                 return null;
             }
@@ -78,10 +78,10 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
 
-    public void deleteFavourite(FavouriteEntity favouriteEntity) {
-        new AsyncTask<FavouriteEntity, Integer, Void>() {
+    public void deleteFavourite(ArrivalsFormatedEntity favouriteEntity) {
+        new AsyncTask<ArrivalsFormatedEntity, Integer, Void>() {
             @Override
-            protected Void doInBackground(FavouriteEntity... params) {
+            protected Void doInBackground(ArrivalsFormatedEntity... params) {
                 database.favouriteDao().deleteFavourite(params[0]);
                 return null;
             }

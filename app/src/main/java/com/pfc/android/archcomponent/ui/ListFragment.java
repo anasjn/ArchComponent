@@ -77,7 +77,9 @@ public class ListFragment extends LifecycleFragment {
             public void onItemClick(View v, int position) {
                 FragmentManager fm = getFragmentManager();
                 Bundle arguments = new Bundle();
-                arguments.putString("naptanId", mAdapter.getStopById(position));
+                arguments.putString("naptanId", mAdapter.getNaptanIdByPosition(position));
+                arguments.putString("lat", mAdapter.getLatByPosition(position));
+                arguments.putString("lon", mAdapter.getLonByPosition(position));
                 DetailFragment detailfragment = new DetailFragment();
                 detailfragment.setArguments(arguments);
                 fm.beginTransaction().replace(R.id.content_fragment, detailfragment).addToBackStack("detail").commit();

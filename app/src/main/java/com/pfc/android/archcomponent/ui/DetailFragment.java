@@ -25,7 +25,7 @@ import java.util.List;
  * Created by ana on 16/08/17.
  */
 
-public class DetailFragment extends LifecycleFragment {
+public class DetailFragment extends LifecycleFragment{
 
     private final String TAG = DetailFragment.class.getName();
 
@@ -50,7 +50,7 @@ public class DetailFragment extends LifecycleFragment {
             lon = args.getString("lon");
         }
 
-        unifiedModelView.setmMutableArrivalsFormated(naptanId);
+        unifiedModelView.setmMutableArrivalsFormated(naptanId,lat,lon);
 
         // Handle changes emitted by LiveData
         unifiedModelView.getmMutableArrivalsFormated().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
@@ -82,9 +82,7 @@ public class DetailFragment extends LifecycleFragment {
             @Override
             public void onItemClick(View v, int position) {
                 ArrivalsFormatedEntity arrival = mAdapter.getArrivalsList().get(position);
-
                 Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++en el click para guardar en la BBDD "+position +" isfav "+arrival.isFavourite() +" arrival.getDirection() "+ arrival.getDirection());
-               // ArrivalsFormatedEntity favourite = new ArrivalsFormatedEntity (arrival.getLineId(),arrival.getPlatformName(),arrival.getDestinationName(),arrival.getStationName(),arrival.getNaptanId(),lat, lon,arrival.getDirection(), arrival.isFavourite(),arrival.getTimeToStationSort());
                 if(!arrival.isFavourite()){
                     Toast.makeText(getContext(), "Line: "+ arrival.getLineId()+ " in Platform: " +arrival.getPlatformName()+ " towards: "+arrival.getDestinationName()+ " has been added to Favourites", Toast.LENGTH_SHORT).show();
                     unifiedModelView.addFavourite(arrival);
@@ -93,11 +91,11 @@ public class DetailFragment extends LifecycleFragment {
                     Toast.makeText(getContext(), "Line: "+ arrival.getLineId()+ " in Platform: " +arrival.getPlatformName()+ " towards: "+arrival.getDestinationName()+ " has been deleted from Favourites", Toast.LENGTH_SHORT).show();
                     Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++delete favourite "+arrival.getNaptanId() +" , "+arrival.getLineId());
                     unifiedModelView.deleteFavourite(arrival);
-                    unifiedModelView.setmMutableLiveDataFavourites();
+                    //unifiedModelView.setmMutableLiveDataFavourites();
                 }
             }
-        };
 
+        };
         mAdapter = new ArrivalAdapter(getContext());
         mAdapter.setOnItemClickListener(mDetailClickListener);
         // Set CustomAdapter as the adapter for RecyclerView.
@@ -117,5 +115,4 @@ public class DetailFragment extends LifecycleFragment {
             ).show();
         }
     }
-
 }

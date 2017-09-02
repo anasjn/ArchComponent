@@ -35,7 +35,7 @@ public class ArrivalsFormatedEntity implements Serializable {
 
     private String destinationName;
 
-    private List<String> timeToStation;
+    private List<Integer> timeToStation;
 
     private boolean favourite;
 
@@ -112,16 +112,16 @@ public class ArrivalsFormatedEntity implements Serializable {
         this.destinationName = destinationName;
     }
 
-    public List<String> getTimeToStation() {
+    public List<Integer> getTimeToStation() {
         return timeToStation;
     }
 
-    public List<String> getTimeToStationSort() {
+    public List<Integer> getTimeToStationSort() {
         Collections.sort(this.timeToStation);
         return timeToStation;
     }
 
-    public void setTimeToStation(List<String> timeToStation) {
+    public void setTimeToStation(List<Integer> timeToStation) {
         this.timeToStation = timeToStation;
     }
 
@@ -133,7 +133,7 @@ public class ArrivalsFormatedEntity implements Serializable {
         this.favourite = favourite;
     }
 
-    public ArrivalsFormatedEntity( String naptanId, String lineId, String stopLetter, String stationName, String platformName, String destinationName, String direction, boolean favourite, List<String> timeToStation) {
+    public ArrivalsFormatedEntity( String naptanId, String lineId, String stopLetter, String stationName, String platformName, String destinationName, String lat, String lon, String direction, boolean favourite, List<Integer> timeToStation) {
         this.naptanId= naptanId;
         this.lineId = lineId;
         this.stopLetter = stopLetter;
@@ -142,6 +142,8 @@ public class ArrivalsFormatedEntity implements Serializable {
         this.destinationName = destinationName;
         this.timeToStation = timeToStation;
         this.direction = direction;
+        this.mLat = lat;
+        this.mLon = lon;
         //isfav?
         this.favourite = favourite;
     }

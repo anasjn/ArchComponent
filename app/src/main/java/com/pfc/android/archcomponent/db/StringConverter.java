@@ -13,10 +13,10 @@ import java.util.List;
 public class StringConverter {
 
     @TypeConverter
-    public static String toString(List<String> times) {
+    public static String toString(List<Integer> times) {
         String time = "";
         if(times !=null) {
-            time = times.get(0);
+            time = times.get(0).toString();
             for (int i = 1; i < times.size(); i++) {
                 time += "," + times.get(i);
             }
@@ -24,6 +24,17 @@ public class StringConverter {
         return time;
     }
     @TypeConverter
+    public static List<Integer> toIntegerList(String time) {
+        List<Integer> intlist = new ArrayList<>();
+        if(time !=null){
+            List<String> stringlist = toList(time);
+            for(int i = 0 ; i< stringlist.size();i++){
+                intlist.add(Integer.parseInt(stringlist.get(i)));
+            }
+        }
+        return intlist;
+    }
+
     public static List<String> toList(String time) {
         return time == null ? null : new ArrayList<String>(Arrays.asList(time.split(",")));
     }

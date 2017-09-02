@@ -46,9 +46,7 @@ public class RemoteRepositoryImpl implements RemoteRepository{
     }
 
     public void getPredictionsByStopPLine(String app_id, String app_key,String lineId, String naptanId, String direction, Callback<List<ArrivalsEntity>> callback){
-        Log.v(TAG,"app_id "+app_id+"app_key" +app_key+"lineId"+lineId+"naptanId"+naptanId+"direction"+direction);
-        Call<List<ArrivalsEntity>> call = mApiService.getPredictionsByStopPLine(app_id,app_key,lineId,naptanId,direction);
-        Log.v(TAG,"app_id "+app_id+"app_key" +app_key+"lineId"+lineId+"naptanId"+naptanId+"direction"+direction);
+        Call<List<ArrivalsEntity>> call = mApiService.getPredictionsByStopPLine(lineId,naptanId,direction,app_id,app_key);
         call.enqueue(callback);
     }
 }

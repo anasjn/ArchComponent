@@ -32,13 +32,14 @@ public class MainActivity extends LifecycleActivity {
 
     private PermissionsRequester permissionsRequester;
     private ListFragment nearmeFragment;
-    FavouritesFragment favouritesFragment;
+    private FavouritesFragment favouritesFragment;
     private LocationFragment locationFragment;
     private View fragmentContainer;
 
     private UnifiedModelView unifiedModelView;
     private List<ArrivalsFormatedEntity> favourites = new ArrayList<>();
 
+    private Bundle arguments = new Bundle();
     //FAB
     FloatingActionButton fab, fabNearMe, fabFavourites;
     LinearLayout fabLayoutNearMe, fabLayoutFavourites;
@@ -52,6 +53,7 @@ public class MainActivity extends LifecycleActivity {
 
         nearmeFragment = new ListFragment();
         favouritesFragment = new FavouritesFragment();
+        locationFragment = new LocationFragment();
 
         //Location permissions check and fragment to use for location
         fragmentContainer = findViewById(R.id.fragment_container);
@@ -60,15 +62,33 @@ public class MainActivity extends LifecycleActivity {
         //Getting the list of favourites in order to see if there is any if them and show them in first place.
         unifiedModelView = ViewModelProviders.of(this).get(UnifiedModelView.class);
 
-        unifiedModelView.setmMutableLiveDataFavourites();
-
-        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+        //ASJ Comment
+        //unifiedModelView.setmMutableLiveDataFavourites();
+        //ASJ Comment
+//        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+//            @Override
+//            public void onChanged(@Nullable List<ArrivalsFormatedEntity> favouriteEntities) {
+//                favourites.addAll(favouriteEntities);
+//                if(favourites.size()>0) {
+//                    getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();
+//                }else{
+//                    getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearme").commit();
+//                }
+//            }
+//        });
+        //ASJ add
+        unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
             @Override
             public void onChanged(@Nullable List<ArrivalsFormatedEntity> favouriteEntities) {
                 favourites.addAll(favouriteEntities);
                 if(favourites.size()>0) {
+                    arguments.putString("fav", "true");
+                    locationFragment.setArguments(arguments);
+                    arguments.clear();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
                     getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();
                 }else{
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
                     getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearme").commit();
                 }
             }
@@ -77,8 +97,13 @@ public class MainActivity extends LifecycleActivity {
 
         if (savedInstanceState == null) {
             if(favourites.size()>0) {
+                arguments.putString("fav", "true");
+                locationFragment.setArguments(arguments);
+                arguments.clear();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();
             }else{
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearme").commit();
             }
         }
@@ -118,27 +143,38 @@ public class MainActivity extends LifecycleActivity {
         @Override
         public void onClick(View v) {
             if(favourites.size()>0) {
-                FavouritesFragment favouritesFragment = new FavouritesFragment();
+                favouritesFragment = new FavouritesFragment();
+                locationFragment = new LocationFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favouriteClick").commit();
+                arguments.putString("fav", "true");
+                locationFragment.setArguments(arguments);
+                arguments.clear();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
             }else{
                 Toast.makeText(getBaseContext(),"No favourites saved",Toast.LENGTH_SHORT).show();
             }
-
+            closeFABMenu();
         }
     };
 
     private View.OnClickListener fabNearMeOnClick = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            locationFragment = new LocationFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
             nearmeFragment = new ListFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearmeClick").commit();
+            closeFABMenu();
         }
     };
 
     //Location
     private void createLocationFragment() {
-        Log.v(TAG,"createLocationFragment");
+        Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++createLocationFragment");
+      //  Bundle arguments = new Bundle();
         locationFragment = (LocationFragment) Fragment.instantiate(this, LocationFragment.class.getCanonicalName());
+       // arguments.putString("fav", "true");
+        if(arguments.size()>0) locationFragment.setArguments(arguments);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
 
     }

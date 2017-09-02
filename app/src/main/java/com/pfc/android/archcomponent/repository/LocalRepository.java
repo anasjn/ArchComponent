@@ -13,6 +13,7 @@ import java.util.List;
 public interface LocalRepository {
 
     List<ArrivalsFormatedEntity> getFavourites();
+    LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData();
 //    LiveData<List<FavouriteEntity>> getLiveDataFavourites();
     void addFavourite(ArrivalsFormatedEntity favouriteEntity);
     void deleteFavourite(ArrivalsFormatedEntity favouriteEntity);

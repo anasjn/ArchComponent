@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.ui.IconGenerator;
 import com.pfc.android.archcomponent.R;
 import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -21,10 +22,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pfc.android.archcomponent.adapters.DataAdapter;
+import com.pfc.android.archcomponent.adapters.FavouriteAdapter;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.model.LocationListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.pfc.android.archcomponent.util.LocationLiveData;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
+import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
 import com.pfc.android.archcomponent.vo.StopPointsEntity;
 
@@ -45,10 +49,15 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
 
     //To show in the map the markers for the list of stops location near me
     protected DataAdapter mAdapter = new DataAdapter(getContext());
+    //To show in the map the markers for the list of favourites stops
+    protected FavouriteAdapter mFAvouritesAdapter = new FavouriteAdapter(new ArrayList<ArrivalsFormatedEntity>(),getContext());
+
 
     //to show a list of markers in the map and adjust the zoom for the list of markers
     ArrayList<Marker> markers =  new ArrayList<Marker>();
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+    private DefaultLocation currentLocation;
 
 
     private UnifiedModelView unifiedModelView;
@@ -81,22 +90,42 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
             @Override
             public void onChanged(@Nullable DefaultLocation defaultLocation) {
+                currentLocation = defaultLocation;
                 updateLocation(defaultLocation, true);
             }
         });
 
-        // Handle changes emitted by StopPointMutableLiveData
-        unifiedModelView.getmStopPointMutableLiveData().observe(this, new Observer<StopLocationEntity>() {
-            @Override
-            public void onChanged(@Nullable StopLocationEntity stopLocationEntity) {
-                handleResponse((List<StopPointsEntity>) stopLocationEntity.getStopPoints());
-            }
-        });
+        Bundle args = getArguments();
+        if(args!=null){
+            //ASJ commnet
+            // Handle changes emitted by mMutableLiveDataFavourites
+//            unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+//                @Override
+//                public void onChanged(@Nullable List<ArrivalsFormatedEntity> arrivalsFormatedEntities) {
+//                    handleResponseFavourites(arrivalsFormatedEntities);
+//                }
+//            });
+            //ASJ add
+            unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+                @Override
+                public void onChanged(@Nullable List<ArrivalsFormatedEntity> arrivalsFormatedEntities) {
+                    handleResponseFavourites(arrivalsFormatedEntities);
+                }
+            });
+        }else {
+            // Handle changes emitted by StopPointMutableLiveData
+            unifiedModelView.getmStopPointMutableLiveData().observe(this, new Observer<StopLocationEntity>() {
+                @Override
+                public void onChanged(@Nullable StopLocationEntity stopLocationEntity) {
+                    handleResponseNearMe((List<StopPointsEntity>) stopLocationEntity.getStopPoints());
+                }
+            });
+        }
     }
 
 
 
-    private void handleResponse(List<StopPointsEntity> stoppoints) {
+    private void handleResponseNearMe(List<StopPointsEntity> stoppoints) {
         markers =  new ArrayList<Marker>();
         builder = new LatLngBounds.Builder();
         String name;
@@ -133,6 +162,48 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         }
     }
 
+    private void handleResponseFavourites(List<ArrivalsFormatedEntity> lines) {
+        markers =  new ArrayList<Marker>();
+        builder = new LatLngBounds.Builder();
+        String name;
+        if (lines != null && lines.size()>0) {
+            if(mFAvouritesAdapter!=null) {
+                mFAvouritesAdapter.addFavourites(lines);
+                if(lines!=null & lines.size()>0) {
+                    for (int i = 0; i < lines.size(); i++) {
+                        name="";
+                        if(lines.get(i).getPlatformName()!=null && !lines.get(i).getPlatformName().isEmpty()){
+                            name = lines.get(i).getPlatformName();
+                        }
+                        if(name.isEmpty() && lines.get(i).getStationName()!=null){
+                            name = lines.get(i).getStationName();
+                        }
+                        if(lines.get(i).getLineId()!=null && !lines.get(i).getLineId().isEmpty()){
+                            name += " - "+lines.get(i).getLineId();
+                        }
+                        if(lines.get(i)!=null && lines.get(i).getmLat()!=null && lines.get(i).getmLon()!=null)
+                        {
+                            DefaultLocation location = new DefaultLocation( Double.parseDouble(lines.get(i).getmLat()), Double.parseDouble(lines.get(i).getmLon()),name);
+                            updateLocation(location,false);
+                        }
+                    }
+                }
+            }
+        } else {
+            mFAvouritesAdapter.clearFavourites();
+            Toast.makeText(
+                    getContext(),
+                    "No stop information found for the searched repository.",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+        if(markers!=null & markers.size()>0) {
+            for (int j = 0; j < markers.size(); j++) {
+                builder.include(markers.get(j).getPosition());
+            }
+            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(builder.build().getCenter(),16));
+        }
+    }
 
     @Override
     public void updateLocation(DefaultLocation defaultLocation, boolean mylocation) {

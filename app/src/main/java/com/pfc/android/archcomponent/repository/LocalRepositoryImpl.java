@@ -62,9 +62,9 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
 
-//    public LiveData<List<FavouriteEntity>> getLiveDataFavourites(){
-//        return database.favouriteDao().getAllFavourites();
-//    }
+    public LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData(){
+        return database.favouriteDao().getFavouritesLiveData();
+    }
 
 
     public void addFavourite(ArrivalsFormatedEntity favouriteEntity) {

@@ -1,6 +1,7 @@
 package com.pfc.android.archcomponent.db;
 
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -17,8 +18,8 @@ import java.util.List;
 
 @Dao
 public interface FavouriteDao {
-//    @Query("SELECT * FROM favourites")
-//    LiveData<List<FavouriteEntity>> getAllFavourites();
+    @Query("SELECT * FROM favourites")
+    LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData();
 //
 //    @Query("SELECT COUNT(*) FROM favourites WHERE mNaptanId LIKE :naptanid AND mLineId LIKE :lineid")
 //    Integer isFavourite(String naptanid, String lineid);

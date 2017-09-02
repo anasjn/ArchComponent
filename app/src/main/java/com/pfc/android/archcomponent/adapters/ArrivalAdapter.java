@@ -10,17 +10,11 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.pfc.android.archcomponent.R;
-import com.pfc.android.archcomponent.db.AppDatabase;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
-import com.pfc.android.archcomponent.repository.LocalRepository;
-import com.pfc.android.archcomponent.repository.LocalRepositoryImpl;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-
-import javax.inject.Inject;
 
 
 /**
@@ -36,7 +30,6 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
     //RecyclerView doesn't come with an onItemClick interface, so we have
     // to implement one in the adapter.This is the field that hold an instance of CustomDetailClickListener
     CustomDetailClickListener detailListener;
-
 //    @Inject
 //    public AppDatabase database;
 
@@ -68,7 +61,6 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
             @Override
             public void onClick(View v){
                 if(detailListener!=null) {
-                    Log.v(TAG,"**************************************************ArrivalAdapter.Holder  onClick");
                     detailListener.onItemClick(v, mViewHolder.getAdapterPosition());
                 }
             }
@@ -83,7 +75,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         if(mArrivalsEntity!=null && mArrivalsEntity.size()>0) {
             ArrivalsFormatedEntity arrival = mArrivalsEntity.get(position);
             String timing = "Next bus in ";
-            List<String> timesToStation;
+            List<Integer> timesToStation;
             if(arrival!=null) {
                 holder.mTextViewStationName.setText(arrival.getStationName());
                 holder.mTextViewLineId.setText(arrival.getLineId());
@@ -140,7 +132,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
      * Whereas the use of the ViewHolder pattern is optional in ListView, RecyclerView enforces it.
      * This improves scrolling and performance by avoiding findViewById() for each cell.
      */
-    public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private final String TAG = ArrivalAdapter.Holder.class.getName();
 
@@ -169,7 +161,6 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         @Override
         public void onClick(View v) {
             if(detailListener!=null) {
-                Log.v(TAG,"**************************************************ArrivalAdapter.Holder  onClick");
                 detailListener.onItemClick(v,getAdapterPosition());
             }
         }

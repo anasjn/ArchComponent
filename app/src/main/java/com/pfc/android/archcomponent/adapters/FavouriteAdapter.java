@@ -1,6 +1,5 @@
 package com.pfc.android.archcomponent.adapters;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,7 +13,6 @@ import com.pfc.android.archcomponent.model.CustomDetailClickListener;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,12 +25,14 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
 
     Context mContext;
     private List<ArrivalsFormatedEntity> favourites;
-    private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableFavourites;
+    //ASJ commment
+//    private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableFavourites;
     //private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrrivals;
 
     //RecyclerView doesn't come with an onItemClick interface, so we have
     // to implement one in the adapter.This is the field that hold an instance of CustomDetailClickListener
     CustomDetailClickListener favouriteListener;
+
 
     private DefaultLocation currentLocation;
     /**
@@ -40,10 +40,15 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
      *
      */
 
-    public FavouriteAdapter(Context context) {
+    public FavouriteAdapter(List<ArrivalsFormatedEntity> favourites,Context context) {
+        Log.v(TAG, "constructor Fvourite Adapter");
         this.mContext = context;
-        this.favourites = new ArrayList<>();
-        this.mMutableFavourites = new MutableLiveData<>();
+        //ASJ comment
+        //this.favourites = new ArrayList<>();
+//        this.mMutableFavourites = new MutableLiveData<>();
+
+        //ASJ add
+        this.favourites=favourites;
       //  this.mMutableArrrivals = new MutableLiveData<>();
     }
 
@@ -68,6 +73,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
                 if(favouriteListener!=null) {
                     favouriteListener.onItemClick(v, mViewHolder.getAdapterPosition());
                 }
+
             }
         });
         return mViewHolder;
@@ -80,12 +86,43 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
     public void onBindViewHolder(final FavouriteAdapter.Holder holder, int position) {
         if(favourites!=null && favourites.size()>0) {
             ArrivalsFormatedEntity favourite = favourites.get(position);
+            String timing = "Next bus in ";
+            List<Integer> timesToStation;
             if(favourite!=null) {
+                Log.v(TAG,"naptan"+favourite.getNaptanId());
+                Log.v(TAG,"getLineId"+favourite.getLineId());
+                Log.v(TAG,"getStopLetter"+ favourite.getStopLetter());
+                        Log.v(TAG,"getStationName"+favourite.getStationName());
+                Log.v(TAG,"getPlatformName"+favourite.getPlatformName());
+                Log.v(TAG,"getDestinationName"+favourite.getDestinationName());
+                Log.v(TAG,"getDirection"+favourite.getDirection());
+                Log.v(TAG,"isFavourite"+favourite.isFavourite());
+                        Log.v(TAG,"getTimeToStationSort"+favourite.getTimeToStationSort());
                 holder.mTextViewLineId.setText(favourite.getLineId());
                 holder.mTextViewPlatformName.setText(favourite.getPlatformName());
                 holder.mTextViewDestinationName.setText(favourite.getDestinationName());
                 holder.mTextViewStationName.setText(favourite.getStationName());
-                holder.mTextViewDistance.setText(""+calDistance(Double.parseDouble(favourite.getmLat()),Double.parseDouble(favourite.getmLon()), currentLocation.getLatitude(), currentLocation.getLongitude()));
+                Double distance = 0.0;
+                if(currentLocation!=null && favourite !=null){
+                   distance = calDistance(Double.parseDouble(favourite.getmLat()),Double.parseDouble(favourite.getmLon()), currentLocation.getLatitude(), currentLocation.getLongitude());
+                }
+                holder.mTextViewDistance.setText(">" + distance.intValue() + "m");
+                timesToStation = favourite.getTimeToStationSort();
+                timing += timesToStation.get(0) + " mins.";
+                holder.mTextViewTimeToStation.setText(timing);
+                if(timesToStation.size()>1) {
+                    timing = "The following in: ";
+                    int last = timesToStation.size() - 1;
+                    for (int i = 1; i < timesToStation.size(); i++) {
+                        timing += timesToStation.get(i);
+                        if (last == i) {
+                            timing += " mins.";
+                        } else {
+                            timing += ", ";
+                        }
+                    }
+                    holder.mTextViewTimeToStation2.setText(timing);
+                }
             }
         }
     }
@@ -94,6 +131,8 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
     public void setOnItemClickListener(CustomDetailClickListener mFavouriteClickListener) {
         favouriteListener = mFavouriteClickListener;
     }
+
+
 
     public void setFavourites(List<ArrivalsFormatedEntity> favourites) {
         this.favourites = favourites;
@@ -107,24 +146,23 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
 
     public void addFavourites(List <ArrivalsFormatedEntity> favourites) {
         this.favourites.clear();
-        Log.v(TAG,"**************************************************FavouriteAdapter addFavourites favourites "+favourites);
         this.favourites.addAll(favourites);
         notifyDataSetChanged();
     }
-
-    public List <ArrivalsFormatedEntity> getFavourites() {
-        Log.v(TAG,"**************************************************FavouriteAdapter getFavourites favourites "+favourites);
-        notifyDataSetChanged();
-        return favourites;
-
-    }
-
-    public MutableLiveData<List<ArrivalsFormatedEntity>> getMutableFavourites() {
-        Log.v(TAG,"**************************************************FavouriteAdapter getMutableFavourites favourites "+favourites);
-        notifyDataSetChanged();
-        return mMutableFavourites;
-
-    }
+//ASJ Comment
+//    public List <ArrivalsFormatedEntity> getFavourites() {
+//        Log.v(TAG,"**************************************************FavouriteAdapter getFavourites favourites "+favourites);
+//        notifyDataSetChanged();
+//        return favourites;
+//
+//    }
+//ASJ commment
+//    public MutableLiveData<List<ArrivalsFormatedEntity>> getMutableFavourites() {
+//        Log.v(TAG,"**************************************************FavouriteAdapter getMutableFavourites favourites "+favourites);
+//        notifyDataSetChanged();
+//        return mMutableFavourites;
+//
+//    }
 
     public void addCurrentLocation (DefaultLocation defaultLocation){
         this.currentLocation = defaultLocation;

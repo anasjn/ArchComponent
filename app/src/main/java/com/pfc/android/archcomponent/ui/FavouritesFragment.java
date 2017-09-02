@@ -1,7 +1,6 @@
 package com.pfc.android.archcomponent.ui;
 
 import android.arch.lifecycle.LifecycleFragment;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -35,13 +34,9 @@ public class FavouritesFragment extends LifecycleFragment {
 
     protected RecyclerView mRecyclerView;
     protected FavouriteAdapter mFavouriteAdapter;
-    //protected ArrivalAdapter mArrivalAdapter;
-
-    private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableFavourites = new MutableLiveData<>();
 
     private DefaultLocation currentLocation;
 
-    private List<ArrivalsFormatedEntity> favourites = new ArrayList<>();
 
     public FavouritesFragment() {
     }
@@ -62,11 +57,26 @@ public class FavouritesFragment extends LifecycleFragment {
             }
         });
 
+        observeFavourites();
+
+    }
+
+    public void observeFavourites(){
+        //ASJ comment
         // Handle changes emitted by LiveData
-        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+//        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+//            @Override
+//            public void onChanged(@Nullable List<ArrivalsFormatedEntity> favourites) {
+//                if(currentLocation!=null) {
+//                    unifiedModelView.setmMutablePredictionsByStopLine(favourites, "" + currentLocation.getLatitude(), "" + currentLocation.getLongitude());
+//                }
+//            }
+//        });
+        //ASJ add
+        unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
             @Override
-            public void onChanged(@Nullable List<ArrivalsFormatedEntity> favourites) {
-                unifiedModelView.setmMutablePredictionsByStopLine(favourites);
+            public void onChanged(@Nullable List<ArrivalsFormatedEntity> arrivalsFormatedEntities) {
+               unifiedModelView.setmMutableFavLines(arrivalsFormatedEntities);
             }
         });
 
@@ -77,9 +87,7 @@ public class FavouritesFragment extends LifecycleFragment {
             }
         });
 
-
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,7 +95,6 @@ public class FavouritesFragment extends LifecycleFragment {
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
         rootView.setTag(TAG);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++onCreateView");
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
@@ -101,11 +108,11 @@ public class FavouritesFragment extends LifecycleFragment {
                 ArrivalsFormatedEntity favourite = mFavouriteAdapter.getFavourite(position);
                 Toast.makeText(getContext(), "Line: "+ favourite.getLineId()+ " in Platform: " +favourite.getPlatformName()+ " towards: "+favourite.getDestinationName()+ " has been deleted from Favourites", Toast.LENGTH_SHORT).show();
                 unifiedModelView.deleteFavourite(favourite);
-                unifiedModelView.setmMutableLiveDataFavourites();
+                //unifiedModelView.setmMutableLiveDataFavourites();
             }
         };
 
-        mFavouriteAdapter = new FavouriteAdapter(getContext());
+        mFavouriteAdapter = new FavouriteAdapter(new ArrayList<ArrivalsFormatedEntity>(),getContext());
         mFavouriteAdapter.setOnItemClickListener(mFavouriteClickListener);
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mFavouriteAdapter);
@@ -115,6 +122,7 @@ public class FavouritesFragment extends LifecycleFragment {
 
     private void handleResponse(List<ArrivalsFormatedEntity> favourites) {
         if (favourites != null && favourites.size()>0) {
+            Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ handle ArrivalsFormated "+favourites);
             mFavouriteAdapter.addFavourites(favourites);
             mFavouriteAdapter.addCurrentLocation(this.currentLocation);
         } else {

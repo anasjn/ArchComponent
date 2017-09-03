@@ -6,9 +6,25 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by dr3amsit on 30/07/17.
+ * LineModeGroup Entity used to recover the information of the Transport API
+ * <p>
+ * This object is part of the structure retrieve by this kind of call:
+ * https://api.tfl.gov.uk/Stoppoint?stoptypes=NaptanRailStation,NaptanBusCoachStation,NaptanFerryPort,NaptanPublicBusCoachTram&lat=xxxxx&lon=xxxxx&radius=xxx
+ * <p>
+ * The relationship between the entities is:
+ * <p>
+ * <StopLocationEntity>
+ *    List<StopPointsEntity>
+ *      List<LineEntity>
+ *      List<LineGroup>
+ *      List<LineModeGroup>
+ *      List<AdditionalPropertiesEntity>
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class LineModeGroup {
     @SerializedName("$type")
     @Expose

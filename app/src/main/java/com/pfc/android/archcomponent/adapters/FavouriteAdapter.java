@@ -16,53 +16,66 @@ import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import java.util.List;
 
 /**
- * Created by ana on 19/08/17.
+ * FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Holder>
+ * <p>
+ * This Adapter is in charge of the interface elements that are showing in every recycler view for the favourites fragments.
+ * Because your adapter subclasses RecyclerView.Adapter, you need to add the following methods:
+ * <ul>
+ * <li> 1.- getItemCount()
+ * <li> 2.- onCreateViewHolder(ViewGroup parent, int viewType)
+ * <li> 3.- onBindViewHolder(Holder holder, int position)
+ * </ul>
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Holder> {
 
     private final String TAG = FavouriteAdapter.class.getName();
 
     Context mContext;
     private List<ArrivalsFormatedEntity> favourites;
-    //ASJ commment
-//    private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableFavourites;
-    //private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrrivals;
 
-    //RecyclerView doesn't come with an onItemClick interface, so we have
+    // RecyclerView doesn't come with an onItemClick interface, so we have
     // to implement one in the adapter.This is the field that hold an instance of CustomDetailClickListener
     CustomDetailClickListener favouriteListener;
 
-
+    // In use only if this adapter is used by FavouriteFragment
     private DefaultLocation currentLocation;
+
     /**
-     * Initialize the ArrayList of the Adapter.
+     * Contructor with a context parameter and a list of ArrivalsFormatedEntity elements
+     * <p>
+     * Initialize the ArrayList and the context of the Adapter.
      *
      */
-
     public FavouriteAdapter(List<ArrivalsFormatedEntity> favourites,Context context) {
-        Log.v(TAG, "constructor Fvourite Adapter");
         this.mContext = context;
-        //ASJ comment
-        //this.favourites = new ArrayList<>();
-//        this.mMutableFavourites = new MutableLiveData<>();
-
-        //ASJ add
         this.favourites=favourites;
-      //  this.mMutableArrrivals = new MutableLiveData<>();
     }
 
 
-    //Because your adapter subclasses RecyclerView.Adapter, you need to add the following methods:
-    //1.- getItemCount()
-    //2.- onCreateViewHolder(ViewGroup parent, int viewType)
-    //3.- onBindViewHolder(Holder holder, int position)
+    /**
+     * Return the number of the elements in the list arrivalsFormatedEntity
+     * <p>
+     *
+     * @return int size
+     */
     @Override
     public int getItemCount() {
         return favourites.size();
     }
 
-    // Create new views (invoked by the layout manager)
+    /**
+     * Create new views (invoked by the layout manager)
+     * <p>
+     *
+     * @param  parent  ViewGroup.
+     * @param  viewType  int.
+     * @return    a FavouriteAdapter.Holder
+     */
     @Override
     public FavouriteAdapter.Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.fav_row, parent, false);
@@ -80,45 +93,41 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
 
     }
 
-
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Replace the contents of a view (invoked by the layout manager)
+     * <p>
+     *
+     * @param  holder  FavouriteAdapter.Holder.
+     * @param  position  int.
+     */
     @Override
     public void onBindViewHolder(final FavouriteAdapter.Holder holder, int position) {
-        if(favourites!=null && favourites.size()>0) {
+        if(favourites!=null && !favourites.isEmpty()) {
             ArrivalsFormatedEntity favourite = favourites.get(position);
-            String timing = "Next bus in ";
+            String timing = mContext.getString(R.string.timing_first)+ " ";
             List<Integer> timesToStation;
             if(favourite!=null) {
-                Log.v(TAG,"naptan"+favourite.getNaptanId());
-                Log.v(TAG,"getLineId"+favourite.getLineId());
-                Log.v(TAG,"getStopLetter"+ favourite.getStopLetter());
-                        Log.v(TAG,"getStationName"+favourite.getStationName());
-                Log.v(TAG,"getPlatformName"+favourite.getPlatformName());
-                Log.v(TAG,"getDestinationName"+favourite.getDestinationName());
-                Log.v(TAG,"getDirection"+favourite.getDirection());
-                Log.v(TAG,"isFavourite"+favourite.isFavourite());
-                        Log.v(TAG,"getTimeToStationSort"+favourite.getTimeToStationSort());
                 holder.mTextViewLineId.setText(favourite.getLineId());
                 holder.mTextViewPlatformName.setText(favourite.getPlatformName());
                 holder.mTextViewDestinationName.setText(favourite.getDestinationName());
                 holder.mTextViewStationName.setText(favourite.getStationName());
-                Double distance = 0.0;
                 if(currentLocation!=null && favourite !=null){
+                   Double distance = 0.0;
                    distance = calDistance(Double.parseDouble(favourite.getmLat()),Double.parseDouble(favourite.getmLon()), currentLocation.getLatitude(), currentLocation.getLongitude());
+                   holder.mTextViewDistance.setText(mContext.getString(R.string.separator_mayor)+ " " + distance.intValue() + " " +mContext.getString(R.string.separator_meters));
                 }
-                holder.mTextViewDistance.setText(">" + distance.intValue() + "m");
                 timesToStation = favourite.getTimeToStationSort();
-                timing += timesToStation.get(0) + " mins.";
+                timing += timesToStation.get(0) + " " +mContext.getString(R.string.final_separtor);
                 holder.mTextViewTimeToStation.setText(timing);
                 if(timesToStation.size()>1) {
-                    timing = "The following in: ";
+                    timing = mContext.getString(R.string.timing_next);
                     int last = timesToStation.size() - 1;
                     for (int i = 1; i < timesToStation.size(); i++) {
                         timing += timesToStation.get(i);
                         if (last == i) {
-                            timing += " mins.";
+                            timing +=" "+ mContext.getString(R.string.final_separtor);
                         } else {
-                            timing += ", ";
+                            timing += mContext.getString(R.string.separator)+ " ";
                         }
                     }
                     holder.mTextViewTimeToStation2.setText(timing);
@@ -127,47 +136,65 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
         }
     }
 
-    //Adding the setter method on the CustomDetailClickListener
+    /**
+     * Adding the setter method on the CustomDetailClickListener
+     * <p>
+     *
+     * @param  mFavouriteClickListener  CustomDetailClickListener.
+     */
     public void setOnItemClickListener(CustomDetailClickListener mFavouriteClickListener) {
         favouriteListener = mFavouriteClickListener;
     }
 
-
-
+    /**
+     * Set the list of favourites
+     * <p>
+     *
+     * @param  favourites  List<ArrivalsFormatedEntity>.
+     */
     public void setFavourites(List<ArrivalsFormatedEntity> favourites) {
         this.favourites = favourites;
         this.notifyDataSetChanged();
     }
 
+    /**
+     * Get the favourite element in the positions given by the parameter
+     * <p>
+     *
+     * @param position an int with the position in the list.
+     * @return  an ArrivalsFormatedEntity element.
+     */
     public ArrivalsFormatedEntity getFavourite(int position) {
         notifyDataSetChanged();
         return favourites.get(position);
     }
 
+    /**
+     * Add the list of favourites
+     * <p>
+     *
+     * @param favourites List <ArrivalsFormatedEntity>
+     */
     public void addFavourites(List <ArrivalsFormatedEntity> favourites) {
         this.favourites.clear();
         this.favourites.addAll(favourites);
         notifyDataSetChanged();
     }
-//ASJ Comment
-//    public List <ArrivalsFormatedEntity> getFavourites() {
-//        Log.v(TAG,"**************************************************FavouriteAdapter getFavourites favourites "+favourites);
-//        notifyDataSetChanged();
-//        return favourites;
-//
-//    }
-//ASJ commment
-//    public MutableLiveData<List<ArrivalsFormatedEntity>> getMutableFavourites() {
-//        Log.v(TAG,"**************************************************FavouriteAdapter getMutableFavourites favourites "+favourites);
-//        notifyDataSetChanged();
-//        return mMutableFavourites;
-//
-//    }
 
+    /**
+     * Add current location
+     * <p>
+     *
+     * @param defaultLocation DefaultLocation
+     */
     public void addCurrentLocation (DefaultLocation defaultLocation){
         this.currentLocation = defaultLocation;
     }
 
+    /**
+     * Clear favourites list.
+     * <p>
+     */
     public void clearFavourites() {
         Log.v(TAG,"**************************************************FavouriteAdapter clearFavouriteInformation");
         if (favourites != null) {
@@ -176,8 +203,19 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
         notifyDataSetChanged();
     }
 
-    //Haversine Formula (from R.W. Sinnott, "Virtues of the Haversine", Sky and Telescope, vol. 68, no. 2, 1984, p. 159):
-    //http://www.movable-type.co.uk/scripts/gis-faq-5.1.html
+
+    /**
+     * Method that implements Haversine Formula (from R.W. Sinnott, "Virtues of the Haversine", Sky and Telescope,
+     * vol. 68, no. 2, 1984, p. 159): http://www.movable-type.co.uk/scripts/gis-faq-5.1.html
+     * <p>
+     * This calc the distance between 2 points following the Haversine Formula
+     *
+     * @param  latPoint1  a double. Latitude point 1
+     * @param  lonPoint1  a double. Longitude point 1
+     * @param  latPoint2  a double. Latitude point 2
+     * @param  lonPoint2  a double. Longitude point 2
+     * @return  the distance between two points gave in the parameters.
+     */
     public double calDistance (double latPoint1, double lonPoint1, double latPoint2, double lonPoint2){
         double dLat = Math.toRadians(latPoint2 - latPoint1);
         double dLon = Math.toRadians(lonPoint2 - lonPoint1);
@@ -194,9 +232,16 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
     }
 
     /**
+     * Holder extends RecyclerView.ViewHolder and implements View.OnClickListener
+     * <p>
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      * Whereas the use of the ViewHolder pattern is optional in ListView, RecyclerView enforces it.
      * This improves scrolling and performance by avoiding findViewById() for each cell.
+     * <p>
+     *
+     * @author      Ana San Juan
+     * @version     "%I%, %G%"
+     * @since       1.0
      */
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener  {
 
@@ -204,6 +249,10 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
 
         TextView  mTextViewLineId, mTextViewPlatformName, mTextViewDestinationName,mTextViewStationName,mTextViewDistance,mTextViewTimeToStation,mTextViewTimeToStation2;
 
+        /**
+         * Contructor with a view parameter.
+         * <p>
+         */
         public Holder(View view) {
             super(view);
             mTextViewLineId = (TextView) view.findViewById(R.id.line_id);
@@ -215,6 +264,11 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
             mTextViewTimeToStation2 = (TextView) view.findViewById(R.id.time_to_station2);
         }
 
+        /**
+         * Contructor with a view, viewType and a context parameters.
+         * <p>
+         *
+         */
         public Holder(View itemView,int ViewType,Context c) {
             // Creating ViewHolder Constructor with View and viewType As a parameter
             super(itemView);
@@ -222,7 +276,13 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
             itemView.setOnClickListener(this);
         }
 
-        //Implements the onClick override method
+
+        /**
+         * Implements the onClick override method
+         * <p>
+         *
+         * return view View
+         */
         @Override
         public void onClick(View v) {
             if(favouriteListener!=null) {

@@ -22,9 +22,15 @@ import java.util.Random;
 
 
 /**
- * Created by dr3amsit on 31/07/17.
+ * LocationLiveData extends MutableLiveData<DefaultLocation>
+ * <p>
+ * This class allow us to use the location of the user or the use a method in order to have a radom location in London.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class LocationLiveData extends MutableLiveData<DefaultLocation> {
 
     private final String TAG = LocationLiveData.class.getName();
@@ -37,6 +43,10 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
         this.context = context;
     }
 
+    /**
+     * This method review of the user has enough permissions in order to use the location.
+     * <p>
+     */
     @Override
     protected void onActive() {
         super.onActive();
@@ -50,6 +60,12 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
         locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, looper);
     }
 
+    /**
+     * This method get the last location known.
+     * <p>
+     *
+     * @return FusedLocationProviderClient
+     */
     @NonNull
     private FusedLocationProviderClient getFusedLocationProviderClient() {
         if (fusedLocationProviderClient == null) {
@@ -58,6 +74,11 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
         return fusedLocationProviderClient;
     }
 
+
+    /**
+     * This method remove LocationUpdates
+     * <p>
+     */
     @Override
     protected void onInactive() {
         if (fusedLocationProviderClient != null) {
@@ -65,27 +86,41 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
         }
     }
 
+    /**
+     * This method set the location cached.
+     * <p>
+     *
+     * @return LocationCallback
+     */
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            //Get the last location known
-//            Location newLocation = locationResult.getLastLocation();
-//            double latitude = newLocation.getLatitude();
-//            double longitude = newLocation.getLongitude();
-//            DefaultLocation location = new DefaultLocation(latitude, longitude, 200);
-
-            //In order to test the application we use a radomLocation
-            if(cachedLocation == null){
-                cachedLocation = randomgeolocation();
-            }
-            if(cachedLocation!=null) {
-                setValue(cachedLocation);
-            }
+            cachedLocation = new DefaultLocation(locationResult.getLastLocation().getLatitude(),
+                    locationResult.getLastLocation().getLongitude(), "I'm here");
+            setValue(cachedLocation);
         }
     };
 
-    //Getting latitude and longitude of two corners of London Map (one superior-right corner and inferior-left corner). With these 2 points we calculeta a random locations.
-    private DefaultLocation randomgeolocation(){
+    /**
+     * This method should be used then there is no gps enabled in the device and we need to test that all is working by
+     * locating an user arround London.
+     * <p>
+     *
+     */
+    public void setRandomLocation() {
+        if (cachedLocation == null) {
+            setValue(randomGeolocation());
+        }
+    }
+
+    /**
+     * Method to get the latitude and longitude of two corners of London Map (one superior-right corner and inferior-left corner).
+     * With these 2 points we calculate a random locations.
+     * <p>
+     *
+     * @return  a DefaultLocation
+     */
+    private DefaultLocation randomGeolocation(){
         Random r = new Random();
         DefaultLocation location = null;
         Double lonMin = -0.4016876220703125 ;

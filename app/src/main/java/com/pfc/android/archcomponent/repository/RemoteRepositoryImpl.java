@@ -1,52 +1,108 @@
 package com.pfc.android.archcomponent.repository;
 
 
+import android.content.Context;
 import android.util.Log;
 
+import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.api.TflApiService;
+import com.pfc.android.archcomponent.di.ContextModule;
+import com.pfc.android.archcomponent.di.DaggerTflApiComponent;
+import com.pfc.android.archcomponent.di.TflApiComponent;
 import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by ana on 29/08/17.
+ * RemoteRepositoryImpl implements a base interface: RemoteRepository
+ * <p>
+ * RemoteRepositoryImpl is the implementation class for managing the communication
+ * between the ViewModel and the Remote backend: Unified Tfl API @link{https://api.tfl.gov.uk/}
+ * using Retrofit.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class RemoteRepositoryImpl implements RemoteRepository{
+
     public static final String TAG = RemoteRepositoryImpl.class.getSimpleName();
 
-    public static final String BASE_URL = "https://api.tfl.gov.uk/";
     private TflApiService mApiService;
+    private String mAppId;
+    private String mAppKey;
 
+    /**
+     * Contructor with a context parameter to interact with the API backend.
+     * <p>
+     * This method  allows the communication withe the API transport backend
+     *
+     */
+    public RemoteRepositoryImpl(Context context) {
 
-    public RemoteRepositoryImpl() {
-        // Set the custom client when building adapter
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
+        mAppId = context.getString(R.string.api_transport_id);
+        mAppKey = context.getString(R.string.api_transport_key);
+
+        //Delegate the instance creation of Retrofit in Dagger
+        TflApiComponent component = DaggerTflApiComponent.builder()
+                .contextModule(new ContextModule(context))
                 .build();
-        Log.v(TAG,"retrofit "+retrofit.baseUrl());
-        mApiService = retrofit.create(TflApiService.class);
-        Log.v(TAG,"mApiService "+mApiService.toString());
+        mApiService = component.getRetrofit();
+
     }
 
-    public void getStopLocation(String app_id, String app_key, double lat, double lon, int radius, Callback<StopLocationEntity> callback) {
-        Call<StopLocationEntity> call = mApiService.getStopLocation(app_id,app_key,lat, lon, radius);
+    /**
+     * Method async with fourth parameters: latitude, longitude, radius and
+     * a callback in order to make a call to the API transport. In the last one is where the answer
+     * of the API is saved.
+     * <p>
+     * This method return the information about the Stops near to the location
+     * given through the parameters (lat, lon and radious).
+     *
+     * @param  lat  a double number giving the latitude of the location.
+     * @param  lon  a double number giving the longitude of the location.
+     * @param  radius  an int number giving the radius of the search.
+     * @param  callback  a Callback<StopLocationEntity> giving the object in order to keep the reply of the API.
+     */
+    public void getStopLocation(double lat, double lon, int radius, Callback<StopLocationEntity> callback) {
+        Call<StopLocationEntity> call = mApiService.getStopLocation(mAppId,mAppKey,lat, lon, radius);
         call.enqueue(callback);
     }
 
-
-    public void getArrivalInformation(String naptanId, String app_id, String app_key, Callback<List<ArrivalsEntity>> callback) {
-        Call<List<ArrivalsEntity>> call = mApiService.getArrivalInformation(naptanId,app_id,app_key);
+    /**
+     * Method async with two parameter: naptanId and a callback
+     * in order to make a call to the API transport.  The last one is where the reply
+     * of the API is saved.
+     * <p>
+     * This method return all the arrival information from the lines related with on Stop in this moment.
+     * given through one parameters (naptanId).
+     *
+     * @param  naptanId  a String giving to identify the Stop that we are interesting on.
+     * @param  callback  a Callback<List<ArrivalsEntity> giving the object in order to keep the answer of the API.
+     */
+    public void getArrivalInformation(String naptanId,Callback<List<ArrivalsEntity>> callback) {
+        Call<List<ArrivalsEntity>> call = mApiService.getArrivalInformation(naptanId,mAppId,mAppKey);
         call.enqueue(callback);
     }
 
-    public void getPredictionsByStopPLine(String app_id, String app_key,String lineId, String naptanId, String direction, Callback<List<ArrivalsEntity>> callback){
-        Call<List<ArrivalsEntity>> call = mApiService.getPredictionsByStopPLine(lineId,naptanId,direction,app_id,app_key);
+    /**
+     * Method async with fourth parameters: lineId, naptanId, direction and
+     * a callback in order to make a call to the API transport.  In the last one is where the reply
+     * of the API is saved.
+     * <p>
+     * This method return the arrival information for one line, in one stop and with one direction
+     * given through the parameters (lineId, naptanId and direction).
+     *
+     * @param  lineId  a String giving to identify the Line that we are interesting on.
+     * @param  naptanId  a String giving to identify the Stop that we are interesting on.
+     * @param  direction  a String that identify the direction of the bus. The value coud be "inbound", outbound" or "all".
+     * @param  callback  a Callback<List<ArrivalsEntity> giving the object in order to keep the answer of the API
+     */
+    public void getPredictionsByStopPLine(String lineId, String naptanId, String direction, Callback<List<ArrivalsEntity>> callback){
+        Call<List<ArrivalsEntity>> call = mApiService.getPredictionsByStopPLine(lineId,naptanId,direction,mAppId,mAppKey);
         call.enqueue(callback);
     }
 }

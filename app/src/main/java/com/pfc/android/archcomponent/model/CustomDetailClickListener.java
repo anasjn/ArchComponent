@@ -2,10 +2,15 @@ package com.pfc.android.archcomponent.model;
 
 import android.view.View;
 
-import com.pfc.android.archcomponent.adapters.DataAdapter;
-
 /**
- * Created by ana on 13/08/17.
+ * CustomDetailClickListener Listener interface for the onClick event.
+ * <p>
+ * RecyclerView doesn't come with an onItemClick interface, so we have
+ * to implement one in the adapter
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
 public interface CustomDetailClickListener {
     void onItemClick(View v, int position);

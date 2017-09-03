@@ -5,16 +5,13 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.ui.IconGenerator;
 import com.pfc.android.archcomponent.R;
 import android.arch.lifecycle.LifecycleFragment;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,7 +23,6 @@ import com.pfc.android.archcomponent.adapters.FavouriteAdapter;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.model.LocationListener;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.pfc.android.archcomponent.util.LocationLiveData;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
@@ -37,7 +33,14 @@ import java.util.List;
 
 
 /**
- * Created by dr3amsit on 31/07/17.
+ * LocationFragment extends LifecycleFragment and implements
+ * <p>
+ * This is the fragment that is in charge of the list of stops near the location of the user.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
 public class LocationFragment extends LifecycleFragment implements LocationListener, OnMapReadyCallback {
 
@@ -62,7 +65,17 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
 
     private UnifiedModelView unifiedModelView;
 
-
+    /**
+     * onCreateView Method
+     * <p>
+     * In this method we set the GoogleMap in order to alocate the user and the Stops or Favourites points
+     * <p>
+     *
+     * @param   inflater   LayoutInflater
+     * @param   container  ViewGroup
+     * @param   savedInstanceState  Bundle
+     * @return a View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_location, container, false);
@@ -74,38 +87,45 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     }
 
 
+    /**
+     * onMapReady Method
+     * <p>
+     * This method is called when the map is ready in order work with it, as adding markers and moving the camera
+     * <p>
+     *
+     * @param   googleMap   GoogleMap
+     */
     @Override
     public void onMapReady(final GoogleMap googleMap){
-        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++onMapReady");
+//        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++onMapReady");
         gMap = googleMap;
         gMap.getUiSettings().setZoomControlsEnabled(true);
         gMap.getUiSettings().setAllGesturesEnabled(true);
 
         unifiedModelView = ViewModelProviders.of(getActivity()).get(UnifiedModelView.class);
 
-        //set current location
-        unifiedModelView.setLmLocationLiveData(getContext());
+        // If the GPS is disabled, generate a custom location around london
+        if ( !unifiedModelView.isGPSEnabled() ) {
+            unifiedModelView.setRandomLocationLiveData(getContext());
+        }
+
+//        //set current location
+//        unifiedModelView.setLmLocationLiveData(getContext());
 
         // Handle changes emitted by LiveDataLocation
-        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
-            @Override
-            public void onChanged(@Nullable DefaultLocation defaultLocation) {
-                currentLocation = defaultLocation;
-                updateLocation(defaultLocation, true);
-            }
-        });
+        unifiedModelView.getLmLocationLiveData().observe(this,
+                defaultLocation -> updateLocation(defaultLocation, true)
+        );
+//        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
+//            @Override
+//            public void onChanged(@Nullable DefaultLocation defaultLocation) {
+//                currentLocation = defaultLocation;
+//                updateLocation(defaultLocation, true);
+//            }
+//        });
 
         Bundle args = getArguments();
         if(args!=null){
-            //ASJ commnet
-            // Handle changes emitted by mMutableLiveDataFavourites
-//            unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
-//                @Override
-//                public void onChanged(@Nullable List<ArrivalsFormatedEntity> arrivalsFormatedEntities) {
-//                    handleResponseFavourites(arrivalsFormatedEntities);
-//                }
-//            });
-            //ASJ add
             unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
                 @Override
                 public void onChanged(@Nullable List<ArrivalsFormatedEntity> arrivalsFormatedEntities) {
@@ -124,7 +144,12 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     }
 
 
-
+    /**
+     * This Method handle the response, giving the List<StopPointsEntity> to the adapter.
+     * <p>
+     *
+     * @param   stoppoints   List<StopPointsEntity>
+     */
     private void handleResponseNearMe(List<StopPointsEntity> stoppoints) {
         markers =  new ArrayList<Marker>();
         builder = new LatLngBounds.Builder();
@@ -147,21 +172,22 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
             }
         } else {
             mAdapter.clearStopInformation();
-            Toast.makeText(
-                    getContext(),
-                    "No stop information found for the searched repository.",
-                    Toast.LENGTH_SHORT
-            ).show();
         }
         if(markers!=null & markers.size()>0) {
             for (int j = 0; j < markers.size(); j++) {
-                Log.v(TAG," markers positions handleResponse" +markers.get(j).getPosition());
+//                Log.v(TAG," markers positions handleResponse" +markers.get(j).getPosition());
                 builder.include(markers.get(j).getPosition());
             }
             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(builder.build().getCenter(),16));
         }
     }
 
+    /**
+     * This Method handle the response, giving the List<ArrivalsFormatedEntity> to the adapter.
+     * <p>
+     *
+     * @param   lines   List<ArrivalsFormatedEntity>
+     */
     private void handleResponseFavourites(List<ArrivalsFormatedEntity> lines) {
         markers =  new ArrayList<Marker>();
         builder = new LatLngBounds.Builder();
@@ -191,11 +217,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
             }
         } else {
             mFAvouritesAdapter.clearFavourites();
-            Toast.makeText(
-                    getContext(),
-                    "No stop information found for the searched repository.",
-                    Toast.LENGTH_SHORT
-            ).show();
         }
         if(markers!=null & markers.size()>0) {
             for (int j = 0; j < markers.size(); j++) {
@@ -204,7 +225,13 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(builder.build().getCenter(),16));
         }
     }
-
+    /**
+     * This Method add markers to a list (the location and the nearme stops markers)
+     * <p>
+     *
+     * @param   defaultLocation   DefaultLocation (lat, long and name information of one location)
+     * @param   mylocation   boolean if this is the location of the user or one stop because the marker added is going to be different.
+     */
     @Override
     public void updateLocation(DefaultLocation defaultLocation, boolean mylocation) {
         if(defaultLocation!=null) {
@@ -220,8 +247,8 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
                 mDefault = gMap.addMarker(opt.position(mDefaultLocation));
                 mDefault.setTag(defaultLocation.getName());
                 if(mDefault!=null) {
-                    Log.v(TAG,"markers locations "+defaultLocation.getLatitude()+","+defaultLocation.getLongitude());
                     markers.add(mDefault);
+                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude()), 16));
                 }
             }
         }

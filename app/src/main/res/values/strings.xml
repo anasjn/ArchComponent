@@ -3,10 +3,16 @@
     <string name="progress_title">Getting stops</string>
     <string name="progress_body">Please Wait</string>
     <!--LOCATION-->
-    <string name="no_permissions">You have not granted the app the necessary permissions</string>
-    <string name="timing_first">Next bus in </string>
-    <string name="timing_next">The following in: </string>
-    <string name="separator">, </string>
-    <string name="final_separtor"> mins. </string>
-    <string name="direction">direction</string>
+    <string name="no_permissions" translatable="true">You have not granted the app the necessary permissions</string>
+    <string name="timing_first" translatable="true">Next bus in </string>
+    <string name="timing_next" translatable="true">The following in: </string>
+    <string name="separator" translatable="false">, </string>
+    <string name="separator_mayor" translatable="false"> ></string>
+    <string name="separator_meters" translatable="false"> m.</string>
+    <string name="final_separtor" translatable="true"> mins. </string>
+    <string name="direction" translatable="true">direction</string>
+    <string name="towards" translatable="true">Towards: </string>
+    <!--Unified Transpor For London API -->
+    <string name="api_transport_endpoint" translatable="false">https://api.tfl.gov.uk/</string>
+
 </resources>

@@ -7,11 +7,22 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by dr3amsit on 29/07/17.
+ * StringConverter is a class in order to have a List<Integer> from a String and a String from a List<Integer>.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class StringConverter {
 
+    /**
+     * Method to convert from List<Integer> to String.
+     * <p>
+     *
+     * @param  times  a List<Integer> giving split through ",".
+     * @return      a String with all the information split through ",".
+     */
     @TypeConverter
     public static String toString(List<Integer> times) {
         String time = "";
@@ -23,6 +34,13 @@ public class StringConverter {
         }
         return time;
     }
+    /**
+     * Method to convert from String to List<Integer>.
+     * <p>
+     *
+     * @param  time  a String giving split through ",".
+     * @return      a List<Integer> with the same information than the String.
+     */
     @TypeConverter
     public static List<Integer> toIntegerList(String time) {
         List<Integer> intlist = new ArrayList<>();
@@ -34,7 +52,13 @@ public class StringConverter {
         }
         return intlist;
     }
-
+    /**
+     * Method to convert from String to List<String>.
+     * <p>
+     *
+     * @param  time  a String giving split through ",".
+     * @return      a List<String> with the same information than the String.
+     */
     public static List<String> toList(String time) {
         return time == null ? null : new ArrayList<String>(Arrays.asList(time.split(",")));
     }

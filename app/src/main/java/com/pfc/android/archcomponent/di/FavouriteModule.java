@@ -10,9 +10,13 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Created by ana on 19/08/17.
+ * Dagger 2 Database Component. - Dependency Injection and Code injection.
+ * <p>
+ * Module that allows to inject code in the ROOM backend in the database called favourite-db
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 @Module
 public class FavouriteModule {
     public static final String TAG = FavouriteModule.class.getSimpleName();
@@ -34,13 +38,13 @@ public class FavouriteModule {
     AppDatabase getTaskDatabase(Context context) {
 
         //Remove the database information
-        //context.deleteDatabase(DATABASE_NAME);
-        //create the database
+        context.deleteDatabase(DATABASE_NAME);
+        //create the database with Room
         AppDatabase db = Room
                 .databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
                 .build();
 
-        Log.v(TAG,"db created");
+        Log.d(TAG,"db created");
         return db;
     }
 }

@@ -9,9 +9,15 @@ import android.support.v4.app.ActivityCompat;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by dr3amsit on 31/07/17.
+ * PermissionsRequester
+ * <p>
+ * This class manage to check if the user has enough persmissions to use the location service.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class PermissionsRequester {
     private static final String[] PERMISSIONS = {
             Manifest.permission.ACCESS_COARSE_LOCATION,

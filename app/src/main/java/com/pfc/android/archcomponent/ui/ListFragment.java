@@ -23,9 +23,15 @@ import java.util.List;
 
 
 /**
- * Created by ana on 12/08/17.
+ * ListFragment extends LifecycleFragment
+ * <p>
+ * This is the fragment that is in charge of the list of stops near the location of the user.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class ListFragment extends LifecycleFragment {
 
     private static final String TAG = ListFragment.class.getName();
@@ -33,30 +39,81 @@ public class ListFragment extends LifecycleFragment {
     protected DataAdapter mAdapter;
     private UnifiedModelView unifiedModelView;
 
+
+    /**
+     * OnCreate Method
+     * <p>
+     * In this method we instantiate the ViewModel that we need in order to get the location of the user
+     * <p>
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         unifiedModelView = ViewModelProviders.of(getActivity()).get(UnifiedModelView.class);
 
-        //Get current location
-        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
-            @Override
-            public void onChanged(@Nullable DefaultLocation defaultLocation) {
-                //set the stops near my current location
-                unifiedModelView.setStopPointMutableLiveData(defaultLocation.getLatitude(), defaultLocation.getLongitude(),200);
-            }
+//        //Get current location
+//        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
+//            @Override
+//            public void onChanged(@Nullable DefaultLocation defaultLocation) {
+//                //set the stops near my current location
+//                unifiedModelView.setStopPointMutableLiveData(defaultLocation.getLatitude(), defaultLocation.getLongitude(),200);
+//            }
+//        });
+//
+//        // Handle changes emitted by StopPointMutableLiveData
+//        unifiedModelView.getmStopPointMutableLiveData().observe(this, new Observer<StopLocationEntity>() {
+//            @Override
+//            public void onChanged(@Nullable StopLocationEntity stopLocationEntity) {
+//                handleResponse((List<StopPointsEntity>) stopLocationEntity.getStopPoints());
+//            }
+//        });
+    }
+
+    /**
+     * onResume Method
+     * <p>
+     * In this method we handle any changes that happens in the livedata for the stopoints.
+     * <p>
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        observeHandlers();
+    }
+    /**
+     * observeHandlers Method
+     * <p>
+     * In this method we handle changes emitted by the  location livedata and the stoppoints livedata
+     * <p>
+     */
+    private void observeHandlers() {
+        // Get current location
+        unifiedModelView.getLmLocationLiveData().observe(this, defaultLocation -> {
+            //set the stops near my current location
+            unifiedModelView.setStopPointMutableLiveData(defaultLocation.getLatitude(), defaultLocation.getLongitude(),200);
         });
 
         // Handle changes emitted by StopPointMutableLiveData
-        unifiedModelView.getmStopPointMutableLiveData().observe(this, new Observer<StopLocationEntity>() {
-            @Override
-            public void onChanged(@Nullable StopLocationEntity stopLocationEntity) {
-                handleResponse((List<StopPointsEntity>) stopLocationEntity.getStopPoints());
-            }
+        unifiedModelView.getmStopPointMutableLiveData().observe(this, stopLocationEntity -> {
+            handleResponse( stopLocationEntity.getStopPoints() ) ;
         });
     }
 
+    /**
+     * onCreateView Method
+     * <p>
+     * In this method we generate the RecyclerView for the list of elements that we are going to show.
+     * <p>
+     * LinearLayoutManager is used here, this will layout the elements in a similar fashion
+     * to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
+     * elements are laid out.
+     *
+     * @param   inflater   LayoutInflater
+     * @param   container  ViewGroup
+     * @param   savedInstanceState  Bundle
+     * @return a View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,10 +121,6 @@ public class ListFragment extends LifecycleFragment {
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
         rootView.setTag(TAG);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-
-        // LinearLayoutManager is used here, this will layout the elements in a similar fashion
-        // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
-        // elements are laid out.
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.hasFixedSize();
@@ -92,17 +145,17 @@ public class ListFragment extends LifecycleFragment {
         return rootView;
     }
 
-
+    /**
+     * This Method handle the response, giving the List<StopPointsEntity> to the adapter.
+     * <p>
+     *
+     * @param   stoppoints   List<StopPointsEntity>
+     */
     private void handleResponse(List<StopPointsEntity> stoppoints) {
-        if (stoppoints != null && stoppoints.size()>0) {
+        if (stoppoints != null && !stoppoints.isEmpty()) {
             mAdapter.addStopInformation(stoppoints);
         } else {
             mAdapter.clearStopInformation();
-            Toast.makeText(
-                    getContext(),
-                    "No stop information found for the searched repository.",
-                    Toast.LENGTH_SHORT
-            ).show();
         }
     }
 

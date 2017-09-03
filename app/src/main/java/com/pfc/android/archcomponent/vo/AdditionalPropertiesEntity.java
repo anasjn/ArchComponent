@@ -4,9 +4,25 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by dr3amsit on 29/07/17.
+ * AdditionalPropertiesEntity Entity used to recover the information of the Transport API
+ * <p>
+ * This object is part of the structure retrieve by this kind of call:
+ * https://api.tfl.gov.uk/Stoppoint?stoptypes=NaptanRailStation,NaptanBusCoachStation,NaptanFerryPort,NaptanPublicBusCoachTram&lat=xxxxx&lon=xxxxx&radius=xxx
+ * <p>
+ * The relationship between the entities is:
+ * <p>
+ * <StopLocationEntity>
+ *    List<StopPointsEntity>
+ *      List<LineEntity>
+ *      List<LineGroup>
+ *      List<LineModeGroup>
+ *      List<AdditionalPropertiesEntity>
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class AdditionalPropertiesEntity {
     @SerializedName("$type")
     @Expose

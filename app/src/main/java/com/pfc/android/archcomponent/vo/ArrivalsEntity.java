@@ -4,9 +4,20 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by ana on 16/08/17.
+ * ArrivalsEntity Entity used to recover the information of the Transport API
+ * <p>
+ * This object is part of the structure retrieve by this kind of call:
+ * https://api.tfl.gov.uk/StopPoint/{id}/Arrivals?app_id=xxx&app_key=xxxx
+ * <p>
+ * This is handle by only one entity:
+ * <p>
+ * <ArrivalsEntity>
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class ArrivalsEntity {
 
     private final String TAG = ArrivalsEntity.class.getName();

@@ -5,12 +5,14 @@ import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.util.PermissionsRequester;
@@ -19,6 +21,8 @@ import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -62,21 +66,6 @@ public class MainActivity extends LifecycleActivity {
         //Getting the list of favourites in order to see if there is any if them and show them in first place.
         unifiedModelView = ViewModelProviders.of(this).get(UnifiedModelView.class);
 
-        //ASJ Comment
-        //unifiedModelView.setmMutableLiveDataFavourites();
-        //ASJ Comment
-//        unifiedModelView.getmMutableLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
-//            @Override
-//            public void onChanged(@Nullable List<ArrivalsFormatedEntity> favouriteEntities) {
-//                favourites.addAll(favouriteEntities);
-//                if(favourites.size()>0) {
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();
-//                }else{
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearme").commit();
-//                }
-//            }
-//        });
-        //ASJ add
         unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
             @Override
             public void onChanged(@Nullable List<ArrivalsFormatedEntity> favouriteEntities) {
@@ -151,7 +140,8 @@ public class MainActivity extends LifecycleActivity {
                 arguments.clear();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
             }else{
-                Toast.makeText(getBaseContext(),"No favourites saved",Toast.LENGTH_SHORT).show();
+                Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++fav imagen");
+                Toast.makeText(getBaseContext(),"Sorry! We haven't found any favourite",Toast.LENGTH_SHORT).show();
             }
             closeFABMenu();
         }

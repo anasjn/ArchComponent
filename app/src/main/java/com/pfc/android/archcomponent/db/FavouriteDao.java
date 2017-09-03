@@ -13,16 +13,23 @@ import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import java.util.List;
 
 /**
- * Interface for database for Favourite related operations.
+ * FavouriteDao is an interface that communicate with the database directly.
+ * <p>
+ * List of queries:
+ * <ul>
+ *  <li>getFavouritesLiveData   - this method retrieve a LiveData<List<ArrivalsFormatedEntity>> object without parameters.
+ *  <li>addFavourite              - this method add one element to the database. parameter: ArrivalsFormatedEntity. return: void.
+ * </ul>deleteFavourite           - this method delete one element to the database. parameter: ArrivalsFormatedEntity. return: void.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 @Dao
 public interface FavouriteDao {
     @Query("SELECT * FROM favourites")
-    LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData();
-//
-//    @Query("SELECT COUNT(*) FROM favourites WHERE mNaptanId LIKE :naptanid AND mLineId LIKE :lineid")
-//    Integer isFavourite(String naptanid, String lineid);
+    public LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addFavourite(ArrivalsFormatedEntity favourite);
@@ -30,6 +37,7 @@ public interface FavouriteDao {
     @Delete
     void deleteFavourite(ArrivalsFormatedEntity favourite);
 
+    //a borrar
     @Query("SELECT * FROM favourites")
     List<ArrivalsFormatedEntity> getFavourites();
 

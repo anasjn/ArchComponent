@@ -15,16 +15,23 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.adapters.ArrivalAdapter;
+import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
 import java.util.List;
 
-
 /**
- * Created by ana on 16/08/17.
+ * DetailFragment extends LifecycleFragment
+ * <p>
+ * This is the fragment that is in charge of the detail. The detail in this case is a list of arrivals of
+ * one stop selected by the user.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class DetailFragment extends LifecycleFragment{
 
     private final String TAG = DetailFragment.class.getName();
@@ -36,6 +43,13 @@ public class DetailFragment extends LifecycleFragment{
     private String lat = "";
     private String lon = "";
 
+    /**
+     * OnCreate Method
+     * <p>
+     * In this method we instantiate the ViewModel that we need in order to paint the User interface
+     * and observe the ViewModel in order to refresh the UI when this ViewModel change.
+     * <p>
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +74,30 @@ public class DetailFragment extends LifecycleFragment{
             }
         });
 
+        unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<ArrivalsFormatedEntity> arrivalsFormatedEntities) {
+                handleResponse(arrivalsFormatedEntities);
+            }
+        });
+
+
     }
 
-
+    /**
+     * onCreateView Method
+     * <p>
+     * In this method we generate the RecyclerView for the list of elements that we are going to show.
+     * <p>
+     * LinearLayoutManager is used here, this will layout the elements in a similar fashion
+     * to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
+     * elements are laid out.
+     *
+     * @param   inflater   LayoutInflater
+     * @param   container  ViewGroup
+     * @param   savedInstanceState  Bundle
+     * @return a View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,10 +105,6 @@ public class DetailFragment extends LifecycleFragment{
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
         rootView.setTag(TAG);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-
-        // LinearLayoutManager is used here, this will layout the elements in a similar fashion
-        // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
-        // elements are laid out.
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.hasFixedSize();
@@ -82,16 +113,17 @@ public class DetailFragment extends LifecycleFragment{
             @Override
             public void onItemClick(View v, int position) {
                 ArrivalsFormatedEntity arrival = mAdapter.getArrivalsList().get(position);
-                Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++en el click para guardar en la BBDD "+position +" isfav "+arrival.isFavourite() +" arrival.getDirection() "+ arrival.getDirection());
                 if(!arrival.isFavourite()){
                     Toast.makeText(getContext(), "Line: "+ arrival.getLineId()+ " in Platform: " +arrival.getPlatformName()+ " towards: "+arrival.getDestinationName()+ " has been added to Favourites", Toast.LENGTH_SHORT).show();
                     unifiedModelView.addFavourite(arrival);
-                    unifiedModelView.setmMutableLiveDataFavourites();
+
+//                    unifiedModelView.setmMutableLiveDataFavourites();
+                   // unifiedModelView.getmLiveDataFavourites();
                 }else{
                     Toast.makeText(getContext(), "Line: "+ arrival.getLineId()+ " in Platform: " +arrival.getPlatformName()+ " towards: "+arrival.getDestinationName()+ " has been deleted from Favourites", Toast.LENGTH_SHORT).show();
                     Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++delete favourite "+arrival.getNaptanId() +" , "+arrival.getLineId());
                     unifiedModelView.deleteFavourite(arrival);
-                    //unifiedModelView.setmMutableLiveDataFavourites();
+//                    unifiedModelView.setmMutableLiveDataFavourites();
                 }
             }
 
@@ -103,16 +135,17 @@ public class DetailFragment extends LifecycleFragment{
         return rootView;
     }
 
+    /**
+     * This Method handle the response, giving the List<ArrivalsFormatedEntity> to the adapter.
+     * <p>
+     *
+     * @param   arrivals   List<ArrivalsFormatedEntity>
+     */
     private void handleResponse(List<ArrivalsFormatedEntity> arrivals) {
-        if (arrivals != null && arrivals.size()>0) {
+        if (arrivals != null && !arrivals.isEmpty()) {
             mAdapter.addArrivalInformation(arrivals);
         } else {
             mAdapter.clearArrivalInformation();
-            Toast.makeText(
-                    getContext(),
-                    "No arrival information found for the searched stop.",
-                    Toast.LENGTH_SHORT
-            ).show();
         }
     }
 }

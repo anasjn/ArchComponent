@@ -8,9 +8,17 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by ana on 26/08/17.
+ * ArrivalsFormatedEntity Entity used to define the structure of the database in SQLite
+ * <p>
+ * This is handle by only one entity:
+ * <p>
+ * <ArrivalsFormatedEntity>
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 @Entity(tableName = "favourites")
 public class ArrivalsFormatedEntity implements Serializable {
 
@@ -133,19 +141,20 @@ public class ArrivalsFormatedEntity implements Serializable {
         this.favourite = favourite;
     }
 
-    public ArrivalsFormatedEntity( String naptanId, String lineId, String stopLetter, String stationName, String platformName, String destinationName, String lat, String lon, String direction, boolean favourite, List<Integer> timeToStation) {
-        this.naptanId= naptanId;
-        this.lineId = lineId;
-        this.stopLetter = stopLetter;
-        this.stationName = stationName;
-        this.platformName = platformName;
-        this.destinationName = destinationName;
-        this.timeToStation = timeToStation;
-        this.direction = direction;
-        this.mLat = lat;
-        this.mLon = lon;
-        //isfav?
-        this.favourite = favourite;
-    }
+//    public ArrivalsFormatedEntity( String naptanId, String lineId, String stopLetter, String stationName, String platformName, String destinationName, String lat, String lon, String direction, boolean favourite, List<Integer> timeToStation) {
+//        this.naptanId= naptanId;
+//        this.lineId = lineId;
+//        this.stopLetter = stopLetter;
+//        this.stationName = stationName;
+//        this.platformName = platformName;
+//        this.destinationName = destinationName;
+//        this.timeToStation = timeToStation;
+//        this.direction = direction;
+//        this.mLat = lat;
+//        this.mLon = lon;
+//        //isfav?
+//        this.favourite = favourite;
+//    }
 
+    public ArrivalsFormatedEntity(){}
 }

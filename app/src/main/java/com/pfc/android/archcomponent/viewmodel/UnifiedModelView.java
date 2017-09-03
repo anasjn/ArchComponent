@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.vo.StopLocationEntity;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import retrofit2.Call;
@@ -29,17 +31,22 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by ana on 29/08/17.
+ * UnifiedModelView extends AndroidViewModel
+ * <p>
+ * This is the ViewModel that manage the communication between the fragments and the repository through the LiveData.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
  */
-
 public class UnifiedModelView extends AndroidViewModel {
 
     private final String TAG = UnifiedModelView.class.getName();
 
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrivalsFormated;
     private MutableLiveData<List<ArrivalsFormatedEntity>> mFavouritesMutableLiveData;
-
-    private LiveData<DefaultLocation> mLocationLiveData;
+    private LocationLiveData mLocationLiveData;
     private MutableLiveData<StopLocationEntity> mStopPointMutableLiveData;
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableLineFav;
 
@@ -52,40 +59,62 @@ public class UnifiedModelView extends AndroidViewModel {
     //List of favourites in order to check if the arrival is a favourite or not
     private List<ArrivalsFormatedEntity> favourites = new ArrayList<>();
 
-    //user and password
-    String app_id=getApplication().getString(R.string.api_transport_id);
-    String app_key=getApplication().getString(R.string.api_transport_key);
-
-
-
-
+    /**
+     * Contructor with a application parameter to interact with all the livedata
+     * <p>
+     *
+     * @param application Application
+     */
     public UnifiedModelView(Application application) {
         super(application);
         ((FavouriteApplication)application).getFavComponent().inject(this);
         this.mMutableArrivalsFormated = new MutableLiveData<>();
         this.mFavouritesMutableLiveData = new MutableLiveData<>();
-        this.mRemoteRepository = new RemoteRepositoryImpl();
+        this.mRemoteRepository = new RemoteRepositoryImpl(application);
         this.mLocalRepository = new LocalRepositoryImpl(database);
         this.mStopPointMutableLiveData = new MutableLiveData<>();
+        // This set own location if the GPS is enabled into the device.
         this.mLocationLiveData = new LocationLiveData(application.getApplicationContext());
         this.mMutableLineFav = new MutableLiveData<>();
     }
 
-
+    /**
+     * This Method return the LiveData<DefaultLocation>
+     * <p>
+     * @return   LiveData<DefaultLocation>
+     */
     public LiveData<DefaultLocation> getLmLocationLiveData() {
        return mLocationLiveData;
     }
 
-    public void setLmLocationLiveData(Context context) {
-        mLocationLiveData = new LocationLiveData(context);
+    /**
+     * This Method makes the set of the location. As the presentation is not going to be in London,
+     * setRandomLocation gives us a location in London in order to test.
+     * <p>
+     * @param   context Context
+     */
+    public void setRandomLocationLiveData(Context context) {
+        mLocationLiveData.setRandomLocation();
     }
 
+
+    /**
+     * This Method return the MutableLiveData mStopPointMutableLiveData
+     * <p>
+     * @return   MutableLiveData<StopLocationEntity>
+     */
     public MutableLiveData<StopLocationEntity> getmStopPointMutableLiveData(){
         return mStopPointMutableLiveData;
     }
-
+    /**
+     * This Method makes the setValue of the MutableLiveData:mStopPointMutableLiveData
+     * <p>
+     * @param   radious int
+     * @param   lat  String
+     * @param   lon  String
+     */
     public void setStopPointMutableLiveData(@NonNull double lat, @NonNull double lon, int radious) {
-        mRemoteRepository.getStopLocation(app_id,app_key,lat, lon, radious, new Callback<StopLocationEntity> () {
+        mRemoteRepository.getStopLocation(lat, lon, radious, new Callback<StopLocationEntity> () {
             @Override
             public void onResponse(Call<StopLocationEntity> call, Response<StopLocationEntity> response) {
                 mStopPointMutableLiveData.setValue(response.body());
@@ -99,22 +128,41 @@ public class UnifiedModelView extends AndroidViewModel {
         });
     }
 
+    /**
+     * This Method checks if the GPS in the device is enable in order to locate own position.
+     * <p>
+     * @return boolean
+     */
+    public boolean isGPSEnabled() {
+        final LocationManager manager = (LocationManager) getApplication().getSystemService( Context.LOCATION_SERVICE );
+        return manager.isProviderEnabled( LocationManager.GPS_PROVIDER );
+    }
+
 
     public void setmMutableLiveDataFavourites() {
         favourites = mLocalRepository.getFavourites();
         mFavouritesMutableLiveData.setValue(favourites);
     }
 
-    public MutableLiveData<List<ArrivalsFormatedEntity>> getmMutableLiveDataFavourites(){
-        return mFavouritesMutableLiveData;
-    }
 
-
+    /**
+     * This Method return the LiveData mStopPointMutableLiveData
+     * <p>
+     * @return   LiveData<List<ArrivalsFormatedEntity>>
+     */
     public LiveData<List<ArrivalsFormatedEntity>> getmLiveDataFavourites(){
         return mLocalRepository.getFavouritesLiveData();
     }
 
 
+//    public void setmLiveDataFavourites(){
+//        mLocalRepository.getFavouritesLiveData();
+//    }
+    /**
+     * This Method add a favourite asynchronous to the database
+     * <p>
+     * @param   favouriteEntity ArrivalsFormatedEntity
+     */
     public void addFavourite(ArrivalsFormatedEntity favouriteEntity) {
         new AsyncTask<ArrivalsFormatedEntity, Integer, Void>() {
             @Override
@@ -124,7 +172,11 @@ public class UnifiedModelView extends AndroidViewModel {
             }
         }.execute(favouriteEntity);
     }
-
+    /**
+     * This Method delete a favourite asynchronous from the database
+     * <p>
+     * @param   favouriteEntity ArrivalsFormatedEntity
+     */
     public void deleteFavourite(ArrivalsFormatedEntity favouriteEntity) {
         new AsyncTask<ArrivalsFormatedEntity, Integer, Void>() {
             @Override
@@ -135,12 +187,25 @@ public class UnifiedModelView extends AndroidViewModel {
         }.execute(favouriteEntity);
     }
 
+
+    /**
+     * This Method return the MutableLiveData mMutableArrivalsFormated
+     * <p>
+     * @return   MutableLiveData<List<ArrivalsFormatedEntity>>
+     */
     public MutableLiveData<List<ArrivalsFormatedEntity>> getmMutableArrivalsFormated(){
         return mMutableArrivalsFormated;
     }
 
+    /**
+     * This Method makes the setValue of the MutableLiveData:mMutableArrivalsFormated
+     * <p>
+     * @param   naptanId String
+     * @param   lat  String
+     * @param   lon  String
+     */
     public void setmMutableArrivalsFormated(@NonNull String naptanId, @NonNull String lat, @NonNull String lon) {
-        mRemoteRepository.getArrivalInformation(naptanId, app_id, app_key, new Callback<List<ArrivalsEntity>>() {
+        mRemoteRepository.getArrivalInformation(naptanId, new Callback<List<ArrivalsEntity>>() {
             @Override
             public void onResponse(Call<List<ArrivalsEntity>> call, Response<List<ArrivalsEntity>> response) {
                 List<ArrivalsFormatedEntity> arrivalsFormatedEntity = convert(response.body(),lat,lon);
@@ -156,36 +221,38 @@ public class UnifiedModelView extends AndroidViewModel {
     }
 
 
+    /**
+     * This Method return the MutableLiveData mMutableLineFav
+     * <p>
+     * @return   MutableLiveData<List<ArrivalsFormatedEntity>>
+     */
     public MutableLiveData<List<ArrivalsFormatedEntity>> getmMutablePredictionsByStopPLine(){
         return mMutableLineFav;
     }
 
-
-    //ASJ add
+    /**
+     * This Method makes the setValue of the MutableLiveData:mMutableLineFav
+     * <p>
+     *
+     * @param  favourites List<ArrivalsFormatedEntity>
+     */
     public void setmMutableFavLines(List<ArrivalsFormatedEntity> favourites) {
         List<ArrivalsFormatedEntity> favouritesResult = new ArrayList<ArrivalsFormatedEntity>();
+
+        if (favourites.isEmpty())
+            mMutableLineFav.setValue(favouritesResult);
+
         for (ArrivalsFormatedEntity fav:favourites) {
-            Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++setmMutableFavLines favourites "+favourites.size());
-
-            Log.v(TAG,"unifiedViewMOder naptan"+fav.getNaptanId());
-            Log.v(TAG,"getLineId"+fav.getLineId());
-            Log.v(TAG,"getStopLetter"+ fav.getStopLetter());
-            Log.v(TAG,"getStationName"+fav.getStationName());
-            Log.v(TAG,"getPlatformName"+fav.getPlatformName());
-            Log.v(TAG,"getDestinationName"+fav.getDestinationName());
-            Log.v(TAG,"getDirection"+fav.getDirection());
-            Log.v(TAG,"isFavourite"+fav.isFavourite());
-            Log.v(TAG,"getTimeToStationSort"+fav.getTimeToStationSort());
-
-            mRemoteRepository.getPredictionsByStopPLine(app_id, app_key, fav.getLineId(), fav.getNaptanId(), fav.getDirection(), new Callback<List<ArrivalsEntity>>() {
+            mRemoteRepository.getPredictionsByStopPLine(fav.getLineId(), fav.getNaptanId(), fav.getDirection(), new Callback<List<ArrivalsEntity>>() {
                 @Override
                 public void onResponse(Call<List<ArrivalsEntity>> call, Response<List<ArrivalsEntity>> response) {
                     if(response !=null & response.body()!=null) {
                         List<ArrivalsFormatedEntity> arrivalsFormatedEntity = convert(response.body(), fav.getmLat(), fav.getmLon());
                         fav.setTimeToStation(arrivalsFormatedEntity.get(0).getTimeToStation());
-                        favouritesResult.add(new ArrivalsFormatedEntity(fav.getNaptanId(), fav.getLineId(), fav.getStopLetter(), fav.getStationName(), fav.getPlatformName(),fav.getDestinationName(), fav.getmLat(), fav.getmLon(), fav.getDirection(), fav.isFavourite(), fav.getTimeToStation()));
+                        favouritesResult.add(fav);
                         Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++favouritesResult " + favouritesResult.size());
-                        if (favourites.size() == favouritesResult.size())mMutableLineFav.setValue(favouritesResult);
+                        if (favourites.size() == favouritesResult.size())
+                            mMutableLineFav.setValue(favouritesResult);
                     }
                 }
 
@@ -199,59 +266,154 @@ public class UnifiedModelView extends AndroidViewModel {
 
     }
 
-    public List<ArrivalsFormatedEntity> convert(List<ArrivalsEntity> arrivals, String lat,String lon) {
-        Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++convert arrivals.get(0).getDirection() "+arrivals);
-        List<ArrivalsFormatedEntity> arrivalsformated = new ArrayList<>();
-        if (arrivals != null && arrivals.size() > 0) {
-            ArrayList<Integer> listtimes = new ArrayList<Integer>();
-            listtimes.add(secondsToMinutes(arrivals.get(0).getTimeToStation()));
-            String lineId = arrivals.get(0).getLineId();
-            boolean fav = isFav(arrivals.get(0));
-            ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).getNaptanId(), lineId, arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(), lat, lon, arrivals.get(0).getDirection(),fav,listtimes);
-            arrivalsformated.add(aformated);
-            List<Integer> times = null;
-            int j = 0;
-            String aux = "";
-            ArrivalsEntity arrivalAux = null;
-            int position = 0;
-            Integer timesInMinutes = 0;
-            for (int i = 1; i < arrivals.size(); i++) {
-                arrivalAux = arrivals.get(i);
-                lineId = arrivalAux.getLineId();
-                if (arrivalsformated.size() > 0) {
-                    position = arrivalsformated.size() - 1;
-                }
-                aux = arrivalsformated.get(position).getLineId();
-                timesInMinutes = secondsToMinutes(arrivalAux.getTimeToStation());
-                if (lineId.equals(aux)) {
-                    times = arrivalsformated.get(position).getTimeToStation();
-                    times.add(timesInMinutes);
-                    arrivalsformated.get(position).setTimeToStation(times);
-                } else {
-                    listtimes = new ArrayList<Integer>();
-                    listtimes.add(timesInMinutes);
-                    fav = isFav(arrivalAux);
-                    aformated = new ArrivalsFormatedEntity(arrivalAux.getNaptanId(), arrivalAux.getLineId(), arrivalAux.getStopLetter(), arrivalAux.getStationName(), arrivalAux.getPlatformName(), arrivalAux.getDestinationName(),lat, lon, arrivalAux.getDirection(),fav,listtimes);
-                    arrivalsformated.add(aformated);
-                }
-            }
 
+    /**
+     * This Method tranforms an ArrivalEntity into a ArrivalsFormatedEntity. It does not fill in all the values.
+     * <p>
+     *
+     * @param   arrival  ArrivalsEntity
+     * @return  ArrivalsFormatedEntity
+     */
+    private ArrivalsFormatedEntity transformToArrivalsFormatedEntity(ArrivalsEntity arrival) {
+
+        ArrivalsFormatedEntity arrivalsFormatted = new ArrivalsFormatedEntity();
+        arrivalsFormatted.setNaptanId(arrival.getNaptanId());
+        arrivalsFormatted.setLineId(arrival.getLineId());
+        arrivalsFormatted.setStopLetter(arrival.getStopLetter());
+        arrivalsFormatted.setStationName(arrival.getStationName());
+        arrivalsFormatted.setPlatformName(arrival.getPlatformName());
+        arrivalsFormatted.setDestinationName(arrival.getDestinationName());
+        arrivalsFormatted.setDirection(arrival.getDirection());
+
+        return arrivalsFormatted;
+    }
+
+
+    /**
+     * This Method checks if a formatted arrival already exists in a collection of formatted and returns its position from the list
+     * If not exists, returns a -1
+     * <p>
+     * There are two parameters adding in order to add the information about the location of the stop in the favourites because after we want to
+     * show it in the application.
+     *
+     * @param   arrivalFormated   ArrivalsFormatedEntity
+     * @param   arrivalFormatedList List<ArrivalsFormatedEntity>
+     * @return  int that indicates the position inside the list. -1 is returned when it is not found.
+     */
+    private int arrivalExistInCurrentList(ArrivalsFormatedEntity arrivalFormated, List<ArrivalsFormatedEntity> arrivalFormatedList) {
+        for ( ArrivalsFormatedEntity item : arrivalFormatedList ) {
+            if ( item.getLineId().equals(arrivalFormated.getLineId()) )   // And same line ID
+                return arrivalFormatedList.indexOf(item);
         }
-        return arrivalsformated;
+        return -1;
     }
 
-    private Integer secondsToMinutes(int seconds){
-        int minutes = 0;
-        minutes = seconds/60;
-        return minutes;
-    }
 
-    private boolean isFav(ArrivalsEntity arrival){
-        for (ArrivalsFormatedEntity fav :
-                favourites) {
-            if (fav.getLineId().equals(arrival.getLineId()) && fav.getNaptanId().equals(arrival.getNaptanId())){
-                return true;
+    /**
+     * This Method convert one List<ArrivalsEntity> to a List<ArrivalsFormatedEntity>, in order to show in the list the different arrivals
+     * times (this is how is returned in the API) for a one single line in the same entry (how we want to show in the application).
+     * <p>
+     * There are two parameters adding in order to add the information about the location of the stop in the favourites because after we want to
+     * show it in the application.
+     *
+     * @param   arrivals   List<ArrivalsEntity>
+     * @param   latitude String
+     * @param   longitude String
+     * @return  List<ArrivalsFormatedEntity>
+     */
+    public List<ArrivalsFormatedEntity> convert(List<ArrivalsEntity> arrivals, String latitude,String longitude) {
+
+        // Create the result list
+        List<ArrivalsFormatedEntity> arrivalsFormated = new ArrayList<>();
+
+        if (arrivals != null && !arrivals.isEmpty()) { //If it si not null and not empty ...
+            for( ArrivalsEntity arrival : arrivals) { // Lets iterate ...
+
+                // Create a new arrivalsFormattedEntity
+                ArrivalsFormatedEntity arrivalsFormatedEntity = transformToArrivalsFormatedEntity(arrival);
+                // Check if the new arrivalsFormattedEntity exist in the list of arrivalsFormattedEntity
+                int positionInList = arrivalExistInCurrentList(arrivalsFormatedEntity, arrivalsFormated);
+                if ( positionInList == -1)  {
+                    // As it does not exists:
+                    // Set current stop latitude and longitude
+                    arrivalsFormatedEntity.setmLat(latitude);
+                    arrivalsFormatedEntity.setmLon(longitude);
+                    // Set if this arrival is in our favourite list
+                    arrivalsFormatedEntity.setFavourite( isFav(arrival) );
+                    // Set the schedule time into the collection
+                    arrivalsFormatedEntity.setTimeToStation(new ArrayList<>(Collections.singletonList(secondsToMinutes(arrival.getTimeToStation()))));
+                    // ... and add it into the arrivalsFormattedEntity list
+                    arrivalsFormated.add( arrivalsFormatedEntity);
+                } else {
+                    // As it already exists, lets add the scheduler time
+                    List<Integer> getCurrentSchedule = arrivalsFormated.get(positionInList).getTimeToStation(); // Get current schedule
+                    getCurrentSchedule.add(secondsToMinutes(arrival.getTimeToStation())); // And the new time
+                    arrivalsFormated.get(positionInList).setTimeToStation(getCurrentSchedule); // ... and set it into the collection.
+                }
             }
+        }
+
+        return arrivalsFormated;
+
+//            ArrayList<Integer> listtimes = new ArrayList<Integer>();
+//            listtimes.add(secondsToMinutes(arrivals.get(0).getTimeToStation()));
+//            String lineId = arrivals.get(0).getLineId();
+//            boolean fav = isFav(arrivals.get(0));
+//            ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).getNaptanId(), lineId, arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(), lat, lon, arrivals.get(0).getDirection(),fav,listtimes);
+//            arrivalsformated.add(aformated);
+//            List<Integer> times = null;
+//            int j = 0;
+//            String aux = "";
+//            ArrivalsEntity arrivalAux = null;
+//            int position = 0;
+//            Integer timesInMinutes = 0;
+//            for (int i = 1; i < arrivals.size(); i++) {
+//                arrivalAux = arrivals.get(i);
+//                lineId = arrivalAux.getLineId();
+//                if (arrivalsformated.size() > 0) {
+//                    position = arrivalsformated.size() - 1;
+//                }
+//                aux = arrivalsformated.get(position).getLineId();
+//                timesInMinutes = secondsToMinutes(arrivalAux.getTimeToStation());
+//                if (lineId.equals(aux)) {
+//                    times = arrivalsformated.get(position).getTimeToStation();
+//                    times.add(timesInMinutes);
+//                    arrivalsformated.get(position).setTimeToStation(times);
+//                } else {
+//                    listtimes = new ArrayList<Integer>();
+//                    listtimes.add(timesInMinutes);
+//                    fav = isFav(arrivalAux);
+//                    aformated = new ArrivalsFormatedEntity(arrivalAux.getNaptanId(), arrivalAux.getLineId(), arrivalAux.getStopLetter(), arrivalAux.getStationName(), arrivalAux.getPlatformName(), arrivalAux.getDestinationName(),lat, lon, arrivalAux.getDirection(),fav,listtimes);
+//                    arrivalsformated.add(aformated);
+//                }
+//            }
+//
+//        }
+//        return arrivalsformated;
+
+
+    }
+
+    /**
+     * This Method return the minutes equivalents to the seconds given as a parameter
+     * <p>
+     *
+     * @param   seconds   int
+     * @return  Integer
+     */
+    private Integer secondsToMinutes(int seconds) { return seconds/60; }
+
+    /**
+     * This Method return true if the arrival parameter is a favourite save in the database
+     * <p>
+     *
+     * @param   arrival   ArrivalsEntity
+     * @return  boolean
+     */
+    private boolean isFav(ArrivalsEntity arrival){
+        for (ArrivalsFormatedEntity fav : favourites) {
+            if (fav.getLineId().equals(arrival.getLineId()) && fav.getNaptanId().equals(arrival.getNaptanId()))
+                return true;
         }
         return false;
     }

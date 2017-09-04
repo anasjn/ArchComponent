@@ -7,7 +7,7 @@ package com.pfc.android.archcomponent.di;
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;

@@ -5,7 +5,7 @@ package com.pfc.android.archcomponent.model;
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public interface LocationListener{

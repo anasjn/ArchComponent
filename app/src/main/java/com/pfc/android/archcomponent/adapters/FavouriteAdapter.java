@@ -238,7 +238,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
      * <p>
      *
      * @author      Ana San Juan
-     * @version     "%I%, %G%"
+     * @version     1.0
      * @since       1.0
      */
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener  {

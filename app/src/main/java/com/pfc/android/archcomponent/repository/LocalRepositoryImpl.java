@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public class LocalRepositoryImpl implements LocalRepository {

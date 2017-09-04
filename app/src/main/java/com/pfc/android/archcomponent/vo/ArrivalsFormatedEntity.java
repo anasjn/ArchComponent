@@ -12,11 +12,11 @@ import java.util.List;
  * <p>
  * This is handle by only one entity:
  * <p>
- * <ArrivalsFormatedEntity>
+ * ArrivalsFormatedEntity
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 @Entity(tableName = "favourites")

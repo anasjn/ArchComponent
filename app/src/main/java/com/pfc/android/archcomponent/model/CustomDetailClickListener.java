@@ -9,7 +9,7 @@ import android.view.View;
  * to implement one in the adapter
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public interface CustomDetailClickListener {

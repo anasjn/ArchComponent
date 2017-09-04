@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
-import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -28,7 +27,7 @@ import java.util.Random;
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public class LocationLiveData extends MutableLiveData<DefaultLocation> {
@@ -129,9 +128,6 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
         Double lonMax = 0.006694793;
         double randomLatValue = latMin + (latMax - latMin) * r.nextDouble();
         double randomLonValue = lonMin + (lonMax - lonMin) * r.nextDouble();
-//        randomLatValue =51.43529544591915;
-//        randomLonValue=-0.035237572972349696;
-        Log.v (TAG, "----------------------------------------MY POSITION "+randomLatValue+","+randomLonValue);
         return location = new DefaultLocation(randomLatValue, randomLonValue, "I'm here");
     }
 }

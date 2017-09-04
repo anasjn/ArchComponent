@@ -13,16 +13,24 @@ import java.util.List;
  * <p>
  * The relationship between the entities is:
  * <p>
- * <StopLocationEntity>
- *    List<StopPointsEntity>
- *      List<LineEntity>
- *      List<LineGroup>
- *      List<LineModeGroup>
- *      List<AdditionalPropertiesEntity>
+ * <ul>
+ *    <li>StopLocationEntity
+ *       <ul>
+ *         <li> List of StopPointsEntity
+ *              <ul>
+ *                <li>List of LineEntity
+ *                <li>List of LineGroup
+ *                <li>List of LineModeGroup
+ *                <li>List of AdditionalPropertiesEntity
+ *              </ul>
+ *          </li>
+ *      </ul>
+ *   </li>
+ * </ul>
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public class LineGroup {

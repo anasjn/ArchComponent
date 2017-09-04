@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 @Module(includes = {ContextModule.class})

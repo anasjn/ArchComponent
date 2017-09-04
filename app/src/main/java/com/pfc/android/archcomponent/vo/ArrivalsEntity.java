@@ -11,11 +11,11 @@ import com.google.gson.annotations.SerializedName;
  * <p>
  * This is handle by only one entity:
  * <p>
- * <ArrivalsEntity>
+ * ArrivalsEntity
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public class ArrivalsEntity {

@@ -18,11 +18,12 @@ import retrofit2.http.Query;
  * <ul>
  *  <li>getArrivalInformation           - Gets the list of arrival predictions for the given stop point id. @link{https://api.tfl.gov.uk/StopPoint/{id}/Arrivals?app_id=xx&app_key=xx}.
  *  <li>getStopLocation                 - Gets a list of StopPoints within {radius} by the specified criteria. @link{https://api.tfl.gov.uk/Stoppoint?stoptypes=NaptanRailStation,NaptanBusCoachStation,NaptanFerryPort,NaptanPublicBusCoachTram&lat=xxx&lon=xxx&radius=xxxapp_id=xx&app_key=xx}.
- * </ul>getPredictionsByStopPLine       - Gets the list of arrival predictions for given line ids based at the given stop. @link{https://api.tfl.gov.uk/Line/{line}/Arrivals/{naptanid}?direction=xxxxxapp_id=xx&app_key=xx}
+ *  <li>getPredictionsByStopPLine       - Gets the list of arrival predictions for given line ids based at the given stop. @link{https://api.tfl.gov.uk/Line/{line}/Arrivals/{naptanid}?direction=xxxxxapp_id=xx&app_key=xx}
+ * </ul>
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public interface TflApiService {

@@ -36,7 +36,7 @@ import retrofit2.Response;
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public class UnifiedModelView extends AndroidViewModel {

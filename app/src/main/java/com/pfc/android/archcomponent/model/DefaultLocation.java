@@ -6,7 +6,7 @@ package com.pfc.android.archcomponent.model;
  * This name allows to mark this location in the map.
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public class DefaultLocation {

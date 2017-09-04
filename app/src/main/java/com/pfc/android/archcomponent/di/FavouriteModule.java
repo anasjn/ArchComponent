@@ -14,7 +14,7 @@ import dagger.Provides;
  * <p>
  * Module that allows to inject code in the ROOM backend in the database called favourite-db
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 @Module

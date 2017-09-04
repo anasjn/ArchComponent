@@ -52,22 +52,6 @@ public class ListFragment extends LifecycleFragment {
 
         unifiedModelView = ViewModelProviders.of(getActivity()).get(UnifiedModelView.class);
 
-//        //Get current location
-//        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
-//            @Override
-//            public void onChanged(@Nullable DefaultLocation defaultLocation) {
-//                //set the stops near my current location
-//                unifiedModelView.setStopPointMutableLiveData(defaultLocation.getLatitude(), defaultLocation.getLongitude(),200);
-//            }
-//        });
-//
-//        // Handle changes emitted by StopPointMutableLiveData
-//        unifiedModelView.getmStopPointMutableLiveData().observe(this, new Observer<StopLocationEntity>() {
-//            @Override
-//            public void onChanged(@Nullable StopLocationEntity stopLocationEntity) {
-//                handleResponse((List<StopPointsEntity>) stopLocationEntity.getStopPoints());
-//            }
-//        });
     }
 
     /**

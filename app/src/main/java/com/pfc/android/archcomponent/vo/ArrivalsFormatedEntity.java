@@ -141,20 +141,6 @@ public class ArrivalsFormatedEntity implements Serializable {
         this.favourite = favourite;
     }
 
-//    public ArrivalsFormatedEntity( String naptanId, String lineId, String stopLetter, String stationName, String platformName, String destinationName, String lat, String lon, String direction, boolean favourite, List<Integer> timeToStation) {
-//        this.naptanId= naptanId;
-//        this.lineId = lineId;
-//        this.stopLetter = stopLetter;
-//        this.stationName = stationName;
-//        this.platformName = platformName;
-//        this.destinationName = destinationName;
-//        this.timeToStation = timeToStation;
-//        this.direction = direction;
-//        this.mLat = lat;
-//        this.mLon = lon;
-//        //isfav?
-//        this.favourite = favourite;
-//    }
 
     public ArrivalsFormatedEntity(){}
 }

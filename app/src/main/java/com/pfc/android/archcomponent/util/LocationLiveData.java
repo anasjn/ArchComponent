@@ -129,8 +129,8 @@ public class LocationLiveData extends MutableLiveData<DefaultLocation> {
         Double lonMax = 0.006694793;
         double randomLatValue = latMin + (latMax - latMin) * r.nextDouble();
         double randomLonValue = lonMin + (lonMax - lonMin) * r.nextDouble();
-        randomLatValue =51.43529544591915;
-        randomLonValue=-0.035237572972349696;
+//        randomLatValue =51.43529544591915;
+//        randomLonValue=-0.035237572972349696;
         Log.v (TAG, "----------------------------------------MY POSITION "+randomLatValue+","+randomLonValue);
         return location = new DefaultLocation(randomLatValue, randomLonValue, "I'm here");
     }

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.pfc.android.archcomponent.db.AppDatabase;
+import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import java.util.List;
@@ -51,6 +52,18 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     /**
+     * Method that return a list of element with the same naptanid and lineid.
+     * So if the result is 0 the element doesn't exist
+     * <p>
+     *
+     * @return     a LiveData<List<ArrivalsFormatedEntity>> object giving to get the favourite.
+     *
+     */
+    public int elementInFav(String naptanid, String lineid){
+        return database.favouriteDao().elementInFav(naptanid, lineid);
+    }
+
+    /**
      * Method async with one parameter: ArrivalsFormatedEntity. This method
      * made an async insert to the database.
      * <p>
@@ -88,33 +101,42 @@ public class LocalRepositoryImpl implements LocalRepository {
         }.execute(favouriteEntity);
     }
 
-    //a borrar
-
-    public List<ArrivalsFormatedEntity> getFavourites(){
+    /**
+     * Method that retrieve is one element is or not in the database in async mode.
+     *
+     * @param arrival to check if is in favourites
+     * @return true or false.
+     */
+    public boolean isFav(ArrivalsEntity arrival){
         try {
-            return new testGetFavourites(database).execute().get();
+            boolean esta = new isFavAsync(database).execute(arrival).get() > 0 ? true : false ;
+            return esta;
         } catch (InterruptedException | ExecutionException ex) {
             ex.printStackTrace();
-            return null;
+            return false;
         }
     }
 
-    private static class testGetFavourites extends AsyncTask<Void, Void, List<ArrivalsFormatedEntity>>{
+    /**
+     * Async class that allows us to make in background one request to the database.
+     */
+    private static class isFavAsync extends AsyncTask<ArrivalsEntity, Void, Integer>{
 
         private AppDatabase database;
 
-        public testGetFavourites(AppDatabase database) {
+        public isFavAsync(AppDatabase database) {
             this.database = database;
         }
 
         @Override
-        protected List<ArrivalsFormatedEntity> doInBackground(Void... voids) {
-            return database.favouriteDao().getFavourites();
+        protected Integer doInBackground(ArrivalsEntity... arrivalsEntities) {
+            return database.favouriteDao().elementInFav(arrivalsEntities[0].getNaptanId(), arrivalsEntities[0].getLineId());
         }
 
         @Override
-        protected void onPostExecute(List<ArrivalsFormatedEntity> favouriteEntities) {
-            super.onPostExecute(favouriteEntities);
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
         }
+
     }
 }

@@ -2,7 +2,6 @@ package com.pfc.android.archcomponent.repository;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.api.TflApiService;

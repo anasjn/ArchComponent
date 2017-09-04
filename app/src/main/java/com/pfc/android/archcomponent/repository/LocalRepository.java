@@ -2,6 +2,7 @@ package com.pfc.android.archcomponent.repository;
 
 import android.arch.lifecycle.LiveData;
 
+import com.pfc.android.archcomponent.vo.ArrivalsEntity;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 
 import java.util.List;
@@ -19,10 +20,11 @@ import java.util.List;
  */
 
 public interface LocalRepository {
-    List<ArrivalsFormatedEntity> getFavourites();
     LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData();
     void addFavourite(ArrivalsFormatedEntity favouriteEntity);
     void deleteFavourite(ArrivalsFormatedEntity favouriteEntity);
+    int elementInFav(String naptanid, String lineid);
+    boolean isFav(ArrivalsEntity arrival);
 
 }
 

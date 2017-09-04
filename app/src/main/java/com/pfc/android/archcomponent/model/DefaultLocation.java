@@ -15,7 +15,7 @@ public class DefaultLocation {
     private final String name;
 
     /**
-     * Contructor with a three parameters: latitude, longitude and name.
+     * Constructor with a three parameters: latitude, longitude and name.
      * <p>
      * @param latitude double
      * @param longitude double

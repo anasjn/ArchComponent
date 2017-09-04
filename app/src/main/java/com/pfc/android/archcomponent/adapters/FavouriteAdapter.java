@@ -2,7 +2,6 @@ package com.pfc.android.archcomponent.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,7 +195,6 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
      * <p>
      */
     public void clearFavourites() {
-        Log.v(TAG,"**************************************************FavouriteAdapter clearFavouriteInformation");
         if (favourites != null) {
             favourites.clear();
         }
@@ -208,7 +206,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
      * Method that implements Haversine Formula (from R.W. Sinnott, "Virtues of the Haversine", Sky and Telescope,
      * vol. 68, no. 2, 1984, p. 159): http://www.movable-type.co.uk/scripts/gis-faq-5.1.html
      * <p>
-     * This calc the distance between 2 points following the Haversine Formula
+     * This calc the distance between 2 points following the Haversine Formula and return the distance in meters.
      *
      * @param  latPoint1  a double. Latitude point 1
      * @param  lonPoint1  a double. Longitude point 1
@@ -228,7 +226,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
 
         double a = Math.pow(Math.sin(dLat / 2),2) + Math.cos(latPoint1) *  Math.cos(latPoint2) * Math.pow(Math.sin(dLon / 2),2) ;
         double c = 2 * Math.asin(Math.sqrt(a));
-        return earthRadious * c;
+        return earthRadious * c * 1000; //return the distance in meters.
     }
 
     /**

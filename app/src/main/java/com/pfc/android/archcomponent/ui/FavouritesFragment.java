@@ -82,7 +82,6 @@ public class FavouritesFragment extends LifecycleFragment {
             public void onChanged(@Nullable DefaultLocation defaultLocation) {
                 //set the favourites
                 currentLocation = defaultLocation;
-                unifiedModelView.setmMutableLiveDataFavourites();
             }
         });
         observeHandlers();
@@ -143,7 +142,6 @@ public class FavouritesFragment extends LifecycleFragment {
                 ArrivalsFormatedEntity favourite = mFavouriteAdapter.getFavourite(position);
                 Toast.makeText(getContext(), "Line: "+ favourite.getLineId()+ " in Platform: " +favourite.getPlatformName()+ " towards: "+favourite.getDestinationName()+ " has been deleted from Favourites", Toast.LENGTH_SHORT).show();
                 unifiedModelView.deleteFavourite(favourite);
-                //unifiedModelView.setmMutableLiveDataFavourites();
             }
         };
 
@@ -162,7 +160,6 @@ public class FavouritesFragment extends LifecycleFragment {
      */
     private void handleResponse(List<ArrivalsFormatedEntity> favourites) {
         if (favourites != null && !favourites.isEmpty()) {
-            Log.v(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ handle ArrivalsFormated "+favourites);
             mFavouriteAdapter.addFavourites(favourites);
             mFavouriteAdapter.addCurrentLocation(this.currentLocation);
         } else {

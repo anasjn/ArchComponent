@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
-import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.db.AppDatabase;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.repository.LocalRepository;
@@ -55,9 +54,6 @@ public class UnifiedModelView extends AndroidViewModel {
 
     RemoteRepository mRemoteRepository;
     LocalRepository mLocalRepository;
-
-    //List of favourites in order to check if the arrival is a favourite or not
-    private List<ArrivalsFormatedEntity> favourites = new ArrayList<>();
 
     /**
      * Contructor with a application parameter to interact with all the livedata
@@ -139,11 +135,6 @@ public class UnifiedModelView extends AndroidViewModel {
     }
 
 
-    public void setmMutableLiveDataFavourites() {
-        favourites = mLocalRepository.getFavourites();
-        mFavouritesMutableLiveData.setValue(favourites);
-    }
-
 
     /**
      * This Method return the LiveData mStopPointMutableLiveData
@@ -155,9 +146,6 @@ public class UnifiedModelView extends AndroidViewModel {
     }
 
 
-//    public void setmLiveDataFavourites(){
-//        mLocalRepository.getFavouritesLiveData();
-//    }
     /**
      * This Method add a favourite asynchronous to the database
      * <p>
@@ -172,6 +160,7 @@ public class UnifiedModelView extends AndroidViewModel {
             }
         }.execute(favouriteEntity);
     }
+
     /**
      * This Method delete a favourite asynchronous from the database
      * <p>
@@ -355,43 +344,6 @@ public class UnifiedModelView extends AndroidViewModel {
 
         return arrivalsFormated;
 
-//            ArrayList<Integer> listtimes = new ArrayList<Integer>();
-//            listtimes.add(secondsToMinutes(arrivals.get(0).getTimeToStation()));
-//            String lineId = arrivals.get(0).getLineId();
-//            boolean fav = isFav(arrivals.get(0));
-//            ArrivalsFormatedEntity aformated = new ArrivalsFormatedEntity(arrivals.get(0).getNaptanId(), lineId, arrivals.get(0).getStopLetter(), arrivals.get(0).getStationName(), arrivals.get(0).getPlatformName(), arrivals.get(0).getDestinationName(), lat, lon, arrivals.get(0).getDirection(),fav,listtimes);
-//            arrivalsformated.add(aformated);
-//            List<Integer> times = null;
-//            int j = 0;
-//            String aux = "";
-//            ArrivalsEntity arrivalAux = null;
-//            int position = 0;
-//            Integer timesInMinutes = 0;
-//            for (int i = 1; i < arrivals.size(); i++) {
-//                arrivalAux = arrivals.get(i);
-//                lineId = arrivalAux.getLineId();
-//                if (arrivalsformated.size() > 0) {
-//                    position = arrivalsformated.size() - 1;
-//                }
-//                aux = arrivalsformated.get(position).getLineId();
-//                timesInMinutes = secondsToMinutes(arrivalAux.getTimeToStation());
-//                if (lineId.equals(aux)) {
-//                    times = arrivalsformated.get(position).getTimeToStation();
-//                    times.add(timesInMinutes);
-//                    arrivalsformated.get(position).setTimeToStation(times);
-//                } else {
-//                    listtimes = new ArrayList<Integer>();
-//                    listtimes.add(timesInMinutes);
-//                    fav = isFav(arrivalAux);
-//                    aformated = new ArrivalsFormatedEntity(arrivalAux.getNaptanId(), arrivalAux.getLineId(), arrivalAux.getStopLetter(), arrivalAux.getStationName(), arrivalAux.getPlatformName(), arrivalAux.getDestinationName(),lat, lon, arrivalAux.getDirection(),fav,listtimes);
-//                    arrivalsformated.add(aformated);
-//                }
-//            }
-//
-//        }
-//        return arrivalsformated;
-
-
     }
 
     /**
@@ -411,11 +363,13 @@ public class UnifiedModelView extends AndroidViewModel {
      * @return  boolean
      */
     private boolean isFav(ArrivalsEntity arrival){
-        for (ArrivalsFormatedEntity fav : favourites) {
-            if (fav.getLineId().equals(arrival.getLineId()) && fav.getNaptanId().equals(arrival.getNaptanId()))
-                return true;
-        }
-        return false;
+
+        return mLocalRepository.isFav(arrival);
+
     }
+
+
+
+
 
 }

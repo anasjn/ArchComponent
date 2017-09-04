@@ -38,7 +38,7 @@ public class FavouriteModule {
     AppDatabase getTaskDatabase(Context context) {
 
         //Remove the database information
-        context.deleteDatabase(DATABASE_NAME);
+        //context.deleteDatabase(DATABASE_NAME);
         //create the database with Room
         AppDatabase db = Room
                 .databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)

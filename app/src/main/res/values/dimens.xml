@@ -8,7 +8,5 @@
     <dimen name="standard_23">23dp</dimen>
     <dimen name="standard_55">55dp</dimen>
     <dimen name="standard_100">100dp</dimen>
-    <!--<dimen name="standard_145">145dp</dimen>-->
-
 
 </resources>

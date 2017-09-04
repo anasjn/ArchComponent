@@ -17,9 +17,11 @@ import java.util.List;
  * <p>
  * List of queries:
  * <ul>
- *  <li>getFavouritesLiveData   - this method retrieve a LiveData<List<ArrivalsFormatedEntity>> object without parameters.
+ *  <li>getFavouritesLiveData     - this method retrieve a LiveData<List<ArrivalsFormatedEntity>> object without parameters.
  *  <li>addFavourite              - this method add one element to the database. parameter: ArrivalsFormatedEntity. return: void.
- * </ul>deleteFavourite           - this method delete one element to the database. parameter: ArrivalsFormatedEntity. return: void.
+ *  <li>deleteFavourite           - this method delete one element to the database. parameter: ArrivalsFormatedEntity. return: void.
+ *  <li>elementInFav              - this method gives the number of entries with this naptanid and this lineid that are in the database
+ * </ul>
  * <p>
  *
  * @author      Ana San Juan
@@ -29,7 +31,7 @@ import java.util.List;
 @Dao
 public interface FavouriteDao {
     @Query("SELECT * FROM favourites")
-    public LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData();
+    LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addFavourite(ArrivalsFormatedEntity favourite);
@@ -37,8 +39,7 @@ public interface FavouriteDao {
     @Delete
     void deleteFavourite(ArrivalsFormatedEntity favourite);
 
-    //a borrar
-    @Query("SELECT * FROM favourites")
-    List<ArrivalsFormatedEntity> getFavourites();
+    @Query("SELECT COUNT(*) FROM favourites WHERE naptanid = :naptanid and lineid = :lineid")
+    int elementInFav(String naptanid, String lineid);
 
 }

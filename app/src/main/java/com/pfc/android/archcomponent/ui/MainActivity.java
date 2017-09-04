@@ -2,34 +2,37 @@ package com.pfc.android.archcomponent.ui;
 
 import android.animation.Animator;
 import android.arch.lifecycle.LifecycleActivity;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.util.PermissionsRequester;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
-
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * MainActivity extends LifecycleActivity
+ * <p>
+ * This is the fragment that is in charge of the list of stops near the location of the user.
+ * <p>
+ *
+ * @author      Ana San Juan
+ * @version     "%I%, %G%"
+ * @since       1.0
+ */
 public class MainActivity extends LifecycleActivity {
 
     private final String TAG = MainActivity.class.getName();
@@ -44,12 +47,24 @@ public class MainActivity extends LifecycleActivity {
     private List<ArrivalsFormatedEntity> favourites = new ArrayList<>();
 
     private Bundle arguments = new Bundle();
+
     //FAB
     FloatingActionButton fab, fabNearMe, fabFavourites;
     LinearLayout fabLayoutNearMe, fabLayoutFavourites;
     View fabBGLayout;
     boolean isFABOpen=false;
 
+
+    /**
+     * onCreate Method
+     * <p>
+     * This method handle the diversion of the traffic to
+     * the favourites fragment in case that the user has some favourites.
+     * And manage the menu button (floating).
+     * <p>
+     *
+     * @param   savedInstanceState  Bundle
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +78,7 @@ public class MainActivity extends LifecycleActivity {
         fragmentContainer = findViewById(R.id.fragment_container);
         permissionsRequester = PermissionsRequester.newInstance(this);
 
-        //Getting the list of favourites in order to see if there is any if them and show them in first place.
+        //Getting the list of favourites in order to see if there is any and show them in first place.
         unifiedModelView = ViewModelProviders.of(this).get(UnifiedModelView.class);
 
         unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
@@ -128,6 +143,8 @@ public class MainActivity extends LifecycleActivity {
 
     }
 
+
+    //Handle the onclick event in the menu Favourite option
     private View.OnClickListener fabFavouritesOnClick = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
@@ -140,13 +157,13 @@ public class MainActivity extends LifecycleActivity {
                 arguments.clear();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
             }else{
-                Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++fav imagen");
                 Toast.makeText(getBaseContext(),"Sorry! We haven't found any favourite",Toast.LENGTH_SHORT).show();
             }
             closeFABMenu();
         }
     };
 
+    //Handle the onclick event in the menu Near Me option
     private View.OnClickListener fabNearMeOnClick = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
@@ -158,18 +175,21 @@ public class MainActivity extends LifecycleActivity {
         }
     };
 
-    //Location
+    /**
+     * This method instantiate the location fragment and call the fragment.
+     *
+     */
     private void createLocationFragment() {
-        Log.v(TAG,"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++createLocationFragment");
-      //  Bundle arguments = new Bundle();
         locationFragment = (LocationFragment) Fragment.instantiate(this, LocationFragment.class.getCanonicalName());
-       // arguments.putString("fav", "true");
         if(arguments.size()>0) locationFragment.setArguments(arguments);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
 
     }
 
-    //Location
+    /**
+     * This method request the permissions in case the user has not enough permissions or call
+     * the Fragment creation method
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -180,7 +200,9 @@ public class MainActivity extends LifecycleActivity {
         }
     }
 
-    //Location
+    /**
+     * This method handle the permission request.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -194,12 +216,18 @@ public class MainActivity extends LifecycleActivity {
         createLocationFragment();
     }
 
+    /**
+     * OnDestroy method
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.v(TAG, "onDestroy ");
     }
 
+    /**
+     * This method show the options of the menu
+     */
     private void showFABMenu(){
         isFABOpen=true;
         fabLayoutNearMe.setVisibility(View.VISIBLE);
@@ -210,6 +238,9 @@ public class MainActivity extends LifecycleActivity {
         fabLayoutFavourites.animate().translationY(-getResources().getDimension(R.dimen.standard_100));
     }
 
+    /**
+     * This method hide the options of the menu
+     */
     private void closeFABMenu(){
         isFABOpen=false;
         fabBGLayout.setVisibility(View.GONE);
@@ -239,7 +270,9 @@ public class MainActivity extends LifecycleActivity {
         });
     }
 
-
+    /**
+     * This method handle what is going on with the back button
+     */
     @Override
     public void onBackPressed() {
         if(isFABOpen){

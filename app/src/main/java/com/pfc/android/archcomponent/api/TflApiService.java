@@ -35,9 +35,8 @@ public interface TflApiService {
      * @param id
      * @param api_transport_id
      * @param api_transport_key
-     * @return
+     * @return Call<List<ArrivalsEntity>>
      */
-    //
     @GET("StopPoint/{id}/Arrivals")
     Call<List<ArrivalsEntity>> getArrivalInformation(
             @Path("id") String id,
@@ -54,7 +53,7 @@ public interface TflApiService {
      * @query lat
      * @query lon
      * @query radius
-     * @return
+     * @return Call<StopLocationEntity>
      */
     @GET("Stoppoint?stoptypes=NaptanRailStation,NaptanBusCoachStation,NaptanPublicBusCoachTram")
     Call<StopLocationEntity> getStopLocation(
@@ -74,7 +73,7 @@ public interface TflApiService {
      * @param lineid
      * @param naptanid
      * @query direction
-     * @return
+     * @return Call<List<ArrivalsEntity>>
      */
     @GET("Line/{lineid}/Arrivals/{naptanid}")
     Call<List<ArrivalsEntity>> getPredictionsByStopPLine(

@@ -33,7 +33,7 @@ import java.util.List;
 
 
 /**
- * LocationFragment extends LifecycleFragment and implements
+ * LocationFragment extends LifecycleFragment and implements LocationListener, OnMapReadyCallback
  * <p>
  * This is the fragment that is in charge of the list of stops near the location of the user.
  * <p>
@@ -109,20 +109,10 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
             unifiedModelView.setRandomLocationLiveData(getContext());
         }
 
-//        //set current location
-//        unifiedModelView.setLmLocationLiveData(getContext());
-
         // Handle changes emitted by LiveDataLocation
         unifiedModelView.getLmLocationLiveData().observe(this,
                 defaultLocation -> updateLocation(defaultLocation, true)
         );
-//        unifiedModelView.getLmLocationLiveData().observe(this, new Observer<DefaultLocation>() {
-//            @Override
-//            public void onChanged(@Nullable DefaultLocation defaultLocation) {
-//                currentLocation = defaultLocation;
-//                updateLocation(defaultLocation, true);
-//            }
-//        });
 
         Bundle args = getArguments();
         if(args!=null){
@@ -175,7 +165,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         }
         if(markers!=null & markers.size()>0) {
             for (int j = 0; j < markers.size(); j++) {
-//                Log.v(TAG," markers positions handleResponse" +markers.get(j).getPosition());
                 builder.include(markers.get(j).getPosition());
             }
             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(builder.build().getCenter(),16));

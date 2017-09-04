@@ -74,12 +74,6 @@ public class DetailFragment extends LifecycleFragment{
             }
         });
 
-        unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
-            @Override
-            public void onChanged(@Nullable List<ArrivalsFormatedEntity> arrivalsFormatedEntities) {
-                handleResponse(arrivalsFormatedEntities);
-            }
-        });
 
 
     }
@@ -116,14 +110,8 @@ public class DetailFragment extends LifecycleFragment{
                 if(!arrival.isFavourite()){
                     Toast.makeText(getContext(), "Line: "+ arrival.getLineId()+ " in Platform: " +arrival.getPlatformName()+ " towards: "+arrival.getDestinationName()+ " has been added to Favourites", Toast.LENGTH_SHORT).show();
                     unifiedModelView.addFavourite(arrival);
-
-//                    unifiedModelView.setmMutableLiveDataFavourites();
-                   // unifiedModelView.getmLiveDataFavourites();
                 }else{
-                    Toast.makeText(getContext(), "Line: "+ arrival.getLineId()+ " in Platform: " +arrival.getPlatformName()+ " towards: "+arrival.getDestinationName()+ " has been deleted from Favourites", Toast.LENGTH_SHORT).show();
-                    Log.v(TAG,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++delete favourite "+arrival.getNaptanId() +" , "+arrival.getLineId());
-                    unifiedModelView.deleteFavourite(arrival);
-//                    unifiedModelView.setmMutableLiveDataFavourites();
+                    Toast.makeText(getContext(), "This element is already a favourite", Toast.LENGTH_SHORT).show();
                 }
             }
 

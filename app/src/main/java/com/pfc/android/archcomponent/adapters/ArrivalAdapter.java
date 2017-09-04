@@ -192,7 +192,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         RadioButton mRadioButtonStar;
 
         /**
-         * Contructor with a view parameter.
+         * Constructor with a view parameter.
          * <p>
          */
         public Holder(View view) {
@@ -207,7 +207,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
         }
 
         /**
-         * Contructor with a view, viewType and a context parameters.
+         * Constructor with a view, viewType and a context parameters.
          * <p>
          *
          */

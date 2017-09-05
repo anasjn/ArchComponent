@@ -39,12 +39,12 @@ import retrofit2.Response;
  * @version     1.0
  * @since       1.0
  */
+
 public class UnifiedModelView extends AndroidViewModel {
 
     private final String TAG = UnifiedModelView.class.getName();
 
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrivalsFormated;
-    private MutableLiveData<List<ArrivalsFormatedEntity>> mFavouritesMutableLiveData;
     private LocationLiveData mLocationLiveData;
     private MutableLiveData<StopLocationEntity> mStopPointMutableLiveData;
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableLineFav;
@@ -65,7 +65,6 @@ public class UnifiedModelView extends AndroidViewModel {
         super(application);
         ((FavouriteApplication)application).getFavComponent().inject(this);
         this.mMutableArrivalsFormated = new MutableLiveData<>();
-        this.mFavouritesMutableLiveData = new MutableLiveData<>();
         this.mRemoteRepository = new RemoteRepositoryImpl(application);
         this.mLocalRepository = new LocalRepositoryImpl(database);
         this.mStopPointMutableLiveData = new MutableLiveData<>();

@@ -52,18 +52,6 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     /**
-     * Method that return a list of element with the same naptanid and lineid.
-     * So if the result is 0 the element doesn't exist
-     * <p>
-     *
-     * @return     a LiveData<List<ArrivalsFormatedEntity>> object giving to get the favourite.
-     *
-     */
-    public int elementInFav(String naptanid, String lineid){
-        return database.favouriteDao().elementInFav(naptanid, lineid);
-    }
-
-    /**
      * Method async with one parameter: ArrivalsFormatedEntity. This method
      * made an async insert to the database.
      * <p>

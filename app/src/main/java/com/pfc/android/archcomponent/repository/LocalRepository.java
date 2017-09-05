@@ -23,7 +23,6 @@ public interface LocalRepository {
     LiveData<List<ArrivalsFormatedEntity>> getFavouritesLiveData();
     void addFavourite(ArrivalsFormatedEntity favouriteEntity);
     void deleteFavourite(ArrivalsFormatedEntity favouriteEntity);
-    int elementInFav(String naptanid, String lineid);
     boolean isFav(ArrivalsEntity arrival);
 
 }

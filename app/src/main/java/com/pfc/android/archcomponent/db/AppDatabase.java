@@ -17,6 +17,7 @@ import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
  * @version     1.0
  * @since       1.0
  */
+
 @Database(entities = {ArrivalsFormatedEntity.class}, version = 1)
 @TypeConverters({StringConverter.class})
 public abstract class AppDatabase extends RoomDatabase {

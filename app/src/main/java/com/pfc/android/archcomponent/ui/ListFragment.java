@@ -1,9 +1,7 @@
 package com.pfc.android.archcomponent.ui;
 
 import android.arch.lifecycle.LifecycleFragment;
-import android.arch.lifecycle.Observer;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,12 +11,9 @@ import android.view.ViewGroup;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.adapters.DataAdapter;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
-import com.pfc.android.archcomponent.vo.StopLocationEntity;
 import com.pfc.android.archcomponent.vo.StopPointsEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
-import com.pfc.android.archcomponent.model.DefaultLocation;
 import android.arch.lifecycle.ViewModelProviders;
-import android.widget.Toast;
 import java.util.List;
 
 
@@ -34,7 +29,7 @@ import java.util.List;
  */
 public class ListFragment extends LifecycleFragment {
 
-    private static final String TAG = ListFragment.class.getName();
+    private static final String tag = ListFragment.class.getName();
     protected RecyclerView mRecyclerView;
     protected DataAdapter mAdapter;
     private UnifiedModelView unifiedModelView;
@@ -103,8 +98,8 @@ public class ListFragment extends LifecycleFragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
-        rootView.setTag(TAG);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        rootView.setTag(tag);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.hasFixedSize();

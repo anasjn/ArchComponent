@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,7 @@ import java.util.List;
 
 public class FavouritesFragment extends LifecycleFragment {
 
-    private final String TAG = FavouritesFragment.class.getName();
+    private final String tag = FavouritesFragment.class.getName();
 
     private UnifiedModelView unifiedModelView;
 
@@ -130,8 +129,8 @@ public class FavouritesFragment extends LifecycleFragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
-        rootView.setTag(TAG);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        rootView.setTag(tag);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.hasFixedSize();

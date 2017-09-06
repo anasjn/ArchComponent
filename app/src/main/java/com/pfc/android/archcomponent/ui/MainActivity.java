@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.util.PermissionsRequester;
@@ -34,8 +33,6 @@ import java.util.List;
  * @since       1.0
  */
 public class MainActivity extends LifecycleActivity {
-
-    private final String TAG = MainActivity.class.getName();
 
     private PermissionsRequester permissionsRequester;
     private ListFragment nearmeFragment;
@@ -84,13 +81,18 @@ public class MainActivity extends LifecycleActivity {
         unifiedModelView.getmLiveDataFavourites().observe(this, new Observer<List<ArrivalsFormatedEntity>>() {
             @Override
             public void onChanged(@Nullable List<ArrivalsFormatedEntity> favouriteEntities) {
-                favourites.addAll(favouriteEntities);
-                if(favourites.size()>0) {
-                    arguments.putString("fav", "true");
-                    locationFragment.setArguments(arguments);
-                    arguments.clear();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();
+                if(favouriteEntities!=null) {
+                    favourites.addAll(favouriteEntities);
+                    if (favourites.size() > 0) {
+                        arguments.putString("fav", "true");
+                        locationFragment.setArguments(arguments);
+                        arguments.clear();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favouritesFragment).addToBackStack("favourite").commit();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearme").commit();
+                    }
                 }else{
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, locationFragment).commit();
                     getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, nearmeFragment).addToBackStack("nearme").commit();
@@ -113,12 +115,12 @@ public class MainActivity extends LifecycleActivity {
         }
 
         //Menu Fab
-        fabLayoutNearMe= (LinearLayout) findViewById(R.id.fabLayoutNearMe);
-        fabLayoutFavourites= (LinearLayout) findViewById(R.id.fabLayoutFavourites);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fabNearMe = (FloatingActionButton) findViewById(R.id.fabNearMe);
-        fabFavourites= (FloatingActionButton) findViewById(R.id.fabFavourites);
-        fabBGLayout=findViewById(R.id.fabBGLayout);
+        fabLayoutNearMe= findViewById(R.id.fabLayoutNearMe);
+        fabLayoutFavourites= findViewById(R.id.fabLayoutFavourites);
+        fab =  findViewById(R.id.fab);
+        fabNearMe = findViewById(R.id.fabNearMe);
+        fabFavourites= findViewById(R.id.fabFavourites);
+        fabBGLayout= findViewById(R.id.fabBGLayout);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,7 +224,6 @@ public class MainActivity extends LifecycleActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.v(TAG, "onDestroy ");
     }
 
     /**

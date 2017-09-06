@@ -24,9 +24,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class LocalRepositoryImpl implements LocalRepository {
 
-    private final String TAG = LocalRepositoryImpl.class.getName();
+    private final String tag = LocalRepositoryImpl.class.getName();
 
-    public AppDatabase database;
+    private AppDatabase database;
 
     /**
      * Contructor with an Appdatabase parameter.
@@ -64,7 +64,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             protected Void doInBackground(ArrivalsFormatedEntity... params) {
                 database.favouriteDao().addFavourite(params[0]);
-                Log.d(TAG, "element added");
+                Log.d(tag, "element added");
                 return null;
             }
         }.execute(favouriteEntity);
@@ -83,7 +83,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             protected Void doInBackground(ArrivalsFormatedEntity... params) {
                 database.favouriteDao().deleteFavourite(params[0]);
-                Log.d(TAG, "element deleted");
+                Log.d(tag, "element deleted");
                 return null;
             }
         }.execute(favouriteEntity);
@@ -97,10 +97,9 @@ public class LocalRepositoryImpl implements LocalRepository {
      */
     public boolean isFav(ArrivalsEntity arrival){
         try {
-            boolean esta = new isFavAsync(database).execute(arrival).get() > 0 ? true : false ;
-            return esta;
+            return new isFavAsync(database).execute(arrival).get() > 0 ? true : false ;
         } catch (InterruptedException | ExecutionException ex) {
-            ex.printStackTrace();
+            Log.e(tag,"error"+ex.getMessage());
             return false;
         }
     }

@@ -8,14 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.adapters.ArrivalAdapter;
-import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.viewmodel.UnifiedModelView;
 import com.pfc.android.archcomponent.vo.ArrivalsFormatedEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
@@ -34,7 +32,7 @@ import java.util.List;
  */
 public class DetailFragment extends LifecycleFragment{
 
-    private final String TAG = DetailFragment.class.getName();
+    private final String tag = DetailFragment.class.getName();
 
     protected ArrivalAdapter mAdapter;
     protected RecyclerView mRecyclerView;
@@ -97,8 +95,8 @@ public class DetailFragment extends LifecycleFragment{
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
-        rootView.setTag(TAG);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        rootView.setTag(tag);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.hasFixedSize();

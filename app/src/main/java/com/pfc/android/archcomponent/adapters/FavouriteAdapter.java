@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
 import com.pfc.android.archcomponent.model.DefaultLocation;
@@ -27,12 +26,10 @@ import java.util.List;
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Holder> {
-
-    private final String TAG = FavouriteAdapter.class.getName();
 
     Context mContext;
     private List<ArrivalsFormatedEntity> favourites;
@@ -110,9 +107,9 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
                 holder.mTextViewPlatformName.setText(favourite.getPlatformName());
                 holder.mTextViewDestinationName.setText(favourite.getDestinationName());
                 holder.mTextViewStationName.setText(favourite.getStationName());
-                if(currentLocation!=null && favourite !=null){
+                if(currentLocation!=null){
                    Double distance = 0.0;
-                   distance = calDistance(Double.parseDouble(favourite.getmLat()),Double.parseDouble(favourite.getmLon()), currentLocation.getLatitude(), currentLocation.getLongitude());
+                   distance = calDistance(Double.parseDouble(favourite.getLatitude()),Double.parseDouble(favourite.getLongitude()), currentLocation.getLatitude(), currentLocation.getLongitude());
                    holder.mTextViewDistance.setText(mContext.getString(R.string.separator_mayor)+ " " + distance.intValue() + " " +mContext.getString(R.string.separator_meters));
                 }
                 timesToStation = favourite.getTimeToStationSort();
@@ -243,9 +240,13 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
      */
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener  {
 
-        private final String TAG = ArrivalAdapter.Holder.class.getName();
-
-        TextView  mTextViewLineId, mTextViewPlatformName, mTextViewDestinationName,mTextViewStationName,mTextViewDistance,mTextViewTimeToStation,mTextViewTimeToStation2;
+        TextView  mTextViewLineId;
+        TextView mTextViewPlatformName;
+        TextView mTextViewDestinationName;
+        TextView mTextViewStationName;
+        TextView mTextViewDistance;
+        TextView mTextViewTimeToStation;
+        TextView mTextViewTimeToStation2;
 
         /**
          * Contructor with a view parameter.
@@ -253,13 +254,13 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Hold
          */
         public Holder(View view) {
             super(view);
-            mTextViewLineId = (TextView) view.findViewById(R.id.line_id);
-            mTextViewPlatformName = (TextView) view.findViewById(R.id.platform_name);
-            mTextViewDestinationName = (TextView) view.findViewById(R.id.destination_name);
-            mTextViewStationName = (TextView) view.findViewById(R.id.station_name);
-            mTextViewDistance = (TextView) view.findViewById(R.id.distance);
-            mTextViewTimeToStation = (TextView) view.findViewById(R.id.time_to_station1);
-            mTextViewTimeToStation2 = (TextView) view.findViewById(R.id.time_to_station2);
+            mTextViewLineId = view.findViewById(R.id.line_id);
+            mTextViewPlatformName = view.findViewById(R.id.platform_name);
+            mTextViewDestinationName = view.findViewById(R.id.destination_name);
+            mTextViewStationName = view.findViewById(R.id.station_name);
+            mTextViewDistance = view.findViewById(R.id.distance);
+            mTextViewTimeToStation = view.findViewById(R.id.time_to_station1);
+            mTextViewTimeToStation2 = view.findViewById(R.id.time_to_station2);
         }
 
         /**

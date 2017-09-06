@@ -17,6 +17,9 @@ import com.pfc.android.archcomponent.di.FavouriteModule;
  * @version     1.0
  * @since       1.0
  */
+
+
+
 public class FavouriteApplication extends Application {
 
         private FavouriteComponent favouriteComponent;

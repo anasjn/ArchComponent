@@ -44,8 +44,6 @@ import java.util.List;
  */
 public class LocationFragment extends LifecycleFragment implements LocationListener, OnMapReadyCallback {
 
-    public static final String TAG = LocationFragment.class.getName();
-
     private GoogleMap gMap = null;
     private Marker mDefault;
     private LatLng mDefaultLocation = null;
@@ -59,8 +57,6 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
     //to show a list of markers in the map and adjust the zoom for the list of markers
     ArrayList<Marker> markers =  new ArrayList<Marker>();
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
-    private DefaultLocation currentLocation;
 
 
     private UnifiedModelView unifiedModelView;
@@ -127,7 +123,7 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
             unifiedModelView.getmStopPointMutableLiveData().observe(this, new Observer<StopLocationEntity>() {
                 @Override
                 public void onChanged(@Nullable StopLocationEntity stopLocationEntity) {
-                    handleResponseNearMe((List<StopPointsEntity>) stopLocationEntity.getStopPoints());
+                    handleResponseNearMe(stopLocationEntity.getStopPoints());
                 }
             });
         }
@@ -144,20 +140,18 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         markers =  new ArrayList<Marker>();
         builder = new LatLngBounds.Builder();
         String name;
-        if (stoppoints != null && stoppoints.size()>0) {
+        if (stoppoints != null && !stoppoints.isEmpty()) {
             if(mAdapter!=null) {
                 mAdapter.addStopInformation(stoppoints);
-                if(stoppoints!=null & stoppoints.size()>0) {
-                    for (int i = 0; i < stoppoints.size(); i++) {
-                        name="";
-                        if(stoppoints.get(i).getStopLetter()!=null && !stoppoints.get(i).getStopLetter().isEmpty()){
-                            name = stoppoints.get(i).getStopLetter();
-                        }
-                        if(name.isEmpty() && stoppoints.get(i).getCommonName()!=null){
-                            name = stoppoints.get(i).getCommonName();
-                        }
-                        updateLocation(new DefaultLocation(Double.parseDouble(stoppoints.get(i).getLat()), Double.parseDouble(stoppoints.get(i).getLon()), name),false);
+                for (int i = 0; i < stoppoints.size(); i++) {
+                    name="";
+                    if(stoppoints.get(i).getStopLetter()!=null && !stoppoints.get(i).getStopLetter().isEmpty()){
+                        name = stoppoints.get(i).getStopLetter();
                     }
+                    if(name.isEmpty() && stoppoints.get(i).getCommonName()!=null){
+                        name = stoppoints.get(i).getCommonName();
+                    }
+                    updateLocation(new DefaultLocation(Double.parseDouble(stoppoints.get(i).getLat()), Double.parseDouble(stoppoints.get(i).getLon()), name),false);
                 }
             }
         } else {
@@ -181,33 +175,31 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
         markers =  new ArrayList<Marker>();
         builder = new LatLngBounds.Builder();
         String name;
-        if (lines != null && lines.size()>0) {
+        if (lines != null && !lines.isEmpty()) {
             if(mFAvouritesAdapter!=null) {
                 mFAvouritesAdapter.addFavourites(lines);
-                if(lines!=null & lines.size()>0) {
-                    for (int i = 0; i < lines.size(); i++) {
-                        name="";
-                        if(lines.get(i).getPlatformName()!=null && !lines.get(i).getPlatformName().isEmpty()){
-                            name = lines.get(i).getPlatformName();
-                        }
-                        if(name.isEmpty() && lines.get(i).getStationName()!=null){
-                            name = lines.get(i).getStationName();
-                        }
-                        if(lines.get(i).getLineId()!=null && !lines.get(i).getLineId().isEmpty()){
-                            name += " - "+lines.get(i).getLineId();
-                        }
-                        if(lines.get(i)!=null && lines.get(i).getmLat()!=null && lines.get(i).getmLon()!=null)
-                        {
-                            DefaultLocation location = new DefaultLocation( Double.parseDouble(lines.get(i).getmLat()), Double.parseDouble(lines.get(i).getmLon()),name);
-                            updateLocation(location,false);
-                        }
+                for (int i = 0; i < lines.size(); i++) {
+                    name="";
+                    if(lines.get(i).getPlatformName()!=null && !lines.get(i).getPlatformName().isEmpty()){
+                        name = lines.get(i).getPlatformName();
+                    }
+                    if(name.isEmpty() && lines.get(i).getStationName()!=null){
+                        name = lines.get(i).getStationName();
+                    }
+                    if(lines.get(i).getLineId()!=null && !lines.get(i).getLineId().isEmpty()){
+                        name += " - "+lines.get(i).getLineId();
+                    }
+                    if(lines.get(i)!=null && lines.get(i).getLatitude()!=null && lines.get(i).getLongitude()!=null)
+                    {
+                        DefaultLocation location = new DefaultLocation( Double.parseDouble(lines.get(i).getLatitude()), Double.parseDouble(lines.get(i).getLongitude()),name);
+                        updateLocation(location,false);
                     }
                 }
             }
         } else {
             mFAvouritesAdapter.clearFavourites();
         }
-        if(markers!=null & markers.size()>0) {
+        if(markers!=null & !markers.isEmpty()) {
             for (int j = 0; j < markers.size(); j++) {
                 builder.include(markers.get(j).getPosition());
             }
@@ -234,8 +226,8 @@ public class LocationFragment extends LifecycleFragment implements LocationListe
                     opt.icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(defaultLocation.getName())));
                 }
                 mDefault = gMap.addMarker(opt.position(mDefaultLocation));
-                mDefault.setTag(defaultLocation.getName());
                 if(mDefault!=null) {
+                    mDefault.setTag(defaultLocation.getName());
                     markers.add(mDefault);
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(defaultLocation.getLatitude(), defaultLocation.getLongitude()), 16));
                 }

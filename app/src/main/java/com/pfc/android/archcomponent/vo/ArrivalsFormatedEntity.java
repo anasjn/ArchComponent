@@ -19,6 +19,8 @@ import java.util.List;
  * @version     1.0
  * @since       1.0
  */
+
+
 @Entity(tableName = "favourites")
 public class ArrivalsFormatedEntity implements Serializable {
 
@@ -37,9 +39,9 @@ public class ArrivalsFormatedEntity implements Serializable {
 
     private String direction;
 
-    public String mLat;
+    private String latitude;
 
-    public String mLon;
+    private String longitude;
 
     private String destinationName;
 
@@ -95,20 +97,20 @@ public class ArrivalsFormatedEntity implements Serializable {
         this.direction = direction;
     }
 
-    public String getmLat() {
-        return mLat;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setmLat(String mLat) {
-        this.mLat = mLat;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
-    public String getmLon() {
-        return mLon;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setmLon(String mLon) {
-        this.mLon = mLon;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
 

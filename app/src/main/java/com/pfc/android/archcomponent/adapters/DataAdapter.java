@@ -6,11 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.pfc.android.archcomponent.R;
 import com.pfc.android.archcomponent.vo.StopPointsEntity;
 import com.pfc.android.archcomponent.model.CustomDetailClickListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +25,10 @@ import java.util.List;
  * <p>
  *
  * @author      Ana San Juan
- * @version     "%I%, %G%"
+ * @version     1.0
  * @since       1.0
  */
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
-
-    private final String TAG = DataAdapter.class.getName();
 
     Context mContext;
     private List<StopPointsEntity> mStopPoints;
@@ -113,7 +109,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
                 if (stop.getAddproperties() != null && stop.getAddproperties().size()>0) {
                     for (int j = 0; j < stop.getAddproperties().size(); j++) {
                         if ("Towards".equals(stop.getAddproperties().get(j).getKey())) {
-                            holder.mTextViewTowards.setText(mContext.getString(R.string.towards)+(CharSequence) stop.getAddproperties().get(j).getValue());
+                            holder.mTextViewTowards.setText(mContext.getString(R.string.towards)+ stop.getAddproperties().get(j).getValue());
                         }
 
                     }
@@ -215,9 +211,11 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
      */
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private final String TAG = Holder.class.getName();
-
-        TextView mTextViewLetter, mTextViewCommonName, mTextViewLine, mTextViewTowards, mTextViewDistance;
+        TextView mTextViewLetter;
+        TextView mTextViewCommonName;
+        TextView mTextViewLine;
+        TextView mTextViewTowards;
+        TextView mTextViewDistance;
 
         /**
          * Contructor with a view parameter.
@@ -225,11 +223,11 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.Holder> {
          */
         public Holder(View view) {
             super(view);
-            mTextViewLetter = (TextView) view.findViewById(R.id.letter);
-            mTextViewCommonName = (TextView) view.findViewById(R.id.common_name);
-            mTextViewLine = (TextView) view.findViewById(R.id.line);
-            mTextViewTowards = (TextView) view.findViewById(R.id.towards);
-            mTextViewDistance = (TextView) view.findViewById(R.id.distance);
+            mTextViewLetter = view.findViewById(R.id.letter);
+            mTextViewCommonName = view.findViewById(R.id.common_name);
+            mTextViewLine = view.findViewById(R.id.line);
+            mTextViewTowards = view.findViewById(R.id.towards);
+            mTextViewDistance = view.findViewById(R.id.distance);
         }
 
         /**

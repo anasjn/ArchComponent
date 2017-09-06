@@ -2,7 +2,6 @@ package com.pfc.android.archcomponent.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +32,6 @@ import java.util.List;
  * @since       1.0
  */
 public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder> {
-
-    private final String TAG = ArrivalAdapter.class.getName();
 
     Context mContext;
     private List<ArrivalsFormatedEntity> mArrivalsEntity;
@@ -97,7 +94,7 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
      */
     @Override
     public void onBindViewHolder(final ArrivalAdapter.Holder holder, int position) {
-        if(mArrivalsEntity!=null && mArrivalsEntity.size()>0) {
+        if(mArrivalsEntity!=null && !mArrivalsEntity.isEmpty()) {
             ArrivalsFormatedEntity arrival = mArrivalsEntity.get(position);
             String timing = mContext.getString(R.string.timing_first)+" ";
             List<Integer> timesToStation;
@@ -186,9 +183,12 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
      */
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        private final String TAG = ArrivalAdapter.Holder.class.getName();
-
-        TextView mTextViewStationName, mTextViewLineId, mTextViewPlatformName, mTextViewDestinationName,mTextViewTimeToStation,mTextViewTimeToStation2;
+        TextView mTextViewStationName;
+        TextView mTextViewLineId;
+        TextView mTextViewPlatformName;
+        TextView mTextViewDestinationName;
+        TextView mTextViewTimeToStation;
+        TextView mTextViewTimeToStation2;
         RadioButton mRadioButtonStar;
 
         /**
@@ -197,13 +197,13 @@ public class ArrivalAdapter  extends RecyclerView.Adapter<ArrivalAdapter.Holder>
          */
         public Holder(View view) {
             super(view);
-            mTextViewStationName = (TextView) view.findViewById(R.id.station_name);
-            mTextViewLineId = (TextView) view.findViewById(R.id.line_id);
-            mTextViewPlatformName = (TextView) view.findViewById(R.id.platform_name);
-            mTextViewDestinationName = (TextView) view.findViewById(R.id.destination_name);
-            mTextViewTimeToStation = (TextView) view.findViewById(R.id.time_to_station1);
-            mTextViewTimeToStation2 = (TextView) view.findViewById(R.id.time_to_station2);
-            mRadioButtonStar = (RadioButton) view.findViewById(R.id.star_rb);
+            mTextViewStationName = view.findViewById(R.id.station_name);
+            mTextViewLineId = view.findViewById(R.id.line_id);
+            mTextViewPlatformName = view.findViewById(R.id.platform_name);
+            mTextViewDestinationName = view.findViewById(R.id.destination_name);
+            mTextViewTimeToStation = view.findViewById(R.id.time_to_station1);
+            mTextViewTimeToStation2 = view.findViewById(R.id.time_to_station2);
+            mRadioButtonStar = view.findViewById(R.id.star_rb);
         }
 
         /**

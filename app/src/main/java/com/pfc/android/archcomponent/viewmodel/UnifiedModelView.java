@@ -9,7 +9,6 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 import com.pfc.android.archcomponent.db.AppDatabase;
 import com.pfc.android.archcomponent.model.DefaultLocation;
 import com.pfc.android.archcomponent.repository.LocalRepository;
@@ -42,7 +41,7 @@ import retrofit2.Response;
 
 public class UnifiedModelView extends AndroidViewModel {
 
-    private final String TAG = UnifiedModelView.class.getName();
+    private final String tag = UnifiedModelView.class.getName();
 
     private MutableLiveData<List<ArrivalsFormatedEntity>> mMutableArrivalsFormated;
     private LocationLiveData mLocationLiveData;
@@ -117,8 +116,7 @@ public class UnifiedModelView extends AndroidViewModel {
 
             @Override
             public void onFailure(Call<StopLocationEntity> call, Throwable t) {
-                Log.e(TAG, "error occured: " + t.toString());
-                Toast.makeText(getApplication().getBaseContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(tag, "error occured: " + t.toString());
             }
         });
     }
@@ -202,8 +200,7 @@ public class UnifiedModelView extends AndroidViewModel {
 
             @Override
             public void onFailure(Call<List<ArrivalsEntity>> call, Throwable t) {
-                Log.e(TAG, "error occured: " + t.toString());
-                Toast.makeText(getApplication().getBaseContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(tag, "error occured: " + t.toString());
             }
         });
     }
@@ -234,11 +231,10 @@ public class UnifiedModelView extends AndroidViewModel {
             mRemoteRepository.getPredictionsByStopPLine(fav.getLineId(), fav.getNaptanId(), fav.getDirection(), new Callback<List<ArrivalsEntity>>() {
                 @Override
                 public void onResponse(Call<List<ArrivalsEntity>> call, Response<List<ArrivalsEntity>> response) {
-                    if(response !=null & response.body()!=null) {
-                        List<ArrivalsFormatedEntity> arrivalsFormatedEntity = convert(response.body(), fav.getmLat(), fav.getmLon());
+                    if(response !=null && response.body()!=null) {
+                        List<ArrivalsFormatedEntity> arrivalsFormatedEntity = convert(response.body(), fav.getLatitude(), fav.getLongitude());
                         fav.setTimeToStation(arrivalsFormatedEntity.get(0).getTimeToStation());
                         favouritesResult.add(fav);
-                        Log.v(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++favouritesResult " + favouritesResult.size());
                         if (favourites.size() == favouritesResult.size())
                             mMutableLineFav.setValue(favouritesResult);
                     }
@@ -246,8 +242,7 @@ public class UnifiedModelView extends AndroidViewModel {
 
                 @Override
                 public void onFailure(Call<List<ArrivalsEntity>> call, Throwable t) {
-                    Log.e(TAG, "error occured: " + t.toString());
-                    Toast.makeText(getApplication().getBaseContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(tag, "error occured: " + t.toString());
                 }
             });
         }
@@ -324,8 +319,8 @@ public class UnifiedModelView extends AndroidViewModel {
                 if ( positionInList == -1)  {
                     // As it does not exists:
                     // Set current stop latitude and longitude
-                    arrivalsFormatedEntity.setmLat(latitude);
-                    arrivalsFormatedEntity.setmLon(longitude);
+                    arrivalsFormatedEntity.setLatitude(latitude);
+                    arrivalsFormatedEntity.setLongitude(longitude);
                     // Set if this arrival is in our favourite list
                     arrivalsFormatedEntity.setFavourite( isFav(arrival) );
                     // Set the schedule time into the collection
